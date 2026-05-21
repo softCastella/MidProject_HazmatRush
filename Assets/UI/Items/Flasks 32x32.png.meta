@@ -1,0 +1,2288 @@
+fileFormatVersion: 2
+guid: 9677baac3e055554fb3330756f6c71d8
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -3346578665392316801
+    second: Flasks 32x32_0
+  - first:
+      213: 7968509947785759092
+    second: Flasks 32x32_1
+  - first:
+      213: 3482844274823605766
+    second: Flasks 32x32_2
+  - first:
+      213: -7123614839972666030
+    second: Flasks 32x32_3
+  - first:
+      213: 6343395697555055830
+    second: Flasks 32x32_4
+  - first:
+      213: 3086910000120325273
+    second: Flasks 32x32_5
+  - first:
+      213: -6007599566996768420
+    second: Flasks 32x32_6
+  - first:
+      213: 4093483070078782182
+    second: Flasks 32x32_7
+  - first:
+      213: -8911397821388524566
+    second: Flasks 32x32_8
+  - first:
+      213: -1417936024982814474
+    second: Flasks 32x32_9
+  - first:
+      213: -6429487789012582981
+    second: Flasks 32x32_10
+  - first:
+      213: -7733304467747746373
+    second: Flasks 32x32_11
+  - first:
+      213: -8501602476715364045
+    second: Flasks 32x32_12
+  - first:
+      213: 6776454929504092836
+    second: Flasks 32x32_13
+  - first:
+      213: 7180118316452502365
+    second: Flasks 32x32_14
+  - first:
+      213: -7779269353180014001
+    second: Flasks 32x32_15
+  - first:
+      213: 1617241641275449312
+    second: Flasks 32x32_16
+  - first:
+      213: 6121875206120556168
+    second: Flasks 32x32_17
+  - first:
+      213: -3064373288870936977
+    second: Flasks 32x32_18
+  - first:
+      213: 8788402517235484333
+    second: Flasks 32x32_19
+  - first:
+      213: 3945183198668473959
+    second: Flasks 32x32_20
+  - first:
+      213: -1037970623333657806
+    second: Flasks 32x32_21
+  - first:
+      213: -494218081685893075
+    second: Flasks 32x32_22
+  - first:
+      213: 2825506375640229782
+    second: Flasks 32x32_23
+  - first:
+      213: 1849599503222924503
+    second: Flasks 32x32_24
+  - first:
+      213: 4597117302039442895
+    second: Flasks 32x32_25
+  - first:
+      213: 3800370013400346154
+    second: Flasks 32x32_26
+  - first:
+      213: -9108365447326450329
+    second: Flasks 32x32_27
+  - first:
+      213: -3327516878339374786
+    second: Flasks 32x32_28
+  - first:
+      213: 4581324334879868884
+    second: Flasks 32x32_29
+  - first:
+      213: -5465426344768714819
+    second: Flasks 32x32_30
+  - first:
+      213: -4530246607720996357
+    second: Flasks 32x32_31
+  - first:
+      213: -7677176414714646810
+    second: Flasks 32x32_32
+  - first:
+      213: -1330195486800467591
+    second: Flasks 32x32_33
+  - first:
+      213: 8762837790518891642
+    second: Flasks 32x32_34
+  - first:
+      213: 5222365205036623193
+    second: Flasks 32x32_35
+  - first:
+      213: -3958768690036191146
+    second: Flasks 32x32_36
+  - first:
+      213: -5099361725898208132
+    second: Flasks 32x32_37
+  - first:
+      213: -3903173655657216256
+    second: Flasks 32x32_38
+  - first:
+      213: -4124749255205017540
+    second: Flasks 32x32_39
+  - first:
+      213: -4632359429008626907
+    second: Flasks 32x32_40
+  - first:
+      213: -961791442534245676
+    second: Flasks 32x32_41
+  - first:
+      213: 5508821658394553653
+    second: Flasks 32x32_42
+  - first:
+      213: 2161724465862726407
+    second: Flasks 32x32_43
+  - first:
+      213: 9135319767124600181
+    second: Flasks 32x32_44
+  - first:
+      213: 6961378202629248481
+    second: Flasks 32x32_45
+  - first:
+      213: -4255443084301573839
+    second: Flasks 32x32_46
+  - first:
+      213: 1105699528885142532
+    second: Flasks 32x32_47
+  - first:
+      213: -2823879539933319640
+    second: Flasks 32x32_48
+  - first:
+      213: 7753794043721448502
+    second: Flasks 32x32_49
+  - first:
+      213: 9127338402338765839
+    second: Flasks 32x32_50
+  - first:
+      213: -8844221511337419772
+    second: Flasks 32x32_51
+  - first:
+      213: 4723171105555820986
+    second: Flasks 32x32_52
+  - first:
+      213: 1358380303896201895
+    second: Flasks 32x32_53
+  - first:
+      213: 1037968970775478448
+    second: Flasks 32x32_54
+  - first:
+      213: 2896089579907237174
+    second: Flasks 32x32_55
+  - first:
+      213: -3970871403587480569
+    second: Flasks 32x32_56
+  - first:
+      213: 7720517113319335038
+    second: Flasks 32x32_57
+  - first:
+      213: -3632020481378655223
+    second: Flasks 32x32_58
+  - first:
+      213: -6222478771459978959
+    second: Flasks 32x32_59
+  - first:
+      213: -8865744164325426035
+    second: Flasks 32x32_60
+  - first:
+      213: 7636941620058457933
+    second: Flasks 32x32_61
+  - first:
+      213: 900282198212358787
+    second: Flasks 32x32_62
+  - first:
+      213: -7464345335089907175
+    second: Flasks 32x32_63
+  - first:
+      213: 3547607047242774210
+    second: Flasks 32x32_64
+  - first:
+      213: -8256784690723261312
+    second: Flasks 32x32_65
+  - first:
+      213: -7337209981310872325
+    second: Flasks 32x32_66
+  - first:
+      213: -5646505600763824300
+    second: Flasks 32x32_67
+  - first:
+      213: 1393641250128478788
+    second: Flasks 32x32_68
+  - first:
+      213: -3026392650883266511
+    second: Flasks 32x32_69
+  - first:
+      213: -8714129475424426389
+    second: Flasks 32x32_70
+  - first:
+      213: -2412143122008904673
+    second: Flasks 32x32_71
+  - first:
+      213: -3561746032592608133
+    second: Flasks 32x32_72
+  - first:
+      213: -2435751942727527528
+    second: Flasks 32x32_73
+  - first:
+      213: 5813376903821551060
+    second: Flasks 32x32_74
+  - first:
+      213: -1365870255748479428
+    second: Flasks 32x32_75
+  - first:
+      213: 3109180169351547406
+    second: Flasks 32x32_76
+  - first:
+      213: 6932233188350359679
+    second: Flasks 32x32_77
+  - first:
+      213: 5622092315045816529
+    second: Flasks 32x32_78
+  - first:
+      213: -3230463127029391509
+    second: Flasks 32x32_79
+  - first:
+      213: 5653020502491937930
+    second: Flasks 32x32_80
+  - first:
+      213: 7960589045906005973
+    second: Flasks 32x32_81
+  - first:
+      213: -242035860095716626
+    second: Flasks 32x32_82
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Flasks 32x32_0
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 288
+        width: 20
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f7ed36c4f609e81d0800000000000000
+      internalID: -3346578665392316801
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_1
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 288
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 479cfea1495d59e60800000000000000
+      internalID: 7968509947785759092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_2
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 288
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 60e2dd04a6c855030800000000000000
+      internalID: 3482844274823605766
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_3
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 291
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2556abaab06d32d90800000000000000
+      internalID: -7123614839972666030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_4
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 288
+        width: 20
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6d4a28637c4480850800000000000000
+      internalID: 6343395697555055830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_5
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 288
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 994e5ca3a48e6da20800000000000000
+      internalID: 3086910000120325273
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_6
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 288
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c59fd500608b0aca0800000000000000
+      internalID: -6007599566996768420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_7
+      rect:
+        serializedVersion: 2
+        x: 227
+        y: 291
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ea0f1ef929fec830800000000000000
+      internalID: 4093483070078782182
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_8
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 256
+        width: 27
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ae372f365ea545480800000000000000
+      internalID: -8911397821388524566
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_9
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 225
+        width: 20
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6f08ba4a2ba725ce0800000000000000
+      internalID: -1417936024982814474
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_10
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 256
+        width: 27
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbd7138bbeed5c6a0800000000000000
+      internalID: -6429487789012582981
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_11
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 225
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbd44f33f88cda490800000000000000
+      internalID: -7733304467747746373
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_12
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 256
+        width: 32
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 331bcc1479d340a80800000000000000
+      internalID: -8501602476715364045
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_13
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 225
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a2498deaddca0e50800000000000000
+      internalID: 6776454929504092836
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_14
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 256
+        width: 15
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d5b5d612197e4a360800000000000000
+      internalID: 7180118316452502365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_15
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 256
+        width: 27
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f4a5f975dbb7a0490800000000000000
+      internalID: -7779269353180014001
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_16
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 225
+        width: 20
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ef513844b8917610800000000000000
+      internalID: 1617241641275449312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_17
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 256
+        width: 27
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 886461c901545f450800000000000000
+      internalID: 6121875206120556168
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_18
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 225
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f6ef6a1cab82975d0800000000000000
+      internalID: -3064373288870936977
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_19
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 256
+        width: 32
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: da648f6c68da6f970800000000000000
+      internalID: 8788402517235484333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_20
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 225
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 766497a773b10c630800000000000000
+      internalID: 3945183198668473959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_21
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 256
+        width: 15
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 23318eca7336891f0800000000000000
+      internalID: -1037970623333657806
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_22
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 228
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d20998fe54f2429f0800000000000000
+      internalID: -494218081685893075
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_23
+      rect:
+        serializedVersion: 2
+        x: 227
+        y: 228
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 69723a61417363720800000000000000
+      internalID: 2825506375640229782
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_24
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 192
+        width: 27
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7d46756d2f81ba910800000000000000
+      internalID: 1849599503222924503
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_25
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 192
+        width: 27
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc5fcd264dd3ccf30800000000000000
+      internalID: 4597117302039442895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_26
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 160
+        width: 23
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a2e26c75460adb430800000000000000
+      internalID: 3800370013400346154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_27
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 192
+        width: 32
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 76d3aa342e5989180800000000000000
+      internalID: -9108365447326450329
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_28
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 192
+        width: 15
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e310772770942d1d0800000000000000
+      internalID: -3327516878339374786
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_29
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 192
+        width: 27
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d70e5da532249f30800000000000000
+      internalID: 4581324334879868884
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_30
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 192
+        width: 27
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: db7cffd42b7e624b0800000000000000
+      internalID: -5465426344768714819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_31
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 160
+        width: 23
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf12fd966b45121c0800000000000000
+      internalID: -4530246607720996357
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_32
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 192
+        width: 32
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6ee2deae9b0357590800000000000000
+      internalID: -7677176414714646810
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_33
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 192
+        width: 15
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9792e6f90423a8de0800000000000000
+      internalID: -1330195486800467591
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_34
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 160
+        width: 23
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a745f300b8adb9970800000000000000
+      internalID: 8762837790518891642
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_35
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 168
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 95561951c71997840800000000000000
+      internalID: 5222365205036623193
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_36
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 160
+        width: 22
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6505472d9d0af09c0800000000000000
+      internalID: -3958768690036191146
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_37
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 160
+        width: 23
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c7c4d92278d6b39b0800000000000000
+      internalID: -5099361725898208132
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_38
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 160
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00783e57d3425d9c0800000000000000
+      internalID: -3903173655657216256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_39
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 168
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c38a2fff762f1c6c0800000000000000
+      internalID: -4124749255205017540
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_40
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 160
+        width: 22
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 52b620284ad86bfb0800000000000000
+      internalID: -4632359429008626907
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_41
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 128
+        width: 20
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4da5cbf57c707a2f0800000000000000
+      internalID: -961791442534245676
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_42
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 128
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 53de59f7c14437c40800000000000000
+      internalID: 5508821658394553653
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_43
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 128
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 703d40ac2fcfffd10800000000000000
+      internalID: 2161724465862726407
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_44
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 131
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 575e01d5dec27ce70800000000000000
+      internalID: 9135319767124600181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_45
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 128
+        width: 20
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e51dd2a798cb9060800000000000000
+      internalID: 6961378202629248481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_46
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 128
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 131ef46af01a1f4c0800000000000000
+      internalID: -4255443084301573839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_47
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 128
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 404048ffcdb385f00800000000000000
+      internalID: 1105699528885142532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_48
+      rect:
+        serializedVersion: 2
+        x: 227
+        y: 131
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 82ee7cd15809fc8d0800000000000000
+      internalID: -2823879539933319640
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_49
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 96
+        width: 27
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 63c7e85f9920b9b60800000000000000
+      internalID: 7753794043721448502
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_50
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 65
+        width: 20
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0cfe201be1daae70800000000000000
+      internalID: 9127338402338765839
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_51
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 96
+        width: 27
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40c5dd5e463034580800000000000000
+      internalID: -8844221511337419772
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_52
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 65
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ab13b0898131c8140800000000000000
+      internalID: 4723171105555820986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_53
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 96
+        width: 32
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7aace9b70bfe9d210800000000000000
+      internalID: 1358380303896201895
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_54
+      rect:
+        serializedVersion: 2
+        x: 68
+        y: 65
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0b043fe874b976e00800000000000000
+      internalID: 1037968970775478448
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_55
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 96
+        width: 15
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 635c418f02af03820800000000000000
+      internalID: 2896089579907237174
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_56
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 96
+        width: 27
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 704596c3f71a4e8c0800000000000000
+      internalID: -3970871403587480569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_57
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 65
+        width: 20
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e7429b5d869c42b60800000000000000
+      internalID: 7720517113319335038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_58
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 96
+        width: 27
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9046b7e8d98789dc0800000000000000
+      internalID: -3632020481378655223
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_59
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 65
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13908b4868055a9a0800000000000000
+      internalID: -6222478771459978959
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_60
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 96
+        width: 32
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d8cf3efb7ac86f480800000000000000
+      internalID: -8865744164325426035
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_61
+      rect:
+        serializedVersion: 2
+        x: 196
+        y: 65
+        width: 24
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d470bf1f0fddbf960800000000000000
+      internalID: 7636941620058457933
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_62
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 96
+        width: 15
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3823e0ea3e17e7c00800000000000000
+      internalID: 900282198212358787
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_63
+      rect:
+        serializedVersion: 2
+        x: 99
+        y: 68
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91a3f1d2771596890800000000000000
+      internalID: -7464345335089907175
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_64
+      rect:
+        serializedVersion: 2
+        x: 227
+        y: 68
+        width: 26
+        height: 26
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c6f39d30d1ab3130800000000000000
+      internalID: 3547607047242774210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_65
+      rect:
+        serializedVersion: 2
+        x: 4
+        y: 32
+        width: 27
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0847e82f1120a6d80800000000000000
+      internalID: -8256784690723261312
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_66
+      rect:
+        serializedVersion: 2
+        x: 36
+        y: 32
+        width: 27
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bf4d38d656efc2a90800000000000000
+      internalID: -7337209981310872325
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_67
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 0
+        width: 23
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 457f734921593a1b0800000000000000
+      internalID: -5646505600763824300
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_68
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 32
+        width: 32
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4424d3a4555375310800000000000000
+      internalID: 1393641250128478788
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_69
+      rect:
+        serializedVersion: 2
+        x: 105
+        y: 32
+        width: 15
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 13800452be71006d0800000000000000
+      internalID: -3026392650883266511
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_70
+      rect:
+        serializedVersion: 2
+        x: 132
+        y: 32
+        width: 27
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b66e09a5961311780800000000000000
+      internalID: -8714129475424426389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_71
+      rect:
+        serializedVersion: 2
+        x: 164
+        y: 32
+        width: 27
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f1ce1415c98568ed0800000000000000
+      internalID: -2412143122008904673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_72
+      rect:
+        serializedVersion: 2
+        x: 165
+        y: 0
+        width: 23
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b742923bad2229ec0800000000000000
+      internalID: -3561746032592608133
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_73
+      rect:
+        serializedVersion: 2
+        x: 192
+        y: 32
+        width: 32
+        height: 28
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 89312c46388723ed0800000000000000
+      internalID: -2435751942727527528
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_74
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 32
+        width: 15
+        height: 32
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4d56eb15e734da050800000000000000
+      internalID: 5813376903821551060
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_75
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 0
+        width: 23
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c3607d43d347b0de0800000000000000
+      internalID: -1365870255748479428
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_76
+      rect:
+        serializedVersion: 2
+        x: 69
+        y: 0
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e0a43e014e6062b20800000000000000
+      internalID: 3109180169351547406
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_77
+      rect:
+        serializedVersion: 2
+        x: 72
+        y: 8
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f78fbc33b5d343060800000000000000
+      internalID: 6932233188350359679
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_78
+      rect:
+        serializedVersion: 2
+        x: 101
+        y: 0
+        width: 22
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d862c46c2fa50e40800000000000000
+      internalID: 5622092315045816529
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_79
+      rect:
+        serializedVersion: 2
+        x: 134
+        y: 0
+        width: 23
+        height: 31
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b6f5a65d6e61b23d0800000000000000
+      internalID: -3230463127029391509
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_80
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 0
+        width: 7
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a8c380f2230937e40800000000000000
+      internalID: 5653020502491937930
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_81
+      rect:
+        serializedVersion: 2
+        x: 200
+        y: 8
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5dfd71c6f81b97e60800000000000000
+      internalID: 7960589045906005973
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Flasks 32x32_82
+      rect:
+        serializedVersion: 2
+        x: 229
+        y: 0
+        width: 22
+        height: 27
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ee2b618eaad14acf0800000000000000
+      internalID: -242035860095716626
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      Flasks 32x32_0: -3346578665392316801
+      Flasks 32x32_1: 7968509947785759092
+      Flasks 32x32_10: -6429487789012582981
+      Flasks 32x32_11: -7733304467747746373
+      Flasks 32x32_12: -8501602476715364045
+      Flasks 32x32_13: 6776454929504092836
+      Flasks 32x32_14: 7180118316452502365
+      Flasks 32x32_15: -7779269353180014001
+      Flasks 32x32_16: 1617241641275449312
+      Flasks 32x32_17: 6121875206120556168
+      Flasks 32x32_18: -3064373288870936977
+      Flasks 32x32_19: 8788402517235484333
+      Flasks 32x32_2: 3482844274823605766
+      Flasks 32x32_20: 3945183198668473959
+      Flasks 32x32_21: -1037970623333657806
+      Flasks 32x32_22: -494218081685893075
+      Flasks 32x32_23: 2825506375640229782
+      Flasks 32x32_24: 1849599503222924503
+      Flasks 32x32_25: 4597117302039442895
+      Flasks 32x32_26: 3800370013400346154
+      Flasks 32x32_27: -9108365447326450329
+      Flasks 32x32_28: -3327516878339374786
+      Flasks 32x32_29: 4581324334879868884
+      Flasks 32x32_3: -7123614839972666030
+      Flasks 32x32_30: -5465426344768714819
+      Flasks 32x32_31: -4530246607720996357
+      Flasks 32x32_32: -7677176414714646810
+      Flasks 32x32_33: -1330195486800467591
+      Flasks 32x32_34: 8762837790518891642
+      Flasks 32x32_35: 5222365205036623193
+      Flasks 32x32_36: -3958768690036191146
+      Flasks 32x32_37: -5099361725898208132
+      Flasks 32x32_38: -3903173655657216256
+      Flasks 32x32_39: -4124749255205017540
+      Flasks 32x32_4: 6343395697555055830
+      Flasks 32x32_40: -4632359429008626907
+      Flasks 32x32_41: -961791442534245676
+      Flasks 32x32_42: 5508821658394553653
+      Flasks 32x32_43: 2161724465862726407
+      Flasks 32x32_44: 9135319767124600181
+      Flasks 32x32_45: 6961378202629248481
+      Flasks 32x32_46: -4255443084301573839
+      Flasks 32x32_47: 1105699528885142532
+      Flasks 32x32_48: -2823879539933319640
+      Flasks 32x32_49: 7753794043721448502
+      Flasks 32x32_5: 3086910000120325273
+      Flasks 32x32_50: 9127338402338765839
+      Flasks 32x32_51: -8844221511337419772
+      Flasks 32x32_52: 4723171105555820986
+      Flasks 32x32_53: 1358380303896201895
+      Flasks 32x32_54: 1037968970775478448
+      Flasks 32x32_55: 2896089579907237174
+      Flasks 32x32_56: -3970871403587480569
+      Flasks 32x32_57: 7720517113319335038
+      Flasks 32x32_58: -3632020481378655223
+      Flasks 32x32_59: -6222478771459978959
+      Flasks 32x32_6: -6007599566996768420
+      Flasks 32x32_60: -8865744164325426035
+      Flasks 32x32_61: 7636941620058457933
+      Flasks 32x32_62: 900282198212358787
+      Flasks 32x32_63: -7464345335089907175
+      Flasks 32x32_64: 3547607047242774210
+      Flasks 32x32_65: -8256784690723261312
+      Flasks 32x32_66: -7337209981310872325
+      Flasks 32x32_67: -5646505600763824300
+      Flasks 32x32_68: 1393641250128478788
+      Flasks 32x32_69: -3026392650883266511
+      Flasks 32x32_7: 4093483070078782182
+      Flasks 32x32_70: -8714129475424426389
+      Flasks 32x32_71: -2412143122008904673
+      Flasks 32x32_72: -3561746032592608133
+      Flasks 32x32_73: -2435751942727527528
+      Flasks 32x32_74: 5813376903821551060
+      Flasks 32x32_75: -1365870255748479428
+      Flasks 32x32_76: 3109180169351547406
+      Flasks 32x32_77: 6932233188350359679
+      Flasks 32x32_78: 5622092315045816529
+      Flasks 32x32_79: -3230463127029391509
+      Flasks 32x32_8: -8911397821388524566
+      Flasks 32x32_80: 5653020502491937930
+      Flasks 32x32_81: 7960589045906005973
+      Flasks 32x32_82: -242035860095716626
+      Flasks 32x32_9: -1417936024982814474
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
