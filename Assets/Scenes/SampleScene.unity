@@ -451,8 +451,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f30ab2e015f2ffc46bbc38c4378368cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Scrollbackground
-  horizonzalSpeed: 0.2
-  verticalSpeed: 0
+  scrollSpeed: 0.2
+  scrollRight: 1
+  pauseWhenPlayerStops: 1
+  isPaused: 1
+  stopSmoothTime: 0.2
+  backgroundTextures: []
+  currentBackgroundIndex: 0
 --- !u!4 &1975668644
 Transform:
   m_ObjectHideFlags: 0
