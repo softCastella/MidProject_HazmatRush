@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6452951628302892781}
   - component: {fileID: 1119910211428263324}
   m_Layer: 0
-  m_Name: PollutantA
+  m_Name: PollutantB
   m_TagString: Pollutant
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 4042876170648913847, guid: 56c27751e880e864b9089025f7f34ee2, type: 3}
+  m_Sprite: {fileID: 6062392498791687778, guid: 56c27751e880e864b9089025f7f34ee2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

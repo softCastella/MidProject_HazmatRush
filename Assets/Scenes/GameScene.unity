@@ -196,6 +196,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 52938064}
   m_CullTransparentMesh: 1
+--- !u!1 &191338665
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 191338666}
+  - component: {fileID: 191338667}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &191338666
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 191338665}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -25.15309, y: 74.49998, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &191338667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 191338665}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 493b6f4391caa3c49b96e7b9820a89bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManager
 --- !u!1 &221234928
 GameObject:
   m_ObjectHideFlags: 0
@@ -283,7 +327,7 @@ GameObject:
   - component: {fileID: 243366883}
   - component: {fileID: 243366882}
   m_Layer: 5
-  m_Name: TimeText
+  m_Name: TimerLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1230,7 +1274,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_MaskInteraction: 0
   m_Sprite: {fileID: 5747273519182721264, guid: 5f8cd66a0e7e9254a81b11364e122360, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1269,7 +1313,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef47d4990cc76f644a0e6ccc1577e7d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
-  moveSpeed: 300
+  moveSpeed: 200
+  leftLimit: -785
+  rightLimit: -403
+  protection: 100
   isMoving: 0
   hasInput: 0
 --- !u!70 &702165563
@@ -1317,7 +1364,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 702165558}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -1674,7 +1721,7 @@ GameObject:
   - component: {fileID: 848615593}
   - component: {fileID: 848615592}
   m_Layer: 5
-  m_Name: ItemTxt
+  m_Name: ItemLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1808,8 +1855,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 851038934}
+  - component: {fileID: 851038935}
   m_Layer: 5
-  m_Name: UITime
+  m_Name: UITimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1827,8 +1875,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 900665560}
   - {fileID: 243366881}
+  - {fileID: 900665560}
   m_Father: {fileID: 1222094816}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -1836,6 +1884,22 @@ RectTransform:
   m_AnchoredPosition: {x: 841, y: 416.2}
   m_SizeDelta: {x: 238, y: 114.19998}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &851038935
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 851038933}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89cb00ca504500745bf5c5138ac0aa5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Timer
+  startSeconds: 60
+  isRunning: 0
+  currentSeconds: 0
+  timeText: {fileID: 900665561}
 --- !u!1 &884552264
 GameObject:
   m_ObjectHideFlags: 0
@@ -1923,7 +1987,7 @@ GameObject:
   - component: {fileID: 900665562}
   - component: {fileID: 900665561}
   m_Layer: 5
-  m_Name: Time
+  m_Name: TimerNum
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2170,7 +2234,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 25179a2ea8d470845ac0afef4cea2d8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PollutantSpawner
-  spawnPoint: {fileID: 0}
+  spawnPoints:
+  - {fileID: 1675545912}
+  - {fileID: 1857756967}
+  - {fileID: 1551264155}
   isActive: 1
 --- !u!1 &1098432735
 GameObject:
@@ -2337,7 +2404,7 @@ GameObject:
   - component: {fileID: 1222094814}
   - component: {fileID: 1222094813}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: HUD_Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3179,9 +3246,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PollutantManager
   player: {fileID: 702165562}
-  pollutantPrefab: {fileID: 8137116525753167442, guid: cc78e2dd8c1b20d4497c891cde40183c, type: 3}
-  spawners: []
-  spawnTimeRange: {x: 2, y: 3}
+  pollutants:
+  - {fileID: 8137116525753167442, guid: cc78e2dd8c1b20d4497c891cde40183c, type: 3}
+  - {fileID: 8137116525753167442, guid: 4386518fa78688549a9a980e25f70c60, type: 3}
+  spawner: {fileID: 1050076633}
+  scroll: {fileID: 0}
+  rangeBuffer: 0.5
+  timeRange: {x: 2, y: 3}
 --- !u!4 &1983561060
 Transform:
   m_ObjectHideFlags: 0
@@ -3206,12 +3277,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2046708318}
+  - component: {fileID: 2046708319}
   - component: {fileID: 2046708317}
   - component: {fileID: 2046708316}
   - component: {fileID: 2046708315}
-  - component: {fileID: 2046708319}
   m_Layer: 0
-  m_Name: ScrollBackground
+  m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3320,14 +3391,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 2046708314}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f30ab2e015f2ffc46bbc38c4378368cb, type: 3}
+  m_Script: {fileID: 11500000, guid: 13ae3645549227146bf61a3f65c8241e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Scrollbackground
-  scrollSpeed: 0.07
+  m_EditorClassIdentifier: Assembly-CSharp::Background
+  scrollSpeed: 0.2
   scrollRight: 1
-  pauseWhenPlayerStops: 0
-  isPaused: 0
-  stopSmoothTime: 0.07
+  pauseWhenPlayerStops: 1
+  isPaused: 1
+  stopSmoothTime: 0.2
   backgroundTextures: []
   currentBackgroundIndex: 0
 --- !u!1 &2088647245
@@ -3588,6 +3659,7 @@ SceneRoots:
   - {fileID: 2046708318}
   - {fileID: 702165561}
   - {fileID: 1222094816}
-  - {fileID: 307527682}
   - {fileID: 1050076632}
   - {fileID: 1983561060}
+  - {fileID: 191338666}
+  - {fileID: 307527682}

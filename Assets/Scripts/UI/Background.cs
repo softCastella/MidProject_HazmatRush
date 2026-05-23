@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Renderer))]
-public class Scrollbackground : MonoBehaviour
+public class Background : MonoBehaviour
 {
     [Header("Scroll Settings")]
     [Range(0f, 5f)]
@@ -77,7 +77,7 @@ public class Scrollbackground : MonoBehaviour
 
         bool shouldStop = isPaused;
         if (pauseWhenPlayerStops)
-            shouldStop = !playerInput;
+            shouldStop = shouldStop || !playerInput;
 
         float targetSpeed = shouldStop ? 0f : scrollSpeed;
         currentScrollSpeed = Mathf.SmoothDamp(currentScrollSpeed, targetSpeed, ref scrollVelocity, stopSmoothTime);
