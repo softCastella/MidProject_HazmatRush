@@ -1,14 +1,25 @@
+using System.Collections;
+using TMPro;
 using UnityEngine;
 
 // PollutantManager는 오염원 생성만 담당하는 간단한 클래스입니다.
 public class PollutantManager : MonoBehaviour
 {
     public Player player;
+    public Timer timer;
+    public ItemSelectManager itemSelectManager;
+    public TMP_Text warningMsg;
     public GameObject[] pollutants; // 등록된 오염원 프리팹 목록
     public PollutantSpawner spawner;
     public Background scroll;
+    public PopupUI popupUI;
+    public float warningDuration = 1f;
+    public float warningFadeDuration = 0.2f;
     public float rangeBuffer = 0.5f;
     public Vector2 timeRange = new Vector2(2f, 3f);
+    public float spawnFadeDuration = 0.7f;
+    public float despawnFadeDuration = 0.7f;
+    private bool awaitingSpawn = false;
 
     // 현재 누적된 이동 시간. Player가 이동 중일 때만 시간 누적을 합니다.
     private float moveTime = 0f;
@@ -21,6 +32,49 @@ public class PollutantManager : MonoBehaviour
         // Player를 Inspector에 할당하지 않았다면 씬에서 자동으로 검색합니다.
         if (player == null)
             player = FindObjectOfType<Player>();
+
+        if (timer == null)
+            timer = FindObjectOfType<Timer>();
+
+        if (itemSelectManager == null)
+            itemSelectManager = FindObjectOfType<ItemSelectManager>();
+
+        if (warningMsg == null)
+        {
+#if UNITY_2020_1_OR_NEWER
+            var allTexts = FindObjectsOfType<TMP_Text>(true);
+            foreach (var text in allTexts)
+            {
+                if (text.gameObject.name == "WarningMsg")
+                {
+                    warningMsg = text;
+                    break;
+                }
+            }
+#else
+            var allTexts = Resources.FindObjectsOfTypeAll<TMP_Text>();
+            foreach (var text in allTexts)
+            {
+                if (text.gameObject.name == "WarningMsg" && text.gameObject.scene.isLoaded)
+                {
+                    warningMsg = text;
+                    break;
+                }
+            }
+#endif
+        }
+
+        if (warningMsg != null)
+        {
+            warningMsg.text = string.Empty;
+            if (warningMsg.transform.parent != null)
+                warningMsg.transform.parent.gameObject.SetActive(true);
+            warningMsg.gameObject.SetActive(false);
+        }
+        else
+        {
+            Debug.LogWarning("PollutantManager: WarningMsg TMP_Text를 찾을 수 없습니다. Inspector에 할당하거나 이름이 정확한지 확인하세요.");
+        }
 
         if (spawner == null)
             spawner = FindObjectOfType<PollutantSpawner>();
@@ -48,12 +102,17 @@ public class PollutantManager : MonoBehaviour
             moveTime = 0f;
         }
 
-        // 누적 시간이 다음 생성 시점을 넘어섰으면 새로운 오염원을 생성합니다.
-        if (moveTime >= nextSpawnTime)
+        // 이미 활성화된 오염물이 있으면 재생성을 대기합니다.
+        if (Pollutant.activeCount > 0)
         {
-            SpawnPollutant();
             moveTime = 0f;
-            nextSpawnTime = Random.Range(timeRange.x, timeRange.y);
+            return;
+        }
+
+        // 누적 시간이 다음 생성 시점을 넘어섰으면 새로운 오염원을 준비합니다.
+        if (moveTime >= nextSpawnTime && !awaitingSpawn)
+        {
+            StartCoroutine(WarningAndSpawn());
         }
 
         // 오염원이 사라지면 배경을 다시 움직이도록 합니다.
@@ -61,42 +120,98 @@ public class PollutantManager : MonoBehaviour
             scroll.ResumeScroll();
     }
 
-    // 실제로 오염원을 생성하는 함수
-    private void SpawnPollutant()
+    private IEnumerator WarningAndSpawn()
     {
-        if (Pollutant.activeCount > 0)
-            return;
+        awaitingSpawn = true;
 
         if (pollutants == null || pollutants.Length == 0)
         {
             Debug.LogError("PollutantManager: 오염원 프리팹을 등록하세요.");
-            return;
+            awaitingSpawn = false;
+            yield break;
+        }
+
+        if (spawner == null)
+        {
+            Debug.LogWarning("PollutantManager: PollutantSpawner가 할당되지 않았습니다.");
+            awaitingSpawn = false;
+            yield break;
+        }
+
+        if (!spawner.isActive)
+        {
+            Debug.LogWarning("PollutantManager: 할당된 스포너가 비활성화되어 있습니다.");
+            awaitingSpawn = false;
+            yield break;
         }
 
         GameObject selectedPrefab = pollutants[Random.Range(0, pollutants.Length)];
         if (selectedPrefab == null)
         {
             Debug.LogError("PollutantManager: 등록된 오염원 프리팹 중 하나가 비어있습니다.");
-            return;
+            awaitingSpawn = false;
+            yield break;
         }
 
-        if (spawner == null)
+        Pollutant prefabPoll = selectedPrefab.GetComponent<Pollutant>();
+
+        // 경고 중에도 플레이어 이동을 막지 않도록 변경했습니다.
+        // 대신 텍스트와 타이머 동작만 보여주기 위함입니다.
+        if (timer != null)
+            timer.StopCountdown();
+
+        if (prefabPoll != null)
         {
-            Debug.LogWarning("PollutantManager: PollutantSpawner가 할당되지 않았습니다.");
-            return;
+            // 경고 텍스트만 표시합니다.
+            if (warningMsg != null)
+            {
+                if (warningMsg.transform.parent != null)
+                    warningMsg.transform.parent.gameObject.SetActive(true);
+                warningMsg.text = $"[경고]\n{prefabPoll.WarningText}";
+                warningMsg.gameObject.SetActive(true);
+            }
+
+            Debug.Log(warningMsg != null ? warningMsg.text : prefabPoll.WarningText);
         }
 
-        if (!spawner.isActive)
+        float waitTime = warningDuration + warningFadeDuration * 2f;
+        yield return new WaitForSeconds(waitTime);
+
+        if (warningMsg != null)
         {
-            Debug.LogWarning("PollutantManager: 할당된 스포너가 비활성화되어 있습니다.");
-            return;
+            warningMsg.text = string.Empty;
+            warningMsg.gameObject.SetActive(false);
+        }
+
+        if (Pollutant.activeCount > 0)
+        {
+            Debug.Log("PollutantManager: 기존 오염물이 남아 있어 새로운 오염원 생성을 취소합니다.");
+            if (player != null)
+                player.canMove = true;
+            if (timer != null)
+                timer.isRunning = true;
+            awaitingSpawn = false;
+            yield break;
         }
 
         GameObject created = spawner.Spawn(selectedPrefab);
         if (created != null)
         {
+            Pollutant poll = created.GetComponent<Pollutant>();
+            if (poll != null)
+            {
+                poll.appearDuration = spawnFadeDuration;
+                poll.disappearDuration = despawnFadeDuration;
+                Debug.Log(poll.PopupText);
+                if (popupUI != null)
+                    popupUI.Show(poll.PopupText);
+            }
+
             if (scroll != null)
+            {
                 scroll.PauseScroll();
+                Debug.Log("PollutantManager: Pollutant 생성 후 배경 스크롤 일시정지.");
+            }
 
             if (player != null)
             {
@@ -106,6 +221,16 @@ public class PollutantManager : MonoBehaviour
 
             Debug.Log($"PollutantManager: {selectedPrefab.name}이 생성되었습니다.");
         }
+
+        if (player != null)
+            player.canMove = true;
+
+        if (timer != null)
+            timer.isRunning = true;
+
+        moveTime = 0f;
+        nextSpawnTime = Random.Range(timeRange.x, timeRange.y);
+        awaitingSpawn = false;
     }
 
     private float GetEdgeX(GameObject obj)
