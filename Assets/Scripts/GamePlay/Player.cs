@@ -34,7 +34,7 @@ public class Player : MonoBehaviour
         }
 
         if (itemSelectManager == null)
-            itemSelectManager = FindObjectOfType<ItemSelectManager>();
+            itemSelectManager = FindAnyObjectByType<ItemSelectManager>();
 
         UpdateProtectionText();
     }
@@ -101,7 +101,7 @@ public class Player : MonoBehaviour
         if (pollutant != null)
         {
             if (itemSelectManager == null)
-                itemSelectManager = FindObjectOfType<ItemSelectManager>();
+                itemSelectManager = FindAnyObjectByType<ItemSelectManager>();
 
             if (itemSelectManager != null)
             {

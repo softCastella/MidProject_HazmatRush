@@ -3464,7 +3464,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uC77C\uBC18\uD328\uB4DC"
+  m_text: "\uBC94\uC6A9\uD328\uB4DC"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e5a70015320a26045b73a3388148e425, type: 2}
   m_sharedMaterial: {fileID: -2450841704643121976, guid: e5a70015320a26045b73a3388148e425, type: 2}
@@ -3558,7 +3558,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4091558552981420662, guid: ef340dd277154854a810690a093ac65f, type: 3}
       propertyPath: m_Name
-      value: SpongeBlue
+      value: OilPad
       objectReference: {fileID: 0}
     - target: {fileID: 6699424899500107634, guid: ef340dd277154854a810690a093ac65f, type: 3}
       propertyPath: m_SizeDelta.x
@@ -3818,7 +3818,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5390408089284417023, guid: da8fd98c1fd061e4a8f7c77ded82d219, type: 3}
       propertyPath: m_Name
-      value: OilPad
+      value: GeneralPad
       objectReference: {fileID: 0}
     - target: {fileID: 8075923059406066027, guid: da8fd98c1fd061e4a8f7c77ded82d219, type: 3}
       propertyPath: m_SizeDelta.x

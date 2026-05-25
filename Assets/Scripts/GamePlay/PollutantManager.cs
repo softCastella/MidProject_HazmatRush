@@ -31,18 +31,22 @@ public class PollutantManager : MonoBehaviour
     {
         // Player를 Inspector에 할당하지 않았다면 씬에서 자동으로 검색합니다.
         if (player == null)
-            player = FindObjectOfType<Player>();
+            player = FindAnyObjectByType<Player>();
 
+        // Timer을 Inspector에 할당하지 않았다면 씬에서 자동으로 검색합니다.
         if (timer == null)
-            timer = FindObjectOfType<Timer>();
+            timer = FindAnyObjectByType<Timer>();
 
+        // ItemSelectManager를 Inspector에 할당하지 않았다면 씬에서 자동으로 검색합니다.
         if (itemSelectManager == null)
-            itemSelectManager = FindObjectOfType<ItemSelectManager>();
+            itemSelectManager = FindAnyObjectByType<ItemSelectManager>();
 
+        // WarningMsg 텍스트를 Inspector에 할당하지 않았다면 씬에서 이름으로 검색합니다.
         if (warningMsg == null)
         {
+        // Unity 2020.1 이상에서는 FindObjectsByType를 사용하여 비활성화된 객체도 검색할 수 있습니다.
 #if UNITY_2020_1_OR_NEWER
-            var allTexts = FindObjectsOfType<TMP_Text>(true);
+            var allTexts = FindObjectsByType<TMP_Text>(FindObjectsInactive.Include);
             foreach (var text in allTexts)
             {
                 if (text.gameObject.name == "WarningMsg")
@@ -51,6 +55,7 @@ public class PollutantManager : MonoBehaviour
                     break;
                 }
             }
+            // Unity 2020.1 미만에서는 Resources.FindObjectsOfTypeAll을 사용하여 비활성화된 객체도 검색할 수 있습니다.
 #else
             var allTexts = Resources.FindObjectsOfTypeAll<TMP_Text>();
             foreach (var text in allTexts)
@@ -61,6 +66,7 @@ public class PollutantManager : MonoBehaviour
                     break;
                 }
             }
+            // 위 방법으로도 찾지 못하면 기존 Find 방식으로 시도합니다.
 #endif
         }
 
@@ -77,10 +83,10 @@ public class PollutantManager : MonoBehaviour
         }
 
         if (spawner == null)
-            spawner = FindObjectOfType<PollutantSpawner>();
+            spawner = FindAnyObjectByType<PollutantSpawner>();
 
         if (scroll == null)
-            scroll = FindObjectOfType<Background>();
+            scroll = FindAnyObjectByType<Background>();
 
         nextSpawnTime = Random.Range(timeRange.x, timeRange.y);
     }
@@ -120,6 +126,7 @@ public class PollutantManager : MonoBehaviour
             scroll.ResumeScroll();
     }
 
+    //오염원 생성 전 경고 메시지를 보여주고, 일정 시간이 지난 후 오염원을 생성하는 코루틴입니다.
     private IEnumerator WarningAndSpawn()
     {
         awaitingSpawn = true;

@@ -21,7 +21,7 @@ public class Pollutant : MonoBehaviour
     {
         "중화제",
         "오일 흡착패드",
-        "일반 흡착 패드"
+        "범용 흡착 패드"
     };
 
     private static readonly string[][] Substances =

@@ -10,7 +10,7 @@ public class ItemSelectManager : MonoBehaviour
     void Awake()
     {
         if (itemManager == null)
-            itemManager = FindObjectOfType<ItemManager>();
+            itemManager = FindAnyObjectByType<ItemManager>();
 
         if (itemTypes == null || itemTypes.Length == 0)
             itemTypes = new[] { ItemType.Scanner, ItemType.Neutralizer, ItemType.GeneralPad, ItemType.OilPad };
