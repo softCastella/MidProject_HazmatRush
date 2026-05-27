@@ -18,17 +18,23 @@ public class Background : MonoBehaviour
     public Texture[] backgroundTextures; // 인덱스로 관리할 이미지 목록입니다.
     public int currentBackgroundIndex = 0; // 현재 선택된 배경 번호입니다.
 
-    private Renderer rend; // 이 오브젝트의 Renderer입니다.
-    private string textureProperty = ""; // 머티리얼이 사용하는 텍스처 이름입니다.
-    private float offsetX; // 텍스처 오프셋 X 값입니다.
-    private float currentScrollSpeed; // 실제로 현재 적용되는 속도입니다.
-    private float scrollVelocity; // SmoothDamp 함수 내부에서 사용하는 값입니다.
-    private Vector3 lastPlayerPosition; // 플레이어 위치 변화를 계산하기 위한 지난 위치입니다.
+    private Renderer rend;
+    private Player player;
+    private string textureProperty = "";
+    private float offsetX;
+    private float currentScrollSpeed;
+    private float scrollVelocity;
+    private Vector3 lastPlayerPosition;
 
     void Start()
     {
-        // Renderer 컴포넌트를 가져옵니다.
         rend = GetComponent<Renderer>();
+
+        player = FindAnyObjectByType<Player>();
+
+        GuideTxt guide = FindAnyObjectByType<GuideTxt>();
+        if (guide == null || string.IsNullOrEmpty(guide.defaultMessage))
+            isPaused = false;
 
         if (rend.material == null)
             return; // 머티리얼이 없으면 더 이상 실행하지 않습니다.
@@ -57,23 +63,10 @@ public class Background : MonoBehaviour
         if (rend == null || rend.material == null || string.IsNullOrEmpty(textureProperty))
             return; // 준비가 안 된 경우 아무 것도 하지 않습니다.
 
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float deadZone = 0.3f;
-        bool axisInput = Mathf.Abs(horizontal) > deadZone;
-        bool keyInput = Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow)
-            || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D);
-        bool playerInput = axisInput || keyInput;
-
+        bool playerInput = player != null ? player.hasInput : false;
         float inputDirection = 0f;
-        if (playerInput)
-        {
-            if (axisInput)
-                inputDirection = horizontal;
-            else if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
-                inputDirection = -1f;
-            else if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
-                inputDirection = 1f;
-        }
+        if (playerInput && player != null)
+            inputDirection = player.transform.localScale.x;
 
         bool shouldStop = isPaused;
         if (pauseWhenPlayerStops)
@@ -84,9 +77,7 @@ public class Background : MonoBehaviour
 
         float direction = 0f;
         if (!shouldStop && playerInput)
-        {
-            direction = Mathf.Sign(inputDirection); // 플레이어 입력 방향에 따라 배경 시각 이동을 반대로 보이도록 합니다.
-        }
+            direction = Mathf.Sign(inputDirection);
 
         offsetX += direction * currentScrollSpeed * Time.deltaTime; // 오프셋을 시간에 맞춰 누적합니다.
         offsetX = Mathf.Repeat(offsetX, 1f); // 오프셋을 0~1 범위로 유지합니다.

@@ -33,7 +33,6 @@ public class Pollutant : MonoBehaviour
 
     public PollutantType type = PollutantType.TypeA;
     public string TypeLabel => TypeLabels[(int)type];
-    public string WarningText => $"{TypeLabel} 오염물질 발견";
     public string RecommendedItem => RecommendedItems[(int)type];
     public ItemType RecommendedItemType => type switch
     {

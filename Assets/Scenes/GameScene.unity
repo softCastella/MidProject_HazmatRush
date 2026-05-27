@@ -569,8 +569,11 @@ MonoBehaviour:
   guideText: {fileID: 1704098986}
   defaultMessage: "\uC624\uB978\uCABD\uC73C\uB85C \uC774\uB3D9\uD558\uC138\uC694"
   showDelay: 0
-  showDuration: 3
+  showDuration: 1.2
   fadeDuration: 0.5
+  player: {fileID: 702165562}
+  timer: {fileID: 851038935}
+  background: {fileID: 2046708319}
 --- !u!225 &400085197
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -1857,7 +1860,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89cb00ca504500745bf5c5138ac0aa5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Timer
-  startSeconds: 60
+  startSeconds: 10
   isRunning: 0
   currentSeconds: 0
   timeText: {fileID: 900665561}
@@ -2275,7 +2278,7 @@ GameObject:
   - component: {fileID: 1215889736}
   - component: {fileID: 1215889735}
   m_Layer: 5
-  m_Name: TimerSec
+  m_Name: TimerSecTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2528,7 +2531,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1259678145
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2570,8 +2573,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uBD80\uC2DD\uC131 \uC624\uC5FC\uBB3C\uC9C8 \uBC1C\uACAC"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: e5a70015320a26045b73a3388148e425, type: 2}
-  m_sharedMaterial: {fileID: -2450841704643121976, guid: e5a70015320a26045b73a3388148e425, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 27edd4c5debbd304283b7e46f0229c9a, type: 2}
+  m_sharedMaterial: {fileID: -8638374689057110753, guid: 27edd4c5debbd304283b7e46f0229c9a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2940,7 +2943,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1704098985
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2980,7 +2983,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: "\uC624\uB978\uCABD\uC73C\uB85C \uC774\uB3D9\uD558\uC138\uC694"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 27edd4c5debbd304283b7e46f0229c9a, type: 2}
   m_sharedMaterial: {fileID: -8638374689057110753, guid: 27edd4c5debbd304283b7e46f0229c9a, type: 2}
@@ -3386,12 +3389,13 @@ MonoBehaviour:
   spawner: {fileID: 1050076633}
   scroll: {fileID: 2046708319}
   popupUI: {fileID: 642128215}
-  warningDuration: 1
-  warningFadeDuration: 0.2
+  warningBlinkDuration: 1.5
+  warningBlinkInterval: 0.2
   rangeBuffer: 0.5
   timeRange: {x: 2, y: 3}
   spawnFadeDuration: 0.7
   despawnFadeDuration: 0.7
+  popupShowDuration: 1.5
 --- !u!4 &1983561060
 Transform:
   m_ObjectHideFlags: 0
@@ -3858,13 +3862,14 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2088647246}
+  - component: {fileID: 2088647247}
   m_Layer: 5
   m_Name: WarningTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2088647246
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3886,6 +3891,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 1, y: 1}
+--- !u!114 &2088647247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2088647245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b714357ff220d3e42be0742c37ea4b6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WarningTxt
 --- !u!1 &2115730539
 GameObject:
   m_ObjectHideFlags: 0
@@ -3920,7 +3937,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 388, y: 0}
+  m_AnchoredPosition: {x: 384.7, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &2115730541
@@ -3977,7 +3994,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 2
+  m_HorizontalAlignment: 4
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
