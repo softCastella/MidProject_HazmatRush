@@ -14,7 +14,7 @@ public class Timer : MonoBehaviour
     void Start()
     {
         currentSeconds = startSeconds;
-        isRunning = true;
+        isRunning = false;
         UpdateTimeText();
     }
 

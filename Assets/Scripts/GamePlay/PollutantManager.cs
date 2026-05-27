@@ -8,17 +8,16 @@ public class PollutantManager : MonoBehaviour
     public Player player;
     public Timer timer;
     public ItemSelectManager itemSelectManager;
-    public TMP_Text warningMsg;
+    public WarningTxt warningTxt;
     public GameObject[] pollutants; // 등록된 오염원 프리팹 목록
     public PollutantSpawner spawner;
     public Background scroll;
     public PopupUI popupUI;
-    public float warningDuration = 1f;
-    public float warningFadeDuration = 0.2f;
     public float rangeBuffer = 0.5f;
     public Vector2 timeRange = new Vector2(2f, 3f);
     public float spawnFadeDuration = 0.7f;
     public float despawnFadeDuration = 0.7f;
+    public float popupShowDuration = 1.5f;
     private bool awaitingSpawn = false;
 
     // 현재 누적된 이동 시간. Player가 이동 중일 때만 시간 누적을 합니다.
@@ -41,46 +40,11 @@ public class PollutantManager : MonoBehaviour
         if (itemSelectManager == null)
             itemSelectManager = FindAnyObjectByType<ItemSelectManager>();
 
-        // WarningMsg 텍스트를 Inspector에 할당하지 않았다면 씬에서 이름으로 검색합니다.
-        if (warningMsg == null)
-        {
-        // Unity 2020.1 이상에서는 FindObjectsByType를 사용하여 비활성화된 객체도 검색할 수 있습니다.
-#if UNITY_2020_1_OR_NEWER
-            var allTexts = FindObjectsByType<TMP_Text>(FindObjectsInactive.Include);
-            foreach (var text in allTexts)
-            {
-                if (text.gameObject.name == "WarningMsg")
-                {
-                    warningMsg = text;
-                    break;
-                }
-            }
-            // Unity 2020.1 미만에서는 Resources.FindObjectsOfTypeAll을 사용하여 비활성화된 객체도 검색할 수 있습니다.
-#else
-            var allTexts = Resources.FindObjectsOfTypeAll<TMP_Text>();
-            foreach (var text in allTexts)
-            {
-                if (text.gameObject.name == "WarningMsg" && text.gameObject.scene.isLoaded)
-                {
-                    warningMsg = text;
-                    break;
-                }
-            }
-            // 위 방법으로도 찾지 못하면 기존 Find 방식으로 시도합니다.
-#endif
-        }
-
-        if (warningMsg != null)
-        {
-            warningMsg.text = string.Empty;
-            if (warningMsg.transform.parent != null)
-                warningMsg.transform.parent.gameObject.SetActive(true);
-            warningMsg.gameObject.SetActive(false);
-        }
-        else
-        {
-            Debug.LogWarning("PollutantManager: WarningMsg TMP_Text를 찾을 수 없습니다. Inspector에 할당하거나 이름이 정확한지 확인하세요.");
-        }
+        // WarningTxt를 Inspector에 할당하지 않았다면 씬에서 자동으로 검색합니다.
+        if (warningTxt == null)
+            warningTxt = FindAnyObjectByType<WarningTxt>();
+        if (warningTxt == null)
+            Debug.LogWarning("PollutantManager: WarningTxt를 찾을 수 없습니다. Inspector에 할당하거나 이름이 정확한지 확인하세요.");
 
         if (spawner == null)
             spawner = FindAnyObjectByType<PollutantSpawner>();
@@ -167,27 +131,18 @@ public class PollutantManager : MonoBehaviour
         if (timer != null)
             timer.StopCountdown();
 
-        if (prefabPoll != null)
+        // 1단계: 경고 문구 깜빡임
+        if (warningTxt != null && prefabPoll != null)
         {
-            // 경고 텍스트만 표시합니다.
-            if (warningMsg != null)
-            {
-                if (warningMsg.transform.parent != null)
-                    warningMsg.transform.parent.gameObject.SetActive(true);
-                warningMsg.text = $"[경고]\n{prefabPoll.WarningText}";
-                warningMsg.gameObject.SetActive(true);
-            }
-
-            Debug.Log(warningMsg != null ? warningMsg.text : prefabPoll.WarningText);
+            string warningText = $"[경고]\n{prefabPoll.TypeLabel} 오염물질 발견";
+            warningTxt.ShowWarning(warningText);
+            Debug.Log(warningText);
+            yield return new WaitForSeconds(warningTxt.blinkDuration);
+            warningTxt.HideWarning();
         }
-
-        float waitTime = warningDuration + warningFadeDuration * 2f;
-        yield return new WaitForSeconds(waitTime);
-
-        if (warningMsg != null)
+        else
         {
-            warningMsg.text = string.Empty;
-            warningMsg.gameObject.SetActive(false);
+            yield return new WaitForSeconds(warningTxt.blinkDuration);
         }
 
         if (Pollutant.activeCount > 0)
@@ -201,6 +156,7 @@ public class PollutantManager : MonoBehaviour
             yield break;
         }
 
+        // 2단계: 오염원 생성 (페이드인 연출)
         GameObject created = spawner.Spawn(selectedPrefab);
         if (created != null)
         {
@@ -209,9 +165,12 @@ public class PollutantManager : MonoBehaviour
             {
                 poll.appearDuration = spawnFadeDuration;
                 poll.disappearDuration = despawnFadeDuration;
-                Debug.Log(poll.PopupText);
+
+                // 3단계: 페이드인이 거의 끝날 때 팝업 표시
+                string popupMsg = poll.PopupText;
+                Debug.Log(popupMsg);
                 if (popupUI != null)
-                    popupUI.Show(poll.PopupText);
+                    StartCoroutine(ShowPopupAfterFadeIn(popupMsg, spawnFadeDuration));
             }
 
             if (scroll != null)
@@ -238,6 +197,16 @@ public class PollutantManager : MonoBehaviour
         moveTime = 0f;
         nextSpawnTime = Random.Range(timeRange.x, timeRange.y);
         awaitingSpawn = false;
+    }
+
+    // BlinkWarning 로직은 WarningTxt로 이동
+
+    private IEnumerator ShowPopupAfterFadeIn(string message, float fadeInDuration)
+    {
+        // 페이드인이 거의 끝날 때 (80% 시점) 팝업 표시
+        yield return new WaitForSeconds(fadeInDuration * 0.8f);
+        if (popupUI != null)
+            popupUI.Show(message, popupShowDuration);
     }
 
     private float GetEdgeX(GameObject obj)

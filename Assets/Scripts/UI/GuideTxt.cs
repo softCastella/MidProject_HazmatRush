@@ -10,6 +10,9 @@ public class GuideTxt : MonoBehaviour
     public float showDelay = 0f;
     public float showDuration = 3f;
     public float fadeDuration = 0.5f;
+    public Player player;
+    public Timer timer;
+    public Background background;
 
     private CanvasGroup canvasGroup;
 
@@ -25,6 +28,21 @@ public class GuideTxt : MonoBehaviour
 
         if (guideText != null && !string.IsNullOrEmpty(defaultMessage) && string.IsNullOrEmpty(guideText.text))
             guideText.text = defaultMessage;
+
+        if (player == null)
+            player = FindAnyObjectByType<Player>();
+
+        if (timer == null)
+            timer = FindAnyObjectByType<Timer>();
+
+        if (background == null)
+            background = FindAnyObjectByType<Background>();
+
+        if (!string.IsNullOrEmpty(defaultMessage))
+        {
+            if (player != null) player.canMove = false;
+            if (background != null) background.PauseScroll();
+        }
     }
 
     void Start()
@@ -61,6 +79,10 @@ public class GuideTxt : MonoBehaviour
         yield return StartCoroutine(FadeTo(1f, fadeDuration));
         yield return new WaitForSeconds(displayDuration);
         yield return StartCoroutine(FadeTo(0f, fadeDuration));
+
+        if (player != null) player.canMove = true;
+        if (timer != null) timer.isRunning = true;
+        if (background != null) background.ResumeScroll();
     }
 
     private IEnumerator FadeTo(float targetAlpha, float duration)
