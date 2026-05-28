@@ -29,6 +29,7 @@ public class ItemManager : MonoBehaviour
         }
     }
 
+    
     private void SetSlotDim(Transform slot, bool dimActive)
     {
         if (slot == null)
