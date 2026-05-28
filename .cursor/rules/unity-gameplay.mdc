@@ -1,0 +1,33 @@
+---
+description: Unity 게임플레이 — HP, 접촉, Pollutant, Player 규칙
+globs: Assets/Scripts/**/*.cs
+alwaysApply: false
+---
+
+# Unity 게임플레이 규칙
+
+## HP
+
+- 계산: `float` (`curProtection`, `pollutanCurHp`)
+- UI `%` 표시: `Mathf.FloorToInt`
+- 데미지: `dps * Time.deltaTime`
+- 로그: `Debug.Log($"[Player] ... {value:F2}")` 형식
+
+## Pollutant 접촉 (`OnTriggerStay2D` 순서 유지)
+
+1. 아이템 판정 로그 (`올바른/틀린 아이템입니다. 추천 = ..., 선택 = ...`)
+2. `player.ApplyPollutantDamage(pollutanDps)`
+3. **추천 아이템 == 선택 아이템**일 때만 오염원 HP 감소
+
+- `OnTriggerExit2D`: 오염원 HP → `pollutanMaxHp` 초기화
+- `IsEdgeContact` 조건 **다시 넣지 않기** (접촉 데미지 끊김 원인)
+
+## Player
+
+- 애니: `anim.SetInteger("State", (int)currentState)`
+- Die Trigger·페이드 사망 코루틴 **요청 없이 추가하지 않기** (롤백됨)
+- `GrowRange` 무분별 변경 금지
+
+## 주요 파일
+
+- `Player.cs`, `Pollutant.cs`, `Item.cs`, `ItemSelectManager.cs`, `PollutantManager.cs`

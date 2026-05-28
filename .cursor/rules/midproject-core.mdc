@@ -1,0 +1,26 @@
+---
+description: MidProject 공통 — 단순 코드, 기존 스타일 우선, 최소 변경
+alwaysApply: true
+---
+
+# MidProject 코어 규칙
+
+Unity 2D 오염 대응 게임. 상세: `README.md`, `AGENTS.md`.
+
+## 코드 작성
+
+- 문법·구조 **단순하게**: 한 함수 한 역할, if 중첩 2단 이하
+- LINQ, 새 인터페이스/추상 클래스/헬퍼 클래스, 디자인 패턴 신규 도입 **금지** (요청 없으면)
+- 수정 전 **해당 파일을 먼저 읽고** 기존 변수명·문법·API 스타일을 그대로 이어 씀
+- 기능 추가 = 기존 메서드에 **몇 줄 추가**. 파일 통째 교체·대규모 리팩터링 금지
+- 요청과 무관한 파일 수정 금지
+
+## 타입·네이밍
+
+- `Item.ItemType`, `Pollutant.PollutantType` 사용 (전역 `ItemType` enum 만들지 않기)
+- `curProtection`, `pollutanCurHp`, `pollutanDps`, `canMove` 등 기존 이름 유지
+
+## Git·폴더
+
+- `git commit`은 사용자가 요청할 때만
+- `Library/`, `Temp/`, `Logs/` 수정·커밋하지 않기
