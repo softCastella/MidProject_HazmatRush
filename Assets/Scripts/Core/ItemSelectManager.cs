@@ -4,7 +4,7 @@ public class ItemSelectManager : MonoBehaviour
 {
     public GameObject[] itemPrefabs;
     public ItemManager itemManager;
-    public ItemType[] itemTypes;
+    public Item.ItemType[] itemTypes;
     public int selectedIndex = 0;
 
     void Awake()
@@ -13,7 +13,7 @@ public class ItemSelectManager : MonoBehaviour
             itemManager = FindAnyObjectByType<ItemManager>();
 
         if (itemTypes == null || itemTypes.Length == 0)
-            itemTypes = new[] { ItemType.Scanner, ItemType.Neutralizer, ItemType.GeneralPad, ItemType.OilPad };
+            itemTypes = new[] { Item.ItemType.Scanner, Item.ItemType.Neutralizer, Item.ItemType.GeneralPad, Item.ItemType.OilPad };
     }
 
     void Start()
@@ -32,11 +32,14 @@ public class ItemSelectManager : MonoBehaviour
     public void SelectNextItem()
     {
         if (itemPrefabs == null || itemPrefabs.Length == 0)
+        {
+            Debug.LogWarning("ItemSelectManager: itemPrefabs가 비어 있어 아이템 변경을 수행할 수 없습니다.");
             return;
+        }
 
         selectedIndex = (selectedIndex + 1) % itemPrefabs.Length;
         UpdateUI();
-        Debug.Log($"선택된 아이템: {GetSelectedItemName()}");
+        Debug.Log($"선택된 아이템: {GetSelectedItemName()} (index={selectedIndex}, type={SelectedItemType})");
     }
 
     public void SetSelectedIndex(int index)
@@ -49,7 +52,7 @@ public class ItemSelectManager : MonoBehaviour
         Debug.Log($"추천 아이템 위치로 선택 변경: {GetSelectedItemName()}");
     }
 
-    public ItemType SelectedItemType
+    public Item.ItemType SelectedItemType
     {
         get
         {
@@ -60,7 +63,7 @@ public class ItemSelectManager : MonoBehaviour
             if (item != null)
                 return InferTypeFromName(item.name);
 
-            return ItemType.Scanner;
+            return Item.ItemType.Scanner;
         }
     }
 
@@ -69,19 +72,19 @@ public class ItemSelectManager : MonoBehaviour
         return pollutant != null && SelectedItemType == pollutant.RecommendedItemType;
     }
 
-    private ItemType InferTypeFromName(string itemName)
+    private Item.ItemType InferTypeFromName(string itemName)
     {
         if (string.IsNullOrEmpty(itemName))
-            return ItemType.Scanner;
+            return Item.ItemType.Scanner;
 
         string lower = itemName.ToLower();
         if (lower.Contains("bottle") || lower.Contains("neutral"))
-            return ItemType.Neutralizer;
+            return Item.ItemType.Neutralizer;
         if (lower.Contains("yellow") || lower.Contains("general") || lower.Contains("pad"))
-            return ItemType.GeneralPad;
+            return Item.ItemType.GeneralPad;
         if (lower.Contains("blue") || lower.Contains("oil") || lower.Contains("absorb"))
-            return ItemType.OilPad;
-        return ItemType.Scanner;
+            return Item.ItemType.OilPad;
+        return Item.ItemType.Scanner;
     }
 
     public string GetSelectedItemName()

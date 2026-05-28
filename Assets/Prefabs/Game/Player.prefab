@@ -132,9 +132,11 @@ MonoBehaviour:
   moveSpeed: 200
   leftLimit: -785
   rightLimit: -403
-  protection: 100
+  maxProtection: 100
+  curProtection: 100
   isMoving: 0
   hasInput: 0
+  canMove: 0
 --- !u!50 &6836094328250049790
 Rigidbody2D:
   serializedVersion: 5

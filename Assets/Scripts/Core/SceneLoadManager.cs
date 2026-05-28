@@ -25,7 +25,7 @@ public class SceneLoadManager : MonoBehaviour
         if (Instance != null)
             return Instance;
 
-        Instance = FindObjectOfType<SceneLoadManager>();
+        Instance = FindAnyObjectByType<SceneLoadManager>();
         if (Instance != null)
             return Instance;
 

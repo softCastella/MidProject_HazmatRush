@@ -137,12 +137,12 @@ public class PollutantManager : MonoBehaviour
             string warningText = $"[경고]\n{prefabPoll.TypeLabel} 오염물질 발견";
             warningTxt.ShowWarning(warningText);
             Debug.Log(warningText);
-            yield return new WaitForSeconds(warningTxt.blinkDuration);
+            yield return new WaitForSeconds(warningTxt.blinkCount * warningTxt.blinkInterval * 2f);
             warningTxt.HideWarning();
         }
         else
         {
-            yield return new WaitForSeconds(warningTxt.blinkDuration);
+            yield return new WaitForSeconds(warningTxt.blinkCount * warningTxt.blinkInterval * 2f);
         }
 
         if (Pollutant.activeCount > 0)
