@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Pollutant : MonoBehaviour
 {
@@ -78,6 +79,9 @@ public class Pollutant : MonoBehaviour
     private bool hasLoggedContactJudge = false; //현재 접촉 구간에서 판정 로그 출력 여부
     private bool lastJudgeMatched = false;      //직전 판정 결과
 
+    public Slider pollutantSlider;      // PollutantManager가 주입
+    private Player currentPlayer;      // 접촉 중인 플레이어 캐시
+
     public static int activeCount = 0;    //활성화된 오염원 개수
     private SpriteRenderer spriteRenderer;    //스프라이트 렌더러
     private Renderer meshRenderer;    //메시 렌더러
@@ -116,16 +120,16 @@ public class Pollutant : MonoBehaviour
         switch (type)
         {
             case PollutantType.TypeA: // 산성오염원
-                pollutanMaxHp = 35;
-                pollutanDps = 3;
+                pollutanMaxHp = 40;
+                pollutanDps = 6;
                 break;
             case PollutantType.TypeB: // 오일오염원
                 pollutanMaxHp = 20;
-                pollutanDps = 2;
+                pollutanDps = 4;
                 break;
             case PollutantType.TypeC: // 혼합오염원
-                pollutanMaxHp = 50;
-                pollutanDps = 5;
+                pollutanMaxHp = 55;
+                pollutanDps = 9;
                 break;
         }
     }
@@ -134,6 +138,34 @@ public class Pollutant : MonoBehaviour
     void OnDestroy()
     {
         activeCount = Mathf.Max(0, activeCount - 1);
+    }
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (!other.CompareTag("Player")) return;
+
+        Player player = other.GetComponent<Player>();
+        if (player == null) return;
+
+        currentPlayer = player;
+
+        if (pollutantSlider != null)
+        {
+            var follower = pollutantSlider.GetComponent<WorldSpaceUIFollower>();
+            if (follower != null) follower.worldTarget = transform;
+            pollutantSlider.minValue = 0f;
+            pollutantSlider.maxValue = 1f;
+            pollutantSlider.value = pollutanCurHp / pollutanMaxHp;
+            pollutantSlider.gameObject.SetActive(true);
+        }
+
+        if (player.protectionSlider != null)
+        {
+            var follower = player.protectionSlider.GetComponent<WorldSpaceUIFollower>();
+            if (follower != null) follower.worldTarget = player.transform;
+            player.protectionSlider.value = player.curProtection / player.maxProtection;
+            player.protectionSlider.gameObject.SetActive(true);
+        }
     }
 
     void OnTriggerStay2D(Collider2D other)
@@ -182,6 +214,9 @@ public class Pollutant : MonoBehaviour
         if (itemDamage > 0f)
             pollutanCurHp = Mathf.Max(0, pollutanCurHp - itemDamage);
 
+        if (pollutantSlider != null)
+            pollutantSlider.value = pollutanCurHp / pollutanMaxHp;
+
         Debug.Log($"[Pollutant] 오염원 HP 감소: -{itemDamage:F2} (itemDps={itemDps:F2}) / 현재 HP: {pollutanCurHp:F2}");
 
         if (pollutanCurHp <= 0f && !isFadingOut)
@@ -199,6 +234,10 @@ public class Pollutant : MonoBehaviour
         hasLoggedContactJudge = false;
         pollutanCurHp = pollutanMaxHp;
         Debug.Log($"[Pollutant] 접촉 해제 -> HP 초기화: {pollutanCurHp:F2}/{pollutanMaxHp:F2}");
+
+        Player player = other.GetComponent<Player>();
+        HideBars(player);
+        currentPlayer = null;
     }
 
     // 플레이어와의 충돌이 가장자리에서만 유효하도록 거리 계산
@@ -268,12 +307,28 @@ public class Pollutant : MonoBehaviour
     private IEnumerator FadeOutAndDestroy()
     {
         isFadingOut = true;
+        HideBars(currentPlayer);
+        currentPlayer = null;
+
+        StageManager stageManager = FindAnyObjectByType<StageManager>();
+        if (stageManager != null)
+            stageManager.AddClearedPollutant();
+
         Collider2D col = GetComponent<Collider2D>();
         if (col != null)
             col.enabled = false;
 
         yield return StartCoroutine(FadeTo(0f, disappearDuration));
         Destroy(gameObject);
+    }
+
+    private void HideBars(Player player)
+    {
+        if (pollutantSlider != null)
+            pollutantSlider.gameObject.SetActive(false);
+
+        if (player != null && player.protectionSlider != null)
+            player.protectionSlider.gameObject.SetActive(false);
     }
 
 }

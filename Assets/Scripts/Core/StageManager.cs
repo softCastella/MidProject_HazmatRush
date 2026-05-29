@@ -19,6 +19,11 @@ public class StageManager : MonoBehaviour
         UpdateUI();
     }
 
+    public bool IsAllCleared()
+    {
+        return clearedPollutants >= totalPollutants;
+    }
+
     private void UpdateUI()
     {
         if (stageUI != null)
