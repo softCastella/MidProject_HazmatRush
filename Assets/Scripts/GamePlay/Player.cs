@@ -200,8 +200,28 @@ public class Player : MonoBehaviour
             SetState(PlayerState.Die);
             if (GameManager.Instance != null)
                 GameManager.Instance.TriggerGameOver(GameManager.GameOverCause.ProtectionDepleted);
-            Destroy(gameObject);
         }
+    }
+
+    public void ResetForStage()
+    {
+        curProtection = maxProtection;
+        UpdateProtectionText();
+        if (protectionSlider != null)
+            protectionSlider.value = 1f;
+
+        ResetRange();
+        if (rb != null)
+            rb.MovePosition(new Vector2(startPosition.x, startPosition.y));
+        else
+            transform.position = startPosition;
+
+        transform.localScale = new Vector3(1f, 1f, 1f);
+        SetState(PlayerState.Idle);
+        canMove = true;
+        isMoving = false;
+        hasInput = false;
+        gameObject.SetActive(true);
     }
 
     private void SetState(PlayerState nextState)

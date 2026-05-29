@@ -31,6 +31,28 @@ public class PollutantManager : MonoBehaviour
     // 다음 생성 시점까지 필요한 시간
     private float nextSpawnTime;
 
+    public void ResetForStage()
+    {
+        StopAllCoroutines();
+        awaitingSpawn = false;
+        pollutantSpawned = false;
+        returningToStart = false;
+        moveTime = 0f;
+        nextSpawnTime = Random.Range(timeRange.x, timeRange.y);
+
+        Pollutant[] activePollutants = FindObjectsByType<Pollutant>(FindObjectsSortMode.None);
+        for (int i = 0; i < activePollutants.Length; i++)
+        {
+            if (activePollutants[i] != null)
+                Destroy(activePollutants[i].gameObject);
+        }
+
+        if (warningTxt != null)
+            warningTxt.HideWarning();
+        if (scroll != null)
+            scroll.ResumeScroll();
+    }
+
     void Awake()
     {
         // Player를 Inspector에 할당하지 않았다면 씬에서 자동으로 검색합니다.

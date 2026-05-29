@@ -15,10 +15,12 @@ public class GameManager : MonoBehaviour
     public StageManager stageManager;
     public Timer timer;
     public Player player;
+    public PollutantManager pollutantManager;
 
     [Header("Result Panels")]
     public GameObject clearSet;     // HUD_Canvas/Result_HUD/ClearSet
     public GameObject gameOverSet;  // HUD_Canvas/Result_HUD/GameOverSet
+    public GameObject nextStageButton; // ClearSet/nextStageBtn
 
     [Header("Pause")]
     public GameObject pauseSet;     // HUD_Canvas/Pause_HUD
@@ -43,6 +45,8 @@ public class GameManager : MonoBehaviour
             timer = FindAnyObjectByType<Timer>();
         if (player == null)
             player = FindAnyObjectByType<Player>();
+        if (pollutantManager == null)
+            pollutantManager = FindAnyObjectByType<PollutantManager>();
 
         if (clearSet != null)
             clearSet.SetActive(false);
@@ -142,6 +146,58 @@ public class GameManager : MonoBehaviour
         ShowClear();
     }
 
+    public void RestartCurrentStage()
+    {
+        if (!gameEnded)
+            return;
+
+        ResumeAfterResult();
+        if (stageManager != null)
+            stageManager.RestartCurrentStage();
+        ResetStagePlay();
+        Debug.Log("[GameManager] 현재 스테이지 재시작");
+    }
+
+    public void GoToNextStage()
+    {
+        if (!gameEnded || stageManager == null)
+            return;
+        if (!stageManager.HasNextStage())
+            return;
+
+        ResumeAfterResult();
+        stageManager.GoToNextStage();
+        ResetStagePlay();
+        Debug.Log("[GameManager] 다음 스테이지");
+    }
+
+    private void ResumeAfterResult()
+    {
+        gameEnded = false;
+        isPaused = false;
+        Time.timeScale = 1f;
+
+        if (clearSet != null)
+            clearSet.SetActive(false);
+        if (gameOverSet != null)
+            gameOverSet.SetActive(false);
+        if (pauseSet != null)
+            pauseSet.SetActive(false);
+    }
+
+    private void ResetStagePlay()
+    {
+        if (pollutantManager != null)
+            pollutantManager.ResetForStage();
+        if (player != null)
+            player.ResetForStage();
+        if (timer != null && stageManager != null)
+        {
+            timer.SetStartTime(stageManager.GetCurrentTimeLimit());
+            timer.StartCountdown();
+        }
+    }
+
     private void ShowClear()
     {
         gameEnded = true;
@@ -151,6 +207,8 @@ public class GameManager : MonoBehaviour
             player.canMove = false;
         if (clearSet != null)
             clearSet.SetActive(true);
+        if (nextStageButton != null)
+            nextStageButton.SetActive(stageManager != null && stageManager.HasNextStage());
 
         int cleared = stageManager != null ? stageManager.clearedPollutants : 0;
         int total = stageManager != null ? stageManager.totalPollutants : 0;
