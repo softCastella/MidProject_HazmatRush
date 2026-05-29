@@ -23,6 +23,9 @@ public class ItemSelectManager : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance != null && GameManager.Instance.IsPaused)
+            return;
+
         if (Input.GetKeyDown(KeyCode.Z))
         {
             SelectNextItem();

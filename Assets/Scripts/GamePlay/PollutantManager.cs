@@ -1,24 +1,29 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 // PollutantManager는 오염원 생성만 담당하는 간단한 클래스입니다.
 public class PollutantManager : MonoBehaviour
 {
     public Player player;
     public Timer timer;
+    public StageManager stageManager;
     public ItemSelectManager itemSelectManager;
     public WarningTxt warningTxt;
     public GameObject[] pollutants; // 등록된 오염원 프리팹 목록
     public PollutantSpawner spawner;
     public Background scroll;
     public PopupUI popupUI;
+    public Slider pollutantSlider;
     public float rangeBuffer = 0.5f;
     public Vector2 timeRange = new Vector2(2f, 3f);
     public float spawnFadeDuration = 0.7f;
     public float despawnFadeDuration = 0.7f;
     public float popupShowDuration = 1.5f;
     private bool awaitingSpawn = false;
+    private bool pollutantSpawned = false;
+    private bool returningToStart = false;
 
     // 현재 누적된 이동 시간. Player가 이동 중일 때만 시간 누적을 합니다.
     private float moveTime = 0f;
@@ -35,6 +40,10 @@ public class PollutantManager : MonoBehaviour
         // Timer을 Inspector에 할당하지 않았다면 씬에서 자동으로 검색합니다.
         if (timer == null)
             timer = FindAnyObjectByType<Timer>();
+
+        // StageManager를 Inspector에 할당하지 않았다면 씬에서 자동으로 검색합니다.
+        if (stageManager == null)
+            stageManager = FindAnyObjectByType<StageManager>();
 
         // ItemSelectManager를 Inspector에 할당하지 않았다면 씬에서 자동으로 검색합니다.
         if (itemSelectManager == null)
@@ -61,6 +70,10 @@ public class PollutantManager : MonoBehaviour
         if (player == null)
             return;
 
+        // 시작 지점으로 복귀 중이면 다른 로직을 멈춥니다.
+        if (returningToStart)
+            return;
+
         // Player가 이동 중일 때만 누적 시간을 증가시킵니다.
         if (player.isMoving)
         {
@@ -76,6 +89,26 @@ public class PollutantManager : MonoBehaviour
         if (Pollutant.activeCount > 0)
         {
             moveTime = 0f;
+            pollutantSpawned = true;
+            return;
+        }
+
+        // 오염원이 중화되어 사라졌으면 처리합니다.
+        if (pollutantSpawned)
+        {
+            pollutantSpawned = false;
+
+            // 마지막 오염원을 중화했다면 복귀하지 않고 그 자리에서 클리어 처리합니다.
+            if (stageManager != null && stageManager.IsAllCleared())
+            {
+                if (GameManager.Instance != null)
+                    GameManager.Instance.TriggerClear();
+            }
+            else
+            {
+                // 남은 오염원이 있으면 시작 지점으로 복귀시킵니다.
+                StartCoroutine(ReturnToStartRoutine());
+            }
             return;
         }
 
@@ -88,6 +121,25 @@ public class PollutantManager : MonoBehaviour
         // 오염원이 사라지면 배경을 다시 움직이도록 합니다.
         if (scroll != null && Pollutant.activeCount == 0)
             scroll.ResumeScroll();
+    }
+
+    // 오염원 중화 후 플레이어를 시작 지점으로 복귀시키고 다음 생성 루프를 준비합니다.
+    private IEnumerator ReturnToStartRoutine()
+    {
+        returningToStart = true;
+
+        if (scroll != null)
+            scroll.PauseScroll();
+
+        if (player != null)
+            yield return StartCoroutine(player.AutoReturnToStart());
+
+        if (scroll != null)
+            scroll.ResumeScroll();
+
+        moveTime = 0f;
+        nextSpawnTime = Random.Range(timeRange.x, timeRange.y);
+        returningToStart = false;
     }
 
     //오염원 생성 전 경고 메시지를 보여주고, 일정 시간이 지난 후 오염원을 생성하는 코루틴입니다.
@@ -165,6 +217,7 @@ public class PollutantManager : MonoBehaviour
             {
                 poll.appearDuration = spawnFadeDuration;
                 poll.disappearDuration = despawnFadeDuration;
+                poll.pollutantSlider = pollutantSlider;
 
                 // 3단계: 페이드인이 거의 끝날 때 팝업 표시
                 string popupMsg = poll.PopupText;

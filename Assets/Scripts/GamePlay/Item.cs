@@ -30,9 +30,9 @@ public class Item : MonoBehaviour
     {
         return type switch
         {
-            ItemType.Neutralizer => 10f,
-            ItemType.GeneralPad => 18f,
-            ItemType.OilPad => 20f,
+            ItemType.Neutralizer => 12f,
+            ItemType.GeneralPad => 14f,
+            ItemType.OilPad => 8f,
             _ => 0f
         };
     }

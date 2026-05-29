@@ -11,6 +11,8 @@ public class Timer : MonoBehaviour
     public float currentSeconds = 0f; // 현재 남은 시간
     public TMP_Text timeText; // 표시할 TMP 텍스트
 
+    private bool timedOut = false; // 타임오버 1회 처리 여부
+
     void Start()
     {
         currentSeconds = startSeconds;
@@ -20,17 +22,23 @@ public class Timer : MonoBehaviour
 
     void Update()
     {
-        if (currentSeconds <= 0f)
-        {
-            currentSeconds = 0f;
-            isRunning = false;
-        }
-
         if (isRunning)
         {
             currentSeconds -= UnityEngine.Time.deltaTime;
-            if (currentSeconds < 0f)
+            if (currentSeconds <= 0f)
+            {
                 currentSeconds = 0f;
+                isRunning = false;
+                UpdateTimeText();
+
+                if (!timedOut)
+                {
+                    timedOut = true;
+                    if (GameManager.Instance != null)
+                        GameManager.Instance.TriggerGameOver(GameManager.GameOverCause.TimeOver);
+                }
+                return;
+            }
         }
 
         UpdateTimeText();
@@ -40,6 +48,7 @@ public class Timer : MonoBehaviour
     {
         currentSeconds = startSeconds;
         isRunning = true;
+        timedOut = false;
         UpdateTimeText();
     }
 
