@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -80,6 +81,7 @@ public class Pollutant : MonoBehaviour
     private bool lastJudgeMatched = false;      //직전 판정 결과
 
     public Slider pollutantSlider;      // PollutantManager가 주입
+    private TMP_Text pollutantHpText;
     private Player currentPlayer;      // 접촉 중인 플레이어 캐시
 
     public static int activeCount = 0;    //활성화된 오염원 개수
@@ -152,19 +154,24 @@ public class Pollutant : MonoBehaviour
         if (pollutantSlider != null)
         {
             var follower = pollutantSlider.GetComponent<WorldSpaceUIFollower>();
-            if (follower != null) follower.worldTarget = transform;
+            if (follower != null)
+                follower.worldTarget = spriteRenderer != null ? spriteRenderer.transform : transform;
             pollutantSlider.minValue = 0f;
             pollutantSlider.maxValue = 1f;
-            pollutantSlider.value = pollutanCurHp / pollutanMaxHp;
             pollutantSlider.gameObject.SetActive(true);
+            UpdatePollutantHpBar();
         }
 
         if (player.protectionSlider != null)
         {
             var follower = player.protectionSlider.GetComponent<WorldSpaceUIFollower>();
-            if (follower != null) follower.worldTarget = player.transform;
-            player.protectionSlider.value = player.curProtection / player.maxProtection;
+            if (follower != null)
+            {
+                SpriteRenderer playerSprite = player.GetComponentInChildren<SpriteRenderer>(true);
+                follower.worldTarget = playerSprite != null ? playerSprite.transform : player.transform;
+            }
             player.protectionSlider.gameObject.SetActive(true);
+            player.UpdateProtectionBar();
         }
     }
 
@@ -214,8 +221,7 @@ public class Pollutant : MonoBehaviour
         if (itemDamage > 0f)
             pollutanCurHp = Mathf.Max(0, pollutanCurHp - itemDamage);
 
-        if (pollutantSlider != null)
-            pollutantSlider.value = pollutanCurHp / pollutanMaxHp;
+        UpdatePollutantHpBar();
 
         Debug.Log($"[Pollutant] 오염원 HP 감소: -{itemDamage:F2} (itemDps={itemDps:F2}) / 현재 HP: {pollutanCurHp:F2}");
 
@@ -329,6 +335,18 @@ public class Pollutant : MonoBehaviour
 
         if (player != null && player.protectionSlider != null)
             player.protectionSlider.gameObject.SetActive(false);
+    }
+
+    void UpdatePollutantHpBar()
+    {
+        if (pollutantSlider == null)
+            return;
+
+        pollutantSlider.value = pollutanCurHp / pollutanMaxHp;
+        if (pollutantHpText == null)
+            pollutantHpText = pollutantSlider.GetComponentInChildren<TMP_Text>(true);
+        if (pollutantHpText != null)
+            pollutantHpText.text = Mathf.FloorToInt(pollutanCurHp).ToString();
     }
 
 }

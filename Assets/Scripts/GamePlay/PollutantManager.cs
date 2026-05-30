@@ -31,12 +31,19 @@ public class PollutantManager : MonoBehaviour
     // 다음 생성 시점까지 필요한 시간
     private float nextSpawnTime;
 
-    public void ResetForStage()
+    public void StopReturnFlow()
     {
         StopAllCoroutines();
+        if (player != null)
+            player.StopAllCoroutines();
+        returningToStart = false;
         awaitingSpawn = false;
         pollutantSpawned = false;
-        returningToStart = false;
+    }
+
+    public void ResetForStage()
+    {
+        StopReturnFlow();
         moveTime = 0f;
         nextSpawnTime = Random.Range(timeRange.x, timeRange.y);
 
@@ -128,8 +135,8 @@ public class PollutantManager : MonoBehaviour
             }
             else
             {
-                // 남은 오염원이 있으면 시작 지점으로 복귀시킵니다.
-                StartCoroutine(ReturnToStartRoutine());
+                if (GameManager.Instance == null || !GameManager.Instance.GameEnded)
+                    StartCoroutine(ReturnToStartRoutine());
             }
             return;
         }
@@ -137,6 +144,10 @@ public class PollutantManager : MonoBehaviour
         // 누적 시간이 다음 생성 시점을 넘어섰으면 새로운 오염원을 준비합니다.
         if (moveTime >= nextSpawnTime && !awaitingSpawn)
         {
+            GuideTxt guide = FindAnyObjectByType<GuideTxt>();
+            if (guide != null && !guide.introFinished)
+                return;
+
             StartCoroutine(WarningAndSpawn());
         }
 
@@ -148,6 +159,9 @@ public class PollutantManager : MonoBehaviour
     // 오염원 중화 후 플레이어를 시작 지점으로 복귀시키고 다음 생성 루프를 준비합니다.
     private IEnumerator ReturnToStartRoutine()
     {
+        if (GameManager.Instance != null && GameManager.Instance.GameEnded)
+            yield break;
+
         returningToStart = true;
 
         if (scroll != null)

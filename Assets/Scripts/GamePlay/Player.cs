@@ -22,6 +22,8 @@ public class Player : MonoBehaviour
 
     public Slider protectionSlider;
 
+    private TMP_Text protectionHpText;
+
     public bool isMoving; // 이동 중인지
     public bool hasInput; // 입력이 들어왔는지
     public bool canMove = false; // 이동 가능 여부
@@ -74,7 +76,16 @@ public class Player : MonoBehaviour
             protectionSlider.maxValue = 1f;
             protectionSlider.value = 1f;
             protectionSlider.gameObject.SetActive(false);
+            protectionHpText = protectionSlider.GetComponentInChildren<TMP_Text>(true);
         }
+    }
+
+    public void UpdateProtectionBar()
+    {
+        if (protectionSlider != null)
+            protectionSlider.value = curProtection / maxProtection;
+        if (protectionHpText != null)
+            protectionHpText.text = Mathf.FloorToInt(curProtection).ToString();
     }
 
     void Update()
@@ -189,8 +200,7 @@ public class Player : MonoBehaviour
 
         curProtection = Mathf.Max(0, curProtection - damage);
         UpdateProtectionText();
-        if (protectionSlider != null)
-            protectionSlider.value = curProtection / maxProtection;
+        UpdateProtectionBar();
         Debug.Log($"[Player] 방호복 HP 감소: -{damage:F2} (pollutantDps={pollutantDps:F2}) / 현재 HP: {curProtection:F2}");
 
         if (curProtection <= 0)
@@ -205,16 +215,16 @@ public class Player : MonoBehaviour
 
     public void ResetForStage()
     {
+        StopAllCoroutines();
+
         curProtection = maxProtection;
         UpdateProtectionText();
+        UpdateProtectionBar();
         if (protectionSlider != null)
-            protectionSlider.value = 1f;
+            protectionSlider.gameObject.SetActive(false);
 
         ResetRange();
-        if (rb != null)
-            rb.MovePosition(new Vector2(startPosition.x, startPosition.y));
-        else
-            transform.position = startPosition;
+        SnapToStartPosition();
 
         transform.localScale = new Vector3(1f, 1f, 1f);
         SetState(PlayerState.Idle);
@@ -222,6 +232,16 @@ public class Player : MonoBehaviour
         isMoving = false;
         hasInput = false;
         gameObject.SetActive(true);
+    }
+
+    void SnapToStartPosition()
+    {
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            rb.position = startPosition;
+        }
+        transform.position = startPosition;
     }
 
     private void SetState(PlayerState nextState)
