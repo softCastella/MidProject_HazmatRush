@@ -1,7 +1,7 @@
 using UnityEngine;
-
 using TMPro;
 
+[DefaultExecutionOrder(-100)]
 public class WarningTxt : MonoBehaviour
 {
     public TMP_Text warningMsg;
@@ -12,18 +12,15 @@ public class WarningTxt : MonoBehaviour
     {
         if (warningMsg == null)
             warningMsg = GetComponentInChildren<TMP_Text>(true);
-        if (warningMsg != null)
-            warningMsg.text = string.Empty;
-        if (warningMsg != null)
-            warningMsg.gameObject.SetActive(false);
+        HideWarning();
     }
 
     public void ShowWarning(string text)
     {
-        if (warningMsg == null) return;
+        if (warningMsg == null)
+            return;
+
         warningMsg.text = text;
-        if (warningMsg.transform.parent != null)
-            warningMsg.transform.parent.gameObject.SetActive(true);
         warningMsg.gameObject.SetActive(true);
         StopAllCoroutines();
         StartCoroutine(BlinkWarning(blinkCount, blinkInterval));
@@ -31,9 +28,13 @@ public class WarningTxt : MonoBehaviour
 
     public void HideWarning()
     {
-        if (warningMsg == null) return;
-        warningMsg.text = string.Empty;
-        warningMsg.gameObject.SetActive(false);
+        StopAllCoroutines();
+        TMP_Text[] texts = GetComponentsInChildren<TMP_Text>(true);
+        for (int i = 0; i < texts.Length; i++)
+        {
+            texts[i].text = string.Empty;
+            texts[i].gameObject.SetActive(false);
+        }
     }
 
     private System.Collections.IEnumerator BlinkWarning(int count, float interval)

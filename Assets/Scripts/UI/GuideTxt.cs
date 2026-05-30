@@ -3,8 +3,11 @@ using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(CanvasGroup))]
+[DefaultExecutionOrder(-100)]
 public class GuideTxt : MonoBehaviour
 {
+    public bool introFinished = false;
+
     public TMP_Text guideText;
     public string defaultMessage;
     public float showDelay = 0f;
@@ -18,10 +21,14 @@ public class GuideTxt : MonoBehaviour
 
     void Awake()
     {
+        introFinished = false;
         canvasGroup = GetComponent<CanvasGroup>();
         canvasGroup.alpha = 0f;
         canvasGroup.interactable = false;
         canvasGroup.blocksRaycasts = false;
+
+        if (guideText != null)
+            guideText.gameObject.SetActive(true);
 
         if (guideText == null)
             guideText = GetComponentInChildren<TMP_Text>(true);
@@ -79,6 +86,8 @@ public class GuideTxt : MonoBehaviour
         yield return StartCoroutine(FadeTo(1f, fadeDuration));
         yield return new WaitForSeconds(displayDuration);
         yield return StartCoroutine(FadeTo(0f, fadeDuration));
+
+        introFinished = true;
 
         if (player != null) player.canMove = true;
         if (timer != null) timer.isRunning = true;

@@ -151,10 +151,10 @@ public class GameManager : MonoBehaviour
         if (!gameEnded)
             return;
 
-        ResumeAfterResult();
         if (stageManager != null)
             stageManager.RestartCurrentStage();
         ResetStagePlay();
+        ResumeAfterResult();
         Debug.Log("[GameManager] 현재 스테이지 재시작");
     }
 
@@ -165,9 +165,9 @@ public class GameManager : MonoBehaviour
         if (!stageManager.HasNextStage())
             return;
 
-        ResumeAfterResult();
         stageManager.GoToNextStage();
         ResetStagePlay();
+        ResumeAfterResult();
         Debug.Log("[GameManager] 다음 스테이지");
     }
 
@@ -187,10 +187,10 @@ public class GameManager : MonoBehaviour
 
     private void ResetStagePlay()
     {
-        if (pollutantManager != null)
-            pollutantManager.ResetForStage();
         if (player != null)
             player.ResetForStage();
+        if (pollutantManager != null)
+            pollutantManager.ResetForStage();
         if (timer != null && stageManager != null)
         {
             timer.SetStartTime(stageManager.GetCurrentTimeLimit());
@@ -229,6 +229,8 @@ public class GameManager : MonoBehaviour
             timer.StopCountdown();
         if (player != null)
             player.canMove = false;
+        if (pollutantManager != null)
+            pollutantManager.StopReturnFlow();
         if (gameOverSet != null)
             gameOverSet.SetActive(true);
 
