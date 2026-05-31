@@ -6301,7 +6301,7 @@ MonoBehaviour:
   buttonClickClip: {fileID: 8300000, guid: a876ecf96443a7b4481789cfa3687850, type: 3}
   clearClip: {fileID: 8300000, guid: 634b6275d8d3e534580994a6cbe4c606, type: 3}
   gameOverClip: {fileID: 8300000, guid: b8401e3cda800cb4bbed739fc5226d87, type: 3}
-  neutralizationClip: {fileID: 8300000, guid: a115d0dea80c9604dbeacd05fc515122, type: 3}
+  neutralizationClip: {fileID: 8300000, guid: 874ff708e7a646a40a4d0b29284ffe6c, type: 3}
   bgmSource: {fileID: 0}
   sfxSource: {fileID: 0}
   bgmVolume: 0.5
