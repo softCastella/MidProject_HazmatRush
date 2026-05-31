@@ -77,6 +77,32 @@ public class GuideTxt : MonoBehaviour
         StartCoroutine(ShowGuideRoutine(message, duration, delay));
     }
 
+    public IEnumerator ShowItemSelectHintRoutine(string message, float duration)
+    {
+        if (guideText == null)
+            guideText = GetComponentInChildren<TMP_Text>(true);
+        if (guideText == null)
+            yield break;
+
+        guideText.text = message;
+        guideText.gameObject.SetActive(true);
+
+        yield return StartCoroutine(FadeTo(1f, fadeDuration));
+        yield return new WaitForSeconds(duration > 0f ? duration : showDuration);
+        yield return StartCoroutine(FadeTo(0f, fadeDuration));
+
+        Debug.Log($"[GuideTxt] {message}");
+    }
+
+    public void HideGuide()
+    {
+        StopAllCoroutines();
+        if (canvasGroup != null)
+            canvasGroup.alpha = 0f;
+        if (guideText != null)
+            guideText.gameObject.SetActive(false);
+    }
+
     private IEnumerator ShowGuideRoutine(string message, float duration, float delay)
     {
         if (delay > 0f)

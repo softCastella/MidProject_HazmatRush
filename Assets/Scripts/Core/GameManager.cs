@@ -108,6 +108,9 @@ public class GameManager : MonoBehaviour
         if (pauseSet != null)
             pauseSet.SetActive(true);
 
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.SetBgmPauseDim(true);
+
         Debug.Log("[GameManager] 일시정지");
     }
 
@@ -120,6 +123,9 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         if (pauseSet != null)
             pauseSet.SetActive(false);
+
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.SetBgmPauseDim(false);
 
         Debug.Log("[GameManager] 재개");
     }
@@ -183,6 +189,12 @@ public class GameManager : MonoBehaviour
             gameOverSet.SetActive(false);
         if (pauseSet != null)
             pauseSet.SetActive(false);
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.SetBgmPauseDim(false);
+            AudioManager.Instance.PlayGameBGM();
+        }
     }
 
     private void ResetStagePlay()
@@ -198,15 +210,27 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void ShowClear()
+    private void FreezePlayOnResult()
     {
-        gameEnded = true;
         if (timer != null)
             timer.StopCountdown();
         if (player != null)
-            player.canMove = false;
+            player.StopMovement();
+        if (pollutantManager != null)
+            pollutantManager.StopReturnFlow();
+    }
+
+    private void ShowClear()
+    {
+        gameEnded = true;
+        FreezePlayOnResult();
         if (clearSet != null)
             clearSet.SetActive(true);
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.StopBGM();
+            AudioManager.Instance.PlayClearSfx();
+        }
         if (nextStageButton != null)
             nextStageButton.SetActive(stageManager != null && stageManager.HasNextStage());
 
@@ -225,14 +249,14 @@ public class GameManager : MonoBehaviour
             return;
 
         gameEnded = true;
-        if (timer != null)
-            timer.StopCountdown();
-        if (player != null)
-            player.canMove = false;
-        if (pollutantManager != null)
-            pollutantManager.StopReturnFlow();
+        FreezePlayOnResult();
         if (gameOverSet != null)
             gameOverSet.SetActive(true);
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.StopBGM();
+            AudioManager.Instance.PlayGameOverSfx();
+        }
 
         Debug.Log($"[GameManager] 게임 오버 - 원인: {GetCauseText(cause)}");
     }
