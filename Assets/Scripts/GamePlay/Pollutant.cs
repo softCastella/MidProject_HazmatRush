@@ -79,6 +79,7 @@ public class Pollutant : MonoBehaviour
     private bool isFadingOut = false;    //페이드아웃 중인지
     private bool hasLoggedContactJudge = false; //현재 접촉 구간에서 판정 로그 출력 여부
     private bool lastJudgeMatched = false;      //직전 판정 결과
+    private bool hasPlayedNeutralizationSfx = false;
 
     public Slider pollutantSlider;      // PollutantManager가 주입
     private TMP_Text pollutantHpText;
@@ -207,6 +208,13 @@ public class Pollutant : MonoBehaviour
             Item.ItemType selectedType = player.itemSelectManager.SelectedItemType;
             if (selectedType == RecommendedItemType)
             {
+                if (!hasPlayedNeutralizationSfx)
+                {
+                    hasPlayedNeutralizationSfx = true;
+                    if (AudioManager.Instance != null)
+                        AudioManager.Instance.PlayNeutralizationSfx();
+                }
+
                 GameObject selectedItemObject = player.itemSelectManager.GetSelectedItem();
                 if (selectedItemObject != null)
                 {
@@ -214,6 +222,10 @@ public class Pollutant : MonoBehaviour
                     if (selectedItem != null)
                         itemDps = selectedItem.GetDps();
                 }
+            }
+            else
+            {
+                StopNeutralizationSfxLocal();
             }
         }
 
@@ -227,6 +239,9 @@ public class Pollutant : MonoBehaviour
 
         if (pollutanCurHp <= 0f && !isFadingOut)
         {
+            StopNeutralizationSfxLocal();
+            if (player.itemSelectManager != null)
+                player.itemSelectManager.ResetToDefault();
             StartCoroutine(FadeOutAndDestroy());
         }
     }
@@ -238,6 +253,7 @@ public class Pollutant : MonoBehaviour
             return;
 
         hasLoggedContactJudge = false;
+        StopNeutralizationSfxLocal();
         pollutanCurHp = pollutanMaxHp;
         Debug.Log($"[Pollutant] 접촉 해제 -> HP 초기화: {pollutanCurHp:F2}/{pollutanMaxHp:F2}");
 
@@ -310,9 +326,20 @@ public class Pollutant : MonoBehaviour
         SetAlpha(targetAlpha);
     }
 
+    private void StopNeutralizationSfxLocal()
+    {
+        if (!hasPlayedNeutralizationSfx)
+            return;
+
+        hasPlayedNeutralizationSfx = false;
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.StopNeutralizationSfx();
+    }
+
     private IEnumerator FadeOutAndDestroy()
     {
         isFadingOut = true;
+        StopNeutralizationSfxLocal();
         HideBars(currentPlayer);
         currentPlayer = null;
 

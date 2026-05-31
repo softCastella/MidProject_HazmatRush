@@ -22,6 +22,9 @@ public class Timer : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance != null && GameManager.Instance.GameEnded)
+            return;
+
         if (isRunning)
         {
             currentSeconds -= UnityEngine.Time.deltaTime;

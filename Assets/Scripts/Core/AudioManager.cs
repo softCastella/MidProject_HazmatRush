@@ -15,6 +15,9 @@ public class AudioManager : MonoBehaviour
 
     [Header("SFX")]
     public AudioClip buttonClickClip;
+    public AudioClip clearClip;
+    public AudioClip gameOverClip;
+    public AudioClip neutralizationClip;
 
     [Header("Audio Source")]
     [Tooltip("BGM 전용. 비우면 자동 연결.")]
@@ -25,9 +28,16 @@ public class AudioManager : MonoBehaviour
     [Header("Settings")]
     [Range(0f, 1f)]
     public float bgmVolume = 0.5f;
+    [Range(0f, 1f)]
+    public float pauseBgmVolumeRatio = 0.333f;
     [Tooltip("PlayOneShot 배율. 1보다 크게 올릴 수 있습니다.")]
     [Range(0f, 3f)]
     public float sfxVolume = 2f;
+    [Tooltip("중화 SFX만 따로 낮출 때 사용 (버튼·클리어 등 sfxVolume과 별도).")]
+    [Range(0f, 3f)]
+    public float neutralizationSfxVolume = 0.35f;
+
+    private bool bgmPauseDimmed = false;
 
     void Awake()
     {
@@ -41,7 +51,7 @@ public class AudioManager : MonoBehaviour
         }
         else if (Instance != this)
         {
-            Instance.CopyClipsIfEmpty(titleBGM, gameBGM, buttonClickClip);
+            Instance.CopyClipsIfEmpty(titleBGM, gameBGM, buttonClickClip, clearClip, gameOverClip, neutralizationClip);
             Destroy(gameObject);
         }
     }
@@ -71,7 +81,7 @@ public class AudioManager : MonoBehaviour
 
         bgmSource.playOnAwake = false;
         bgmSource.loop = true;
-        bgmSource.volume = bgmVolume;
+        ApplyBgmVolume();
     }
 
     void SetupSfxSource()
@@ -104,13 +114,57 @@ public class AudioManager : MonoBehaviour
 
     public void PlayButtonSfx()
     {
-        if (buttonClickClip == null)
+        PlaySfx(buttonClickClip, sfxVolume);
+    }
+
+    public void PlayClearSfx()
+    {
+        PlaySfx(clearClip, sfxVolume);
+    }
+
+    public void PlayGameOverSfx()
+    {
+        PlaySfx(gameOverClip, sfxVolume);
+    }
+
+    public void PlayNeutralizationSfx()
+    {
+        if (neutralizationClip == null)
             return;
 
         if (sfxSource == null)
             SetupSfxSource();
 
-        sfxSource.PlayOneShot(buttonClickClip, sfxVolume);
+        if (sfxSource.isPlaying && sfxSource.clip == neutralizationClip)
+            return;
+
+        sfxSource.clip = neutralizationClip;
+        sfxSource.loop = true;
+        sfxSource.volume = neutralizationSfxVolume;
+        sfxSource.Play();
+    }
+
+    public void StopNeutralizationSfx()
+    {
+        if (sfxSource == null)
+            return;
+        if (!sfxSource.isPlaying || sfxSource.clip != neutralizationClip)
+            return;
+
+        sfxSource.Stop();
+        sfxSource.loop = false;
+        sfxSource.clip = null;
+    }
+
+    void PlaySfx(AudioClip clip, float oneShotVolume)
+    {
+        if (clip == null)
+            return;
+
+        if (sfxSource == null)
+            SetupSfxSource();
+
+        sfxSource.PlayOneShot(clip, oneShotVolume);
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -143,7 +197,33 @@ public class AudioManager : MonoBehaviour
         PlayBGM(gameBGM);
     }
 
-    void CopyClipsIfEmpty(AudioClip title, AudioClip game, AudioClip buttonClick)
+    public void StopBGM()
+    {
+        if (bgmSource == null)
+            SetupAudioSource();
+        if (bgmSource != null)
+            bgmSource.Stop();
+    }
+
+    public void SetBgmPauseDim(bool dimmed)
+    {
+        bgmPauseDimmed = dimmed;
+        ApplyBgmVolume();
+    }
+
+    void ApplyBgmVolume()
+    {
+        if (bgmSource == null)
+            return;
+
+        float volume = bgmVolume;
+        if (bgmPauseDimmed)
+            volume *= pauseBgmVolumeRatio;
+
+        bgmSource.volume = volume;
+    }
+
+    void CopyClipsIfEmpty(AudioClip title, AudioClip game, AudioClip buttonClick, AudioClip clear, AudioClip gameOver, AudioClip neutralization)
     {
         if (titleBGM == null && title != null)
             titleBGM = title;
@@ -151,6 +231,12 @@ public class AudioManager : MonoBehaviour
             gameBGM = game;
         if (buttonClickClip == null && buttonClick != null)
             buttonClickClip = buttonClick;
+        if (clearClip == null && clear != null)
+            clearClip = clear;
+        if (gameOverClip == null && gameOver != null)
+            gameOverClip = gameOver;
+        if (neutralizationClip == null && neutralization != null)
+            neutralizationClip = neutralization;
     }
 
     void PlayBGM(AudioClip clip)
@@ -165,12 +251,15 @@ public class AudioManager : MonoBehaviour
         }
 
         if (bgmSource.clip == clip && bgmSource.isPlaying)
+        {
+            ApplyBgmVolume();
             return;
+        }
 
         bgmSource.Stop();
         bgmSource.clip = clip;
         bgmSource.loop = true;
-        bgmSource.volume = bgmVolume;
+        ApplyBgmVolume();
         bgmSource.Play();
 
         Debug.Log($"[AudioManager] 재생: {clip.name}");

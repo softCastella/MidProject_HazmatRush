@@ -12,7 +12,7 @@ public class ItemManager : MonoBehaviour
             slots = GetDirectChildSlots();
     }
 
-    public void SetSelected(int index)
+    public void SetSelected(int index, bool dimScannerSlot = false)
     {
         if (slots == null || slots.Length == 0)
             return;
@@ -25,7 +25,11 @@ public class ItemManager : MonoBehaviour
             if (slots[i] == null)
                 continue;
 
-            SetSlotDim(slots[i], i != index);
+            bool dim = i != index;
+            if (dimScannerSlot && i == 0)
+                dim = true;
+
+            SetSlotDim(slots[i], dim);
         }
     }
 

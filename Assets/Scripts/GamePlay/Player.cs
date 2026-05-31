@@ -13,7 +13,8 @@ public class Player : MonoBehaviour
     }
 
     public float moveSpeed = 400f; // 플레이어 이동 속도
-    public float returnMoveSpeed = 600f; // 시작 지점 복귀(3차 이동) 속도
+    public float returnMoveSpeed = 900f; // 시작 지점 복귀 속도 (씬에서 10000 등 과하게 올리지 않기)
+    public float returnStopDistance = 0.2f; // 이 거리 안이면 복귀 완료
     public float leftLimit = -785f; // 왼쪽 이동 제한
     public float rightLimit = -403f; // 오른쪽 이동 제한
     public float maxProtection = 100f; // 방호복 최대 수치
@@ -35,6 +36,7 @@ public class Player : MonoBehaviour
     private float startRight; // 기본 오른쪽 이동 범위 저장
     private Vector3 startPosition; // 게임 시작 시 플레이어 위치
     private PlayerState currentState = PlayerState.Idle;
+    private bool isReturning = false;
 
     void Awake()
     {
@@ -90,11 +92,14 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (!canMove || (GameManager.Instance != null && GameManager.Instance.IsPaused))
+        if (!canMove || (GameManager.Instance != null && (GameManager.Instance.IsPaused || GameManager.Instance.GameEnded)))
         {
-            isMoving = false;
-            hasInput = false;
-            SetState(currentState == PlayerState.Die ? PlayerState.Die : PlayerState.Idle);
+            if (!isReturning)
+            {
+                isMoving = false;
+                hasInput = false;
+                SetState(currentState == PlayerState.Die ? PlayerState.Die : PlayerState.Idle);
+            }
             return;
         }
 
@@ -140,37 +145,81 @@ public class Player : MonoBehaviour
         rightLimit = startRight;
     }
 
+    public void StopMovement()
+    {
+        isReturning = false;
+        canMove = false;
+        isMoving = false;
+        hasInput = false;
+        if (rb != null)
+            rb.linearVelocity = Vector2.zero;
+        if (currentState != PlayerState.Die)
+            SetState(PlayerState.Idle);
+    }
+
     // 오염원 중화 후 시작 지점으로 자동 복귀시키고 1차 이동 범위로 되돌립니다.
     public IEnumerator AutoReturnToStart()
     {
-        if (currentState == PlayerState.Die)
+        if (currentState == PlayerState.Die || isReturning)
             yield break;
 
         canMove = false;
+        isReturning = true;
+        isMoving = false;
+        hasInput = false;
         ResetRange();
 
-        // 복귀 중에도 항상 오른쪽을 향하도록 고정합니다.
         transform.localScale = new Vector3(1f, 1f, 1f);
-
-        SetState(PlayerState.Move);
-
-        while (Mathf.Abs(transform.position.x - startPosition.x) > 1f)
-        {
-            float newX = Mathf.MoveTowards(transform.position.x, startPosition.x, returnMoveSpeed * Time.deltaTime);
-            if (rb != null)
-                rb.MovePosition(new Vector2(newX, transform.position.y));
-            else
-                transform.position = new Vector3(newX, transform.position.y, transform.position.z);
-            yield return null;
-        }
+        SetState(PlayerState.Idle);
 
         if (rb != null)
-            rb.MovePosition(new Vector2(startPosition.x, transform.position.y));
-        else
-            transform.position = new Vector3(startPosition.x, transform.position.y, transform.position.z);
+            rb.linearVelocity = Vector2.zero;
 
+        float stopDist = Mathf.Max(0.05f, returnStopDistance);
+
+        while (true)
+        {
+            if (GameManager.Instance != null && GameManager.Instance.GameEnded)
+            {
+                isReturning = false;
+                isMoving = false;
+                if (rb != null)
+                    rb.linearVelocity = Vector2.zero;
+                yield break;
+            }
+
+            float posX = rb != null ? rb.position.x : transform.position.x;
+            float dist = Mathf.Abs(posX - startPosition.x);
+            if (dist <= stopDist)
+                break;
+
+            float step = returnMoveSpeed * Time.fixedDeltaTime;
+            float newX;
+            if (step >= dist)
+                newX = startPosition.x;
+            else
+                newX = Mathf.MoveTowards(posX, startPosition.x, step);
+
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+                rb.MovePosition(new Vector2(newX, rb.position.y));
+                yield return new WaitForFixedUpdate();
+            }
+            else
+            {
+                transform.position = new Vector3(newX, transform.position.y, transform.position.z);
+                yield return null;
+            }
+        }
+
+        SnapToStartPosition();
+        isReturning = false;
+        isMoving = false;
         SetState(PlayerState.Idle);
-        canMove = true;
+
+        if (GameManager.Instance == null || !GameManager.Instance.GameEnded)
+            canMove = true;
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -192,6 +241,8 @@ public class Player : MonoBehaviour
     public void ApplyPollutantDamage(float pollutantDps)
     {
         if (currentState == PlayerState.Die)
+            return;
+        if (GameManager.Instance != null && GameManager.Instance.GameEnded)
             return;
 
         float damage = pollutantDps * Time.deltaTime;
@@ -216,6 +267,7 @@ public class Player : MonoBehaviour
     public void ResetForStage()
     {
         StopAllCoroutines();
+        isReturning = false;
 
         curProtection = maxProtection;
         UpdateProtectionText();

@@ -11,6 +11,8 @@ public class PollutantManager : MonoBehaviour
     public StageManager stageManager;
     public ItemSelectManager itemSelectManager;
     public WarningTxt warningTxt;
+    public GuideTxt guideTxt;
+    public float itemSelectHintDuration = 2f;
     public GameObject[] pollutants; // 등록된 오염원 프리팹 목록
     public PollutantSpawner spawner;
     public Background scroll;
@@ -56,8 +58,12 @@ public class PollutantManager : MonoBehaviour
 
         if (warningTxt != null)
             warningTxt.HideWarning();
+        if (guideTxt != null)
+            guideTxt.HideGuide();
         if (scroll != null)
             scroll.ResumeScroll();
+        if (itemSelectManager != null)
+            itemSelectManager.ResetToDefault();
     }
 
     void Awake()
@@ -84,6 +90,9 @@ public class PollutantManager : MonoBehaviour
         if (warningTxt == null)
             Debug.LogWarning("PollutantManager: WarningTxt를 찾을 수 없습니다. Inspector에 할당하거나 이름이 정확한지 확인하세요.");
 
+        if (guideTxt == null)
+            guideTxt = FindAnyObjectByType<GuideTxt>();
+
         if (spawner == null)
             spawner = FindAnyObjectByType<PollutantSpawner>();
 
@@ -95,6 +104,9 @@ public class PollutantManager : MonoBehaviour
 
     void Update()
     {
+        if (GameManager.Instance != null && GameManager.Instance.GameEnded)
+            return;
+
         // Player가 없으면 생성 로직을 실행하지 않습니다.
         if (player == null)
             return;
@@ -161,6 +173,8 @@ public class PollutantManager : MonoBehaviour
     {
         if (GameManager.Instance != null && GameManager.Instance.GameEnded)
             yield break;
+        if (returningToStart)
+            yield break;
 
         returningToStart = true;
 
@@ -219,27 +233,37 @@ public class PollutantManager : MonoBehaviour
         if (timer != null)
             timer.StopCountdown();
 
-        // 1단계: 경고 문구 깜빡임
+        // 1단계: 경고 깜빡임
         if (warningTxt != null && prefabPoll != null)
         {
             string warningText = $"[경고]\n{prefabPoll.TypeLabel} 오염물질 발견";
-            warningTxt.ShowWarning(warningText);
+            if (itemSelectManager != null)
+                itemSelectManager.OnWarningShown();
             Debug.Log(warningText);
-            yield return new WaitForSeconds(warningTxt.blinkCount * warningTxt.blinkInterval * 2f);
-            warningTxt.HideWarning();
+            yield return StartCoroutine(warningTxt.ShowWarningRoutine(warningText));
+        }
+
+        // 2단계: GuideTxt에 Z키 안내 문구 표시
+        if (guideTxt != null)
+        {
+            yield return StartCoroutine(guideTxt.ShowItemSelectHintRoutine(
+                "Z키로 대응 아이템을 골라주세요", itemSelectHintDuration));
         }
         else
         {
-            yield return new WaitForSeconds(warningTxt.blinkCount * warningTxt.blinkInterval * 2f);
+            yield return new WaitForSeconds(itemSelectHintDuration);
         }
 
         if (Pollutant.activeCount > 0)
         {
             Debug.Log("PollutantManager: 기존 오염물이 남아 있어 새로운 오염원 생성을 취소합니다.");
-            if (player != null)
-                player.canMove = true;
-            if (timer != null)
-                timer.isRunning = true;
+            if (GameManager.Instance == null || !GameManager.Instance.GameEnded)
+            {
+                if (player != null)
+                    player.canMove = true;
+                if (timer != null)
+                    timer.isRunning = true;
+            }
             awaitingSpawn = false;
             yield break;
         }
@@ -277,11 +301,13 @@ public class PollutantManager : MonoBehaviour
             Debug.Log($"PollutantManager: {selectedPrefab.name}이 생성되었습니다.");
         }
 
-        if (player != null)
-            player.canMove = true;
-
-        if (timer != null)
-            timer.isRunning = true;
+        if (GameManager.Instance == null || !GameManager.Instance.GameEnded)
+        {
+            if (player != null)
+                player.canMove = true;
+            if (timer != null)
+                timer.isRunning = true;
+        }
 
         moveTime = 0f;
         nextSpawnTime = Random.Range(timeRange.x, timeRange.y);
