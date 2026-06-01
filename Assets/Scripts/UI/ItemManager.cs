@@ -33,7 +33,16 @@ public class ItemManager : MonoBehaviour
         }
     }
 
-    
+    // 모든 슬롯을 한 번에 dim 처리/해제합니다. (오대응 패널티용)
+    public void SetAllDim(bool dim)
+    {
+        if (slots == null || slots.Length == 0)
+            return;
+
+        for (int i = 0; i < slots.Length; i++)
+            SetSlotDim(slots[i], dim);
+    }
+
     private void SetSlotDim(Transform slot, bool dimActive)
     {
         if (slot == null)

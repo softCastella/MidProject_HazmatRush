@@ -1,35 +1,96 @@
+using System.Collections.Generic;
+using Newtonsoft.Json;
+using TMPro;
 using UnityEngine;
 
 [System.Serializable]
 public class StageData
 {
     public string stageLabel = "Stage 1-1";
+    public string placeName = "1F A area 1-1";
     public int totalPollutants = 3;
     public float timeLimitSeconds = 60f;
+    public string pollutantTypes = "A";
+    public int backgroundIndex = 0;
+}
+
+[System.Serializable]
+public class StageJsonRow
+{
+    public int stageId;
+    public string label;
+    public string placeName;
+    public string pollutantTypes;
+    public int totalPollutant;
+    public int timeLimit;
+    public int bgIndex;
 }
 
 public class StageManager : MonoBehaviour
 {
+    public TextAsset stageDataJson;
     public StageData[] stages;
     public int currentStageIndex = 0;
 
     public string stageLabel;
+    public string placeName = "1F A area 1-1";
     public int totalPollutants = 3;
     public int clearedPollutants = 0;
-    public StageUI stageUI;
+
+    [Header("HUD (StageInfo 하위 텍스트)")]
+    public TMP_Text stageText;
+    public TMP_Text pollutantCountText;
 
     void Start()
     {
+        TryLoadStagesFromJson();
+
         if (stages == null || stages.Length == 0)
         {
             stages = new StageData[1];
             stages[0] = new StageData();
             stages[0].stageLabel = stageLabel;
+            stages[0].placeName = placeName;
             stages[0].totalPollutants = totalPollutants;
             stages[0].timeLimitSeconds = 60f;
         }
 
-        LoadStage(currentStageIndex);
+        int startIndex = 0;
+        if (SceneLoadManager.Instance != null && SceneLoadManager.Instance.pendingStageIndex >= 0)
+            startIndex = SceneLoadManager.Instance.pendingStageIndex;
+
+        LoadStage(startIndex);
+
+        if (SceneLoadManager.Instance != null)
+            SceneLoadManager.Instance.pendingStageIndex = -1;
+    }
+
+    private void TryLoadStagesFromJson()
+    {
+        if (stageDataJson == null || string.IsNullOrEmpty(stageDataJson.text))
+            return;
+
+        List<StageJsonRow> rows = JsonConvert.DeserializeObject<List<StageJsonRow>>(stageDataJson.text);
+        if (rows == null || rows.Count == 0)
+        {
+            Debug.LogWarning("[StageManager] stage_data.json 파싱 결과가 비어 있습니다.");
+            return;
+        }
+
+        stages = new StageData[rows.Count];
+        for (int i = 0; i < rows.Count; i++)
+        {
+            StageJsonRow row = rows[i];
+            stages[i] = new StageData();
+            stages[i].stageLabel = row.label;
+            stages[i].placeName = row.placeName;
+            stages[i].totalPollutants = row.totalPollutant;
+            stages[i].timeLimitSeconds = row.timeLimit;
+            stages[i].pollutantTypes = row.pollutantTypes;
+            stages[i].backgroundIndex = row.bgIndex;
+        }
+
+        Debug.Log($"[StageManager] JSON에서 스테이지 {stages.Length}개 로드");
     }
 
     public void LoadStage(int index)
@@ -41,11 +102,31 @@ public class StageManager : MonoBehaviour
         StageData data = stages[currentStageIndex];
 
         stageLabel = data.stageLabel;
+        placeName = data.placeName;
         totalPollutants = data.totalPollutants;
         clearedPollutants = 0;
         UpdateUI();
 
-        Debug.Log($"[StageManager] 스테이지 로드: {stageLabel} ({currentStageIndex + 1}/{stages.Length})");
+        Timer timer = FindAnyObjectByType<Timer>();
+        if (timer != null)
+            timer.SetStartTime(data.timeLimitSeconds);
+
+        Debug.Log($"[StageManager] 스테이지 로드: {stageLabel} {placeName} ({currentStageIndex + 1}/{stages.Length}) types={data.pollutantTypes}");
+    }
+
+    public string GetCurrentPollutantTypes()
+    {
+        if (stages == null || stages.Length == 0)
+            return "";
+
+        return stages[currentStageIndex].pollutantTypes;
+    }
+
+    public int GetStageCount()
+    {
+        if (stages == null)
+            return 0;
+        return stages.Length;
     }
 
     public float GetCurrentTimeLimit()
@@ -87,7 +168,10 @@ public class StageManager : MonoBehaviour
 
     private void UpdateUI()
     {
-        if (stageUI != null)
-            stageUI.SetStageInfo(stageLabel, clearedPollutants, totalPollutants);
+        if (stageText != null)
+            stageText.text = $"{stageLabel} {placeName}";
+
+        if (pollutantCountText != null)
+            pollutantCountText.text = $"오염원: {clearedPollutants}/{totalPollutants}";
     }
 }

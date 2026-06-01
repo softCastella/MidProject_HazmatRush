@@ -197,7 +197,8 @@ public class PollutantManager : MonoBehaviour
     {
         awaitingSpawn = true;
 
-        if (pollutants == null || pollutants.Length == 0)
+        GameObject[] pool = GetActivePollutantPool();
+        if (pool == null || pool.Length == 0)
         {
             Debug.LogError("PollutantManager: 오염원 프리팹을 등록하세요.");
             awaitingSpawn = false;
@@ -218,7 +219,7 @@ public class PollutantManager : MonoBehaviour
             yield break;
         }
 
-        GameObject selectedPrefab = pollutants[Random.Range(0, pollutants.Length)];
+        GameObject selectedPrefab = pool[Random.Range(0, pool.Length)];
         if (selectedPrefab == null)
         {
             Debug.LogError("PollutantManager: 등록된 오염원 프리팹 중 하나가 비어있습니다.");
@@ -322,6 +323,74 @@ public class PollutantManager : MonoBehaviour
         yield return new WaitForSeconds(fadeInDuration * 0.8f);
         if (popupUI != null)
             popupUI.Show(message, popupShowDuration);
+    }
+
+    private GameObject[] GetActivePollutantPool()
+    {
+        if (pollutants == null || pollutants.Length == 0)
+            return pollutants;
+
+        if (stageManager == null)
+            return pollutants;
+
+        string types = stageManager.GetCurrentPollutantTypes();
+        if (string.IsNullOrEmpty(types))
+            return pollutants;
+
+        string[] parts = types.Split('|');
+        GameObject[] temp = new GameObject[pollutants.Length];
+        int count = 0;
+
+        for (int p = 0; p < parts.Length; p++)
+        {
+            string token = parts[p].Trim();
+            if (token.Length == 0)
+                continue;
+
+            Pollutant.PollutantType wantType = CharToPollutantType(token[0]);
+            for (int i = 0; i < pollutants.Length; i++)
+            {
+                if (pollutants[i] == null)
+                    continue;
+
+                Pollutant pol = pollutants[i].GetComponent<Pollutant>();
+                if (pol == null || pol.type != wantType)
+                    continue;
+
+                bool alreadyAdded = false;
+                for (int j = 0; j < count; j++)
+                {
+                    if (temp[j] == pollutants[i])
+                    {
+                        alreadyAdded = true;
+                        break;
+                    }
+                }
+
+                if (!alreadyAdded)
+                    temp[count++] = pollutants[i];
+            }
+        }
+
+        if (count == 0)
+            return pollutants;
+
+        GameObject[] result = new GameObject[count];
+        for (int i = 0; i < count; i++)
+            result[i] = temp[i];
+
+        return result;
+    }
+
+    private Pollutant.PollutantType CharToPollutantType(char c)
+    {
+        switch (char.ToUpperInvariant(c))
+        {
+            case 'A': return Pollutant.PollutantType.TypeA;
+            case 'B': return Pollutant.PollutantType.TypeB;
+            case 'C': return Pollutant.PollutantType.TypeC;
+            default: return Pollutant.PollutantType.TypeA;
+        }
     }
 
     private float GetEdgeX(GameObject obj)

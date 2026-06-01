@@ -92,7 +92,7 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (!canMove || (GameManager.Instance != null && (GameManager.Instance.IsPaused || GameManager.Instance.GameEnded)))
+        if (!canMove || (GameManager.Instance != null && (GameManager.Instance.IsPaused || GameManager.Instance.GameEnded || GameManager.Instance.IsPenalty)))
         {
             if (!isReturning)
             {

@@ -7,6 +7,10 @@ public class SceneLoadManager : MonoBehaviour
 
     public string titleSceneName = "TitleScene";
     public string gameSceneName = "GameScene";
+    public string loadingSceneName = "LoadingScene";
+
+    public string nextSceneName;
+    public int pendingStageIndex = -1;
 
     void Awake()
     {
@@ -29,7 +33,31 @@ public class SceneLoadManager : MonoBehaviour
 
     public void StartButton()
     {
-        LoadScene(gameSceneName);
+        pendingStageIndex = 0;
+        nextSceneName = gameSceneName;
+
+        if (string.IsNullOrEmpty(loadingSceneName))
+            LoadScene(gameSceneName);
+        else
+            LoadScene(loadingSceneName);
+    }
+
+    public void ContinueButton()
+    {
+        GameSaveData data = GameSaveManager.Load();
+        if (data == null)
+        {
+            StartButton();
+            return;
+        }
+
+        pendingStageIndex = data.continueStageIndex;
+        nextSceneName = gameSceneName;
+
+        if (string.IsNullOrEmpty(loadingSceneName))
+            LoadScene(gameSceneName);
+        else
+            LoadScene(loadingSceneName);
     }
 
     public void TitleButton()
