@@ -177,7 +177,7 @@ Assets/Audio/SFX/
 | `Background` | 무한 스크롤 배경 (`player.hasInput` 연동, 경계 Repeat) |
 | `ItemManager` | 선택 아이템 HUD (비선택·Scanner 딤 처리) |
 | `ItemSelectManager` | Scanner 기본 / 경고 후 전환 / 중화 후 리셋 |
-| `StageUI` | 스테이지 라벨 / 오염원 수 표시 |
+| `StageManager` (HUD) | `StageInfo/StageTxt`, `PollutantCountTxt` — 스테이지·장소·오염원 수 표시 |
 
 ---
 
@@ -207,7 +207,6 @@ Assets/
 │       ├── PopupUI.cs
 │       ├── Timer.cs
 │       ├── Background.cs
-│       ├── StageUI.cs
 │       ├── ItemManager.cs
 │       ├── UIItem.cs
 │       └── WorldSpaceUIFollower.cs

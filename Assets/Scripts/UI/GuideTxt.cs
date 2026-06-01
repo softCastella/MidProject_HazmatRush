@@ -94,6 +94,17 @@ public class GuideTxt : MonoBehaviour
         Debug.Log($"[GuideTxt] {message}");
     }
 
+    // 페이드 없이 즉시 문구를 노출합니다. (오대응 패널티 안내 등)
+    public void ShowGuideImmediate(string message)
+    {
+        StopAllCoroutines();
+        SetGuideText(message);
+        if (canvasGroup == null)
+            canvasGroup = GetComponent<CanvasGroup>();
+        if (canvasGroup != null)
+            canvasGroup.alpha = 1f;
+    }
+
     public void HideGuide()
     {
         StopAllCoroutines();

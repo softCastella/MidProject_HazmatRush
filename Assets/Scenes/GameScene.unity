@@ -441,7 +441,14 @@ MonoBehaviour:
   gameOverSet: {fileID: 248471577}
   nextStageButton: {fileID: 370596520}
   pauseSet: {fileID: 606434749}
+  guideTxt: {fileID: 400085196}
+  itemManager: {fileID: 686408801}
+  itemSelectManager: {fileID: 2126004990}
+  wrongItemPenaltyMessage: "\uC798\uBABB\uB41C \uC544\uC774\uD15C \uC120\uD0DD\uC73C\uB85C
+    2\uCD08 \uD6C4\uC5D0 \uC544\uC774\uD15C\uC120\uD0DD\uC774 \uAC00\uB2A5\uD569\uB2C8\uB2E4."
+  wrongItemPenaltySeconds: 2
   enableDebugKeys: 1
+  enableDebugSaveKeys: 1
 --- !u!1 &243366880
 GameObject:
   m_ObjectHideFlags: 0
@@ -1744,7 +1751,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &606434750
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2242,7 +2249,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 662673936}
-  - component: {fileID: 662673937}
   m_Layer: 5
   m_Name: StageInfo
   m_TagString: Untagged
@@ -2271,20 +2277,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -35}
   m_SizeDelta: {x: 238, y: 114.19995}
   m_Pivot: {x: 0.5, y: 1}
---- !u!114 &662673937
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 662673935}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24779fe58c2640047b340d625b020258, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StageUI
-  stageText: {fileID: 793394095}
-  pollutantCountText: {fileID: 655277282}
 --- !u!1 &686408796
 GameObject:
   m_ObjectHideFlags: 0
@@ -2604,7 +2596,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 793394094}
-  - component: {fileID: 793394097}
   - component: {fileID: 793394096}
   - component: {fileID: 793394095}
   m_Layer: 5
@@ -2733,20 +2724,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 793394093}
   m_CullTransparentMesh: 1
---- !u!114 &793394097
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 793394093}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24779fe58c2640047b340d625b020258, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StageUI
-  stageText: {fileID: 793394095}
-  pollutantCountText: {fileID: 655277282}
 --- !u!1 &848615590
 GameObject:
   m_ObjectHideFlags: 0
@@ -3213,6 +3190,43 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 900665559}
   m_CullTransparentMesh: 1
+--- !u!1 &928357890
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 928357891}
+  m_Layer: 5
+  m_Name: HpBar
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &928357891
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 928357890}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1156002671}
+  - {fileID: 2124237248}
+  m_Father: {fileID: 1222094816}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 320, y: 54.4576}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &952169671
 GameObject:
   m_ObjectHideFlags: 0
@@ -3589,7 +3603,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1052522905
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3984,7 +3998,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1156002670}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3992,7 +4006,7 @@ RectTransform:
   - {fileID: 1435518665}
   - {fileID: 1783230859}
   - {fileID: 278451312}
-  m_Father: {fileID: 1222094816}
+  m_Father: {fileID: 928357891}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4381,8 +4395,7 @@ RectTransform:
   - {fileID: 686408797}
   - {fileID: 2088647246}
   - {fileID: 642128212}
-  - {fileID: 1156002671}
-  - {fileID: 2124237248}
+  - {fileID: 928357891}
   - {fileID: 1331404180}
   - {fileID: 1052522905}
   m_Father: {fileID: 0}
@@ -5304,6 +5317,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoadManager
   titleSceneName: TitleScene
   gameSceneName: GameScene
+  loadingSceneName: LoadingScene
+  nextSceneName: GameScene
+  pendingStageIndex: -1
 --- !u!4 &1641693275
 Transform:
   m_ObjectHideFlags: 0
@@ -6305,7 +6321,7 @@ MonoBehaviour:
   bgmSource: {fileID: 0}
   sfxSource: {fileID: 0}
   bgmVolume: 0.5
-  pauseBgmVolumeRatio: 0.333
+  pauseBgmVolumeRatio: 0.18
   sfxVolume: 2
   neutralizationSfxVolume: 0.02
 --- !u!4 &1772189952
@@ -6848,10 +6864,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PollutantManager
   player: {fileID: 702165562}
   timer: {fileID: 851038935}
-  stageManager: {fileID: 0}
+  stageManager: {fileID: 2044922902}
   itemSelectManager: {fileID: 2126004990}
   warningTxt: {fileID: 2088647247}
-  guideTxt: {fileID: 0}
+  guideTxt: {fileID: 400085196}
   itemSelectHintDuration: 2
   pollutants:
   - {fileID: 8137116525753167442, guid: cc78e2dd8c1b20d4497c891cde40183c, type: 3}
@@ -7199,18 +7215,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b429a19b171ca134ea7d023336bb8321, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StageManager
+  stageDataJson: {fileID: 4900000, guid: cbae55230335c17489b65f38a416523c, type: 3}
   stages:
   - stageLabel: Stage 1-1 IF A area
+    placeName: 1F A area 1-1
     totalPollutants: 3
     timeLimitSeconds: 60
+    pollutantTypes: A
+    backgroundIndex: 0
   - stageLabel: Stage 1-2 IF A area
+    placeName: 1F A area 1-1
     totalPollutants: 3
     timeLimitSeconds: 60
+    pollutantTypes: A
+    backgroundIndex: 0
   currentStageIndex: 0
   stageLabel: Stage 1-1 IF A area
+  placeName: 1F A area
   totalPollutants: 3
   clearedPollutants: 0
-  stageUI: {fileID: 662673937}
+  stageText: {fileID: 793394095}
+  pollutantCountText: {fileID: 655277282}
 --- !u!114 &2046708319 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4379523216314017800, guid: 1dd9a8e548494d648b5d5b1f5defb0f9, type: 3}
@@ -7840,7 +7865,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2124237247}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7848,7 +7873,7 @@ RectTransform:
   - {fileID: 631487856}
   - {fileID: 1834566171}
   - {fileID: 952169672}
-  m_Father: {fileID: 1222094816}
+  m_Father: {fileID: 928357891}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -8075,6 +8100,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Background
       objectReference: {fileID: 0}
+    - target: {fileID: 4379523216314017800, guid: 1dd9a8e548494d648b5d5b1f5defb0f9, type: 3}
+      propertyPath: backgroundTextures.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4379523216314017800, guid: 1dd9a8e548494d648b5d5b1f5defb0f9, type: 3}
+      propertyPath: 'backgroundTextures.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2800000, guid: c208e41bf2ef08d4f85c8321e1da071b, type: 3}
     - target: {fileID: 7356488609104833290, guid: 1dd9a8e548494d648b5d5b1f5defb0f9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -8191,7 +8224,7 @@ SceneRoots:
   - {fileID: 191338666}
   - {fileID: 2126004991}
   - {fileID: 2044922901}
-  - {fileID: 307527682}
   - {fileID: 1772189952}
   - {fileID: 1641693275}
   - {fileID: 1641693281}
+  - {fileID: 307527682}

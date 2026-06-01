@@ -22,7 +22,7 @@ public class Timer : MonoBehaviour
 
     void Update()
     {
-        if (GameManager.Instance != null && GameManager.Instance.GameEnded)
+        if (GameManager.Instance != null && (GameManager.Instance.GameEnded || GameManager.Instance.IsPenalty))
             return;
 
         if (isRunning)

@@ -29,7 +29,7 @@ public class ItemSelectManager : MonoBehaviour
 
     void Update()
     {
-        if (GameManager.Instance != null && (GameManager.Instance.IsPaused || GameManager.Instance.GameEnded))
+        if (GameManager.Instance != null && (GameManager.Instance.IsPaused || GameManager.Instance.GameEnded || GameManager.Instance.IsPenalty))
             return;
 
         if (Input.GetKeyDown(KeyCode.Z))
@@ -46,11 +46,13 @@ public class ItemSelectManager : MonoBehaviour
 
     public void OnWarningShown()
     {
+        // 경고 이후부터는 스캐너를 제외하고 첫 대응 아이템을 기본 선택합니다.
+        // (스캐너는 이동/스캔 중에만 유효 → 중화모드 오판정 대상에서 제외)
         itemSwitchEnabled = true;
-        hasPickedFirstItem = false;
-        selectedIndex = ScannerIndex;
+        hasPickedFirstItem = true;
+        selectedIndex = FirstTreatmentIndex;
         UpdateUI();
-        Debug.Log("[ItemSelectManager] 경고 표시 - 아이템 전환 가능 (스캐너 기본)");
+        Debug.Log("[ItemSelectManager] 경고 표시 - 아이템 전환 가능 (스캐너 제외, 첫 대응 아이템 기본)");
     }
 
     public void SelectNextItem()
@@ -152,6 +154,12 @@ public class ItemSelectManager : MonoBehaviour
             selectedIndex = 0;
 
         return itemPrefabs[selectedIndex];
+    }
+
+    // 외부(패널티 종료 등)에서 현재 선택 상태로 아이템 UI(dim)를 다시 적용합니다.
+    public void RefreshUI()
+    {
+        UpdateUI();
     }
 
     private void UpdateUI()

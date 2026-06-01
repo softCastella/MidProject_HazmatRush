@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -25,14 +26,26 @@ public class GameManager : MonoBehaviour
     [Header("Pause")]
     public GameObject pauseSet;     // HUD_Canvas/Pause_HUD
 
+    [Header("Wrong Item Penalty (Stage 1-1 튜토리얼 전용)")]
+    public GuideTxt guideTxt;                       // 패널티 안내 문구 표시
+    public ItemManager itemManager;                 // 아이템 창 전체 dim
+    public ItemSelectManager itemSelectManager;     // 패널티 종료 후 아이템 UI 복구
+    [TextArea]
+    public string wrongItemPenaltyMessage = "잘못된 아이템 선택으로 2초 후에 아이템선택이 가능합니다.";
+    public float wrongItemPenaltySeconds = 2f;
+
     [Header("Debug")]
     public bool enableDebugKeys = true; // F1: 강제 클리어, F2: 강제 게임오버
+    public bool enableDebugSaveKeys = true; // F3: 저장 로그, F4: 저장 로드 후 스테이지 적용
 
     private bool gameEnded = false;
     public bool GameEnded => gameEnded;
 
     private bool isPaused = false;
     public bool IsPaused => isPaused;
+
+    private bool isPenalty = false;
+    public bool IsPenalty => isPenalty;
 
     void Awake()
     {
@@ -47,6 +60,12 @@ public class GameManager : MonoBehaviour
             player = FindAnyObjectByType<Player>();
         if (pollutantManager == null)
             pollutantManager = FindAnyObjectByType<PollutantManager>();
+        if (guideTxt == null)
+            guideTxt = FindAnyObjectByType<GuideTxt>();
+        if (itemManager == null)
+            itemManager = FindAnyObjectByType<ItemManager>();
+        if (itemSelectManager == null)
+            itemSelectManager = FindAnyObjectByType<ItemSelectManager>();
 
         if (clearSet != null)
             clearSet.SetActive(false);
@@ -74,18 +93,46 @@ public class GameManager : MonoBehaviour
         if (isPaused)
             return;
 
-        if (!enableDebugKeys)
+        if (enableDebugKeys)
+        {
+            if (Input.GetKeyDown(KeyCode.F1))
+            {
+                Debug.Log("[GameManager] (디버그) 강제 클리어");
+                ForceClear();
+            }
+            else if (Input.GetKeyDown(KeyCode.F2))
+            {
+                Debug.Log("[GameManager] (디버그) 강제 게임오버");
+                TriggerGameOver(GameOverCause.Debug);
+            }
+        }
+
+        if (!enableDebugSaveKeys || stageManager == null)
             return;
 
-        if (Input.GetKeyDown(KeyCode.F1))
+        if (Input.GetKeyDown(KeyCode.F3))
         {
-            Debug.Log("[GameManager] (디버그) 강제 클리어");
-            ForceClear();
+            if (GameSaveManager.HasSave())
+                Debug.Log($"[GameManager] (디버그) 저장 있음: {GameSaveManager.SaveFilePath}");
+            else
+                Debug.Log("[GameManager] (디버그) 저장 파일 없음");
         }
-        else if (Input.GetKeyDown(KeyCode.F2))
+        else if (Input.GetKeyDown(KeyCode.F4))
         {
-            Debug.Log("[GameManager] (디버그) 강제 게임오버");
-            TriggerGameOver(GameOverCause.Debug);
+            GameSaveData data = GameSaveManager.Load();
+            if (data == null)
+            {
+                Debug.Log("[GameManager] (디버그) 로드할 저장 없음");
+                return;
+            }
+
+            stageManager.LoadStage(data.continueStageIndex);
+            if (gameEnded)
+                ResumeAfterResult();
+            else
+                ResetStagePlay();
+
+            Debug.Log($"[GameManager] (디버그) 저장 로드 → 스테이지 index={data.continueStageIndex} ({data.lastStageLabel})");
         }
     }
 
@@ -128,6 +175,44 @@ public class GameManager : MonoBehaviour
             AudioManager.Instance.SetBgmPauseDim(false);
 
         Debug.Log("[GameManager] 재개");
+    }
+
+    // 중화모드에서 틀린 아이템으로 접촉했을 때 호출. (스테이지 1-1 튜토리얼 전용)
+    public void TriggerWrongItemPenalty()
+    {
+        if (isPenalty || gameEnded || isPaused)
+            return;
+
+        // 첫 스테이지(1-1)에서만 패널티 안내가 동작합니다.
+        if (stageManager == null || stageManager.currentStageIndex != 0)
+            return;
+
+        StartCoroutine(WrongItemPenaltyRoutine());
+    }
+
+    // 2초간 화면 전체 정지 + 안내 문구 + 아이템 창 dim 후 모두 해제
+    private IEnumerator WrongItemPenaltyRoutine()
+    {
+        isPenalty = true;
+
+        if (itemManager != null)
+            itemManager.SetAllDim(true);
+        if (guideTxt != null)
+            guideTxt.ShowGuideImmediate(wrongItemPenaltyMessage);
+
+        Debug.Log("[GameManager] 오대응 패널티 시작 - 전체 정지");
+
+        yield return new WaitForSeconds(wrongItemPenaltySeconds);
+
+        if (guideTxt != null)
+            guideTxt.HideGuide();
+        if (itemSelectManager != null)
+            itemSelectManager.RefreshUI();
+        else if (itemManager != null)
+            itemManager.SetAllDim(false);
+
+        isPenalty = false;
+        Debug.Log("[GameManager] 오대응 패널티 종료 - 제한 해제");
     }
 
     // 모든 오염원 중화 + 방호구 1 이상 + 타이머 잔여 시 클리어
@@ -240,6 +325,16 @@ public class GameManager : MonoBehaviour
         int protection = player != null ? Mathf.FloorToInt(player.curProtection) : 0;
 
         Debug.Log($"[GameManager] 스테이지 클리어 - 오염원수 {cleared}/{total} / 남은 시간: {remainSec:00}초 / 방호복 내구도: {protection:00}%");
+
+        if (stageManager != null)
+        {
+            GameSaveData saveData = GameSaveManager.BuildSaveFromClear(
+                stageManager.currentStageIndex,
+                stageManager.GetStageCount(),
+                stageManager.stageLabel,
+                stageManager.HasNextStage());
+            GameSaveManager.Save(saveData);
+        }
     }
 
     // 방호구 0 / 타임오버 / 시간 내 미정화 시 게임오버

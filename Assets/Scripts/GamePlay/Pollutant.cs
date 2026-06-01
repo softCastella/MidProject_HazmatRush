@@ -33,8 +33,8 @@ public class Pollutant : MonoBehaviour
     private static readonly string[] RecommendedItems =
     {
         "중화제",
-        "오일 흡착패드",
-        "범용 흡착 패드"
+        "오일패드", 
+        "범용패드"
     };
 
 
@@ -181,6 +181,10 @@ public class Pollutant : MonoBehaviour
         if (!other.CompareTag("Player"))
             return;
 
+        // 오대응 패널티 중에는 판정·HP 감소를 모두 멈춥니다.
+        if (GameManager.Instance != null && GameManager.Instance.IsPenalty)
+            return;
+
         Player player = other.GetComponent<Player>();
         if (player == null)
             return;
@@ -195,6 +199,10 @@ public class Pollutant : MonoBehaviour
                 Debug.Log($"{(isMatched ? "올바른 아이템입니다." : "틀린 아이템입니다.")} 추천 = {RecommendedItemType}, 선택 = {selectedType}");
                 hasLoggedContactJudge = true;
                 lastJudgeMatched = isMatched;
+
+                // 틀린 아이템으로 접촉하면 오대응 패널티(스테이지 1-1 전용)를 발동합니다.
+                if (!isMatched && GameManager.Instance != null)
+                    GameManager.Instance.TriggerWrongItemPenalty();
             }
         }
 
