@@ -81,9 +81,9 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 6024254801446027434, guid: b788f5e2d19d3aa489d1296bf9a40bdf, type: 3}
+  m_Sprite: {fileID: 7447824398099991663, guid: ed64a15260a5164488ee600a540cbf5e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -106,10 +106,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Pollutant
   type: 0
-  hp: 0
+  pollutanMaxHp: 0
+  pollutanCurHp: 0
   edgeHitRatio: 0.7
   appearDuration: 0.7
   disappearDuration: 0.7
+  pollutantSlider: {fileID: 0}
 --- !u!70 &6571695734980903087
 CapsuleCollider2D:
   m_ObjectHideFlags: 0

@@ -23,9 +23,20 @@ public class PollutantManager : MonoBehaviour
     public float spawnFadeDuration = 0.7f;
     public float despawnFadeDuration = 0.7f;
     public float popupShowDuration = 1.5f;
+
+    [Header("스테이지 클리어")]
+    public float clearPanelDelay = 1f; // 마지막 오염원 페이드아웃 후 클리어 패널까지 대기(초)
+
+    [Header("맵 구간 전환 (오염원 중화 후)")]
+    public float mapEndX = 769f;
+    public float mapEndReachDistance = 2f;
+    public float mapFadeDuration = 0.6f;
+    public CanvasGroup mapFadeOverlay;
+
     private bool awaitingSpawn = false;
     private bool pollutantSpawned = false;
     private bool returningToStart = false;
+    private bool mapTransitioning = false;
 
     // 현재 누적된 이동 시간. Player가 이동 중일 때만 시간 누적을 합니다.
     private float moveTime = 0f;
@@ -39,8 +50,14 @@ public class PollutantManager : MonoBehaviour
         if (player != null)
             player.StopAllCoroutines();
         returningToStart = false;
+        mapTransitioning = false;
         awaitingSpawn = false;
         pollutantSpawned = false;
+        if (mapFadeOverlay != null)
+        {
+            mapFadeOverlay.alpha = 0f;
+            mapFadeOverlay.blocksRaycasts = false;
+        }
     }
 
     public void ResetForStage()
@@ -100,6 +117,7 @@ public class PollutantManager : MonoBehaviour
             scroll = FindAnyObjectByType<Background>();
 
         nextSpawnTime = Random.Range(timeRange.x, timeRange.y);
+        EnsureMapFadeOverlay();
     }
 
     void Update()
@@ -139,16 +157,13 @@ public class PollutantManager : MonoBehaviour
         {
             pollutantSpawned = false;
 
-            // 마지막 오염원을 중화했다면 복귀하지 않고 그 자리에서 클리어 처리합니다.
-            if (stageManager != null && stageManager.IsAllCleared())
+            bool allCleared = stageManager != null && stageManager.IsAllCleared();
+            if (GameManager.Instance != null && !GameManager.Instance.GameEnded)
             {
-                if (GameManager.Instance != null)
-                    GameManager.Instance.TriggerClear();
-            }
-            else
-            {
-                if (GameManager.Instance == null || !GameManager.Instance.GameEnded)
-                    StartCoroutine(ReturnToStartRoutine());
+                if (allCleared)
+                    StartCoroutine(TriggerClearAfterDelay());
+                else
+                    StartCoroutine(MapAdvanceRoutine());
             }
             return;
         }
@@ -168,28 +183,143 @@ public class PollutantManager : MonoBehaviour
             scroll.ResumeScroll();
     }
 
-    // 오염원 중화 후 플레이어를 시작 지점으로 복귀시키고 다음 생성 루프를 준비합니다.
-    private IEnumerator ReturnToStartRoutine()
+    private IEnumerator TriggerClearAfterDelay()
+    {
+        if (clearPanelDelay > 0f)
+            yield return new WaitForSeconds(clearPanelDelay);
+
+        if (GameManager.Instance != null && !GameManager.Instance.GameEnded)
+            GameManager.Instance.TriggerClear();
+    }
+
+    // 오염원 중화 후 x=mapEndX까지 이동 → 페이드아웃 → 시작 위치·배경 리셋 → 페이드인 (마지막 오염원 제외)
+    private IEnumerator MapAdvanceRoutine()
     {
         if (GameManager.Instance != null && GameManager.Instance.GameEnded)
             yield break;
-        if (returningToStart)
+        if (returningToStart || mapTransitioning)
             yield break;
 
         returningToStart = true;
-
-        if (scroll != null)
-            scroll.PauseScroll();
-
-        if (player != null)
-            yield return StartCoroutine(player.AutoReturnToStart());
+        mapTransitioning = true;
 
         if (scroll != null)
             scroll.ResumeScroll();
 
+        if (player != null)
+        {
+            player.mapAdvanceRightX = mapEndX;
+            player.PrepareMapAdvanceWalk();
+        }
+
+        float reachX = mapEndX - Mathf.Max(0.1f, mapEndReachDistance);
+        while (player != null)
+        {
+            if (GameManager.Instance != null && GameManager.Instance.GameEnded)
+            {
+                mapTransitioning = false;
+                returningToStart = false;
+                yield break;
+            }
+
+            float posX = player.transform.position.x;
+            if (posX >= reachX)
+                break;
+
+            yield return null;
+        }
+
+        yield return FadeMapOverlay(1f, mapFadeDuration);
+
+        if (player != null)
+        {
+            player.ResetRange();
+            player.SnapToStartPosition();
+            player.canMove = true;
+        }
+
+        if (scroll != null)
+        {
+            scroll.ResetScrollOffset();
+            scroll.ResumeScroll();
+        }
+
+        yield return FadeMapOverlay(0f, mapFadeDuration);
+
         moveTime = 0f;
         nextSpawnTime = Random.Range(timeRange.x, timeRange.y);
+        mapTransitioning = false;
         returningToStart = false;
+    }
+
+    private void EnsureMapFadeOverlay()
+    {
+        if (mapFadeOverlay != null)
+            return;
+
+        Canvas hudCanvas = null;
+        Canvas[] canvases = FindObjectsByType<Canvas>(FindObjectsSortMode.None);
+        for (int i = 0; i < canvases.Length; i++)
+        {
+            if (canvases[i].renderMode == RenderMode.ScreenSpaceOverlay)
+            {
+                hudCanvas = canvases[i];
+                break;
+            }
+        }
+
+        if (hudCanvas == null && canvases.Length > 0)
+            hudCanvas = canvases[0];
+
+        if (hudCanvas == null)
+            return;
+
+        GameObject fadeObj = new GameObject("MapTransitionFade");
+        fadeObj.transform.SetParent(hudCanvas.transform, false);
+
+        RectTransform rt = fadeObj.AddComponent<RectTransform>();
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.offsetMin = Vector2.zero;
+        rt.offsetMax = Vector2.zero;
+
+        Image img = fadeObj.AddComponent<Image>();
+        img.color = Color.black;
+        img.raycastTarget = true;
+
+        mapFadeOverlay = fadeObj.AddComponent<CanvasGroup>();
+        mapFadeOverlay.alpha = 0f;
+        mapFadeOverlay.interactable = false;
+        mapFadeOverlay.blocksRaycasts = false;
+        fadeObj.transform.SetAsLastSibling();
+    }
+
+    private IEnumerator FadeMapOverlay(float targetAlpha, float duration)
+    {
+        EnsureMapFadeOverlay();
+        if (mapFadeOverlay == null)
+            yield break;
+
+        if (duration <= 0f)
+        {
+            mapFadeOverlay.alpha = targetAlpha;
+            mapFadeOverlay.blocksRaycasts = targetAlpha > 0.01f;
+            yield break;
+        }
+
+        float startAlpha = mapFadeOverlay.alpha;
+        mapFadeOverlay.blocksRaycasts = true;
+        float time = 0f;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            mapFadeOverlay.alpha = Mathf.Lerp(startAlpha, targetAlpha, time / duration);
+            yield return null;
+        }
+
+        mapFadeOverlay.alpha = targetAlpha;
+        mapFadeOverlay.blocksRaycasts = targetAlpha > 0.01f;
     }
 
     //오염원 생성 전 경고 메시지를 보여주고, 일정 시간이 지난 후 오염원을 생성하는 코루틴입니다.
