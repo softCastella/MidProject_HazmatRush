@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: d0dfb5e627eee42428cceff9a7cd5da1
+guid: f490b4c4ac437f342b38b355fd14a11f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3310002292416464744
-    second: image-removebg-preview_0
+      213: -9107830105481289741
+    second: TalkMedia_i_4b0737f95867.png (1)_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: image-removebg-preview_0
+      name: TalkMedia_i_4b0737f95867.png (1)_0
       rect:
         serializedVersion: 2
-        x: 120
-        y: 58
-        width: 268
-        height: 403
+        x: 6
+        y: 6
+        width: 138
+        height: 193
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 867463d3c8d7fed20800000000000000
-      internalID: 3310002292416464744
+      spriteID: 3ffdd2046cc7a9180800000000000000
+      internalID: -9107830105481289741
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      image-removebg-preview_0: 3310002292416464744
+      TalkMedia_i_4b0737f95867.png (1)_0: -9107830105481289741
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

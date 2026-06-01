@@ -22,8 +22,10 @@ public class AudioManager : MonoBehaviour
     [Header("Audio Source")]
     [Tooltip("BGM 전용. 비우면 자동 연결.")]
     public AudioSource bgmSource;
-    [Tooltip("SFX 전용(버튼음). BGM 볼륨과 따로 조절됩니다. 비우면 자동 생성.")]
+    [Tooltip("SFX 전용(버튼·클리어·게임오버). 비우면 자동 생성.")]
     public AudioSource sfxSource;
+    [Tooltip("중화 루프 SFX 전용. sfxSource와 분리해야 패널음 볼륨이 줄지 않습니다.")]
+    public AudioSource neutralizationSource;
 
     [Header("Settings")]
     [Range(0f, 1f)]
@@ -32,7 +34,7 @@ public class AudioManager : MonoBehaviour
     public float pauseBgmVolumeRatio = 0.333f;
     [Tooltip("PlayOneShot 배율. 1보다 크게 올릴 수 있습니다.")]
     [Range(0f, 3f)]
-    public float sfxVolume = 2f;
+    public float sfxVolume = 1f;
     [Tooltip("중화 SFX만 따로 낮출 때 사용 (버튼·클리어 등 sfxVolume과 별도).")]
     [Range(0f, 3f)]
     public float neutralizationSfxVolume = 0.35f;
@@ -47,6 +49,7 @@ public class AudioManager : MonoBehaviour
             DontDestroyOnLoad(gameObject);
             SetupAudioSource();
             SetupSfxSource();
+            SetupNeutralizationSource();
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else if (Instance != this)
@@ -112,6 +115,20 @@ public class AudioManager : MonoBehaviour
         sfxSource.volume = 1f;
     }
 
+    void SetupNeutralizationSource()
+    {
+        if (neutralizationSource != null)
+        {
+            neutralizationSource.playOnAwake = false;
+            return;
+        }
+
+        neutralizationSource = gameObject.AddComponent<AudioSource>();
+        neutralizationSource.playOnAwake = false;
+        neutralizationSource.loop = false;
+        neutralizationSource.volume = 1f;
+    }
+
     public void PlayButtonSfx()
     {
         PlaySfx(buttonClickClip, sfxVolume);
@@ -132,28 +149,28 @@ public class AudioManager : MonoBehaviour
         if (neutralizationClip == null)
             return;
 
-        if (sfxSource == null)
-            SetupSfxSource();
+        if (neutralizationSource == null)
+            SetupNeutralizationSource();
 
-        if (sfxSource.isPlaying && sfxSource.clip == neutralizationClip)
+        if (neutralizationSource.isPlaying && neutralizationSource.clip == neutralizationClip)
             return;
 
-        sfxSource.clip = neutralizationClip;
-        sfxSource.loop = true;
-        sfxSource.volume = neutralizationSfxVolume;
-        sfxSource.Play();
+        neutralizationSource.clip = neutralizationClip;
+        neutralizationSource.loop = true;
+        neutralizationSource.volume = neutralizationSfxVolume;
+        neutralizationSource.Play();
     }
 
     public void StopNeutralizationSfx()
     {
-        if (sfxSource == null)
+        if (neutralizationSource == null)
             return;
-        if (!sfxSource.isPlaying || sfxSource.clip != neutralizationClip)
+        if (!neutralizationSource.isPlaying)
             return;
 
-        sfxSource.Stop();
-        sfxSource.loop = false;
-        sfxSource.clip = null;
+        neutralizationSource.Stop();
+        neutralizationSource.loop = false;
+        neutralizationSource.clip = null;
     }
 
     void PlaySfx(AudioClip clip, float oneShotVolume)
@@ -164,6 +181,7 @@ public class AudioManager : MonoBehaviour
         if (sfxSource == null)
             SetupSfxSource();
 
+        sfxSource.volume = 1f;
         sfxSource.PlayOneShot(clip, oneShotVolume);
     }
 

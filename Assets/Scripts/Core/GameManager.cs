@@ -34,12 +34,18 @@ public class GameManager : MonoBehaviour
     public string wrongItemPenaltyMessage = "잘못된 아이템 선택으로 2초 후에 아이템선택이 가능합니다.";
     public float wrongItemPenaltySeconds = 2f;
 
+    [Header("Game Over")]
+    public float dieGameOverDelay = 2f; // Die 애니 후 게임오버 패널까지 대기(초)
+
     [Header("Debug")]
     public bool enableDebugKeys = true; // F1: 강제 클리어, F2: 강제 게임오버
     public bool enableDebugSaveKeys = true; // F3: 저장 로그, F4: 저장 로드 후 스테이지 적용
 
     private bool gameEnded = false;
     public bool GameEnded => gameEnded;
+
+    private bool gameOverPending = false;
+    private Coroutine gameOverDelayRoutine;
 
     private bool isPaused = false;
     public bool IsPaused => isPaused;
@@ -264,6 +270,7 @@ public class GameManager : MonoBehaviour
 
     private void ResumeAfterResult()
     {
+        CancelPendingGameOver();
         gameEnded = false;
         isPaused = false;
         Time.timeScale = 1f;
@@ -340,6 +347,34 @@ public class GameManager : MonoBehaviour
     // 방호구 0 / 타임오버 / 시간 내 미정화 시 게임오버
     public void TriggerGameOver(GameOverCause cause)
     {
+        if (gameEnded || gameOverPending)
+            return;
+
+        if (cause == GameOverCause.ProtectionDepleted && dieGameOverDelay > 0f)
+        {
+            gameOverDelayRoutine = StartCoroutine(GameOverAfterDieDelay(cause));
+            return;
+        }
+
+        FinishGameOver(cause);
+    }
+
+    private IEnumerator GameOverAfterDieDelay(GameOverCause cause)
+    {
+        gameOverPending = true;
+        FreezePlayOnResult();
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.StopNeutralizationSfx();
+
+        yield return new WaitForSeconds(dieGameOverDelay);
+
+        gameOverPending = false;
+        gameOverDelayRoutine = null;
+        FinishGameOver(cause);
+    }
+
+    private void FinishGameOver(GameOverCause cause)
+    {
         if (gameEnded)
             return;
 
@@ -350,10 +385,21 @@ public class GameManager : MonoBehaviour
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.StopBGM();
+            AudioManager.Instance.StopNeutralizationSfx();
             AudioManager.Instance.PlayGameOverSfx();
         }
 
         Debug.Log($"[GameManager] 게임 오버 - 원인: {GetCauseText(cause)}");
+    }
+
+    private void CancelPendingGameOver()
+    {
+        gameOverPending = false;
+        if (gameOverDelayRoutine != null)
+        {
+            StopCoroutine(gameOverDelayRoutine);
+            gameOverDelayRoutine = null;
+        }
     }
 
     private string GetCauseText(GameOverCause cause)

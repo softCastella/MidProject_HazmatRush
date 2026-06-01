@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: 1c2189d1f93c6164f80cace9a3a395eb
+guid: ddc082b7452e140469adffed57a39c09
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2890336272021831757
-    second: Purify_Pads_outlineFixed_0
-  - first:
-      213: 3698532057322206435
-    second: Purify_Pads_outlineFixed_1
+      213: -5027906432766726339
+    second: TalkMedia_i_84083661624c.png_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -40,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -116,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Purify_Pads_outlineFixed_0
+      name: TalkMedia_i_84083661624c.png_0
       rect:
         serializedVersion: 2
-        x: 124
-        y: 91
-        width: 139
-        height: 196
+        x: 7
+        y: 4
+        width: 260
+        height: 378
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -131,30 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d40c94796898c1820800000000000000
-      internalID: 2890336272021831757
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Purify_Pads_outlineFixed_1
-      rect:
-        serializedVersion: 2
-        x: 408
-        y: 91
-        width: 139
-        height: 195
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 3e4b51b7f43d35330800000000000000
-      internalID: 3698532057322206435
+      spriteID: d3fa9070db9493ab0800000000000000
+      internalID: -5027906432766726339
       vertices: []
       indices: 
       edges: []
@@ -173,8 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Purify_Pads_outlineFixed_0: 2890336272021831757
-      Purify_Pads_outlineFixed_1: 3698532057322206435
+      TalkMedia_i_84083661624c.png_0: -5027906432766726339
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

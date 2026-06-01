@@ -75,7 +75,8 @@ public class Pollutant : MonoBehaviour
 
     //페이드 효과 속도
     public float appearDuration = 0.7f;//페이드인 아웃 속도
-    public float disappearDuration = 0.7f;//페이드아웃 아웃 속도    
+    public float disappearDuration = 0.7f;//페이드아웃 아웃 속도
+    public int spriteSortingOrder = 0; // 플레이어(5)보다 뒤에 그림 — A/B/C 동일
     private bool isFadingOut = false;    //페이드아웃 중인지
     private bool hasLoggedContactJudge = false; //현재 접촉 구간에서 판정 로그 출력 여부
     private bool lastJudgeMatched = false;      //직전 판정 결과
@@ -107,7 +108,24 @@ public class Pollutant : MonoBehaviour
         if (spriteRenderer == null && meshRenderer == null && (childRenderers == null || childRenderers.Length == 0))
             Debug.LogWarning($"{name}: Pollutant에서 렌더러를 찾지 못했습니다. SpriteRenderer 또는 Renderer가 필요합니다.");
 
+        ApplySpriteSortingOrder();
         SetAlpha(0f);
+    }
+
+    void ApplySpriteSortingOrder()
+    {
+        if (spriteRenderer != null)
+            spriteRenderer.sortingOrder = spriteSortingOrder;
+
+        if (childRenderers == null)
+            return;
+
+        for (int i = 0; i < childRenderers.Length; i++)
+        {
+            SpriteRenderer sr = childRenderers[i] as SpriteRenderer;
+            if (sr != null)
+                sr.sortingOrder = spriteSortingOrder;
+        }
     }
 
     void OnEnable()
@@ -143,12 +161,22 @@ public class Pollutant : MonoBehaviour
         activeCount = Mathf.Max(0, activeCount - 1);
     }
 
+    bool CanProcessPlayerContact(Player player)
+    {
+        if (player == null || player.IsDead)
+            return false;
+        if (GameManager.Instance != null && (GameManager.Instance.GameEnded || GameManager.Instance.IsPenalty))
+            return false;
+        return true;
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (!other.CompareTag("Player")) return;
 
         Player player = other.GetComponent<Player>();
-        if (player == null) return;
+        if (!CanProcessPlayerContact(player))
+            return;
 
         currentPlayer = player;
 
@@ -181,13 +209,12 @@ public class Pollutant : MonoBehaviour
         if (!other.CompareTag("Player"))
             return;
 
-        // 오대응 패널티 중에는 판정·HP 감소를 모두 멈춥니다.
-        if (GameManager.Instance != null && GameManager.Instance.IsPenalty)
-            return;
-
         Player player = other.GetComponent<Player>();
-        if (player == null)
+        if (!CanProcessPlayerContact(player))
+        {
+            StopNeutralizationSfxLocal();
             return;
+        }
 
         // 1) 접촉 판정 로그를 먼저 출력 (처음 1회 + 결과가 바뀔 때)
         if (player.itemSelectManager != null)

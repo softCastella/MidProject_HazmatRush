@@ -51,12 +51,14 @@
               └ 오염원 생성 (페이드 인)
                     └ 페이드 인 ~80% 시점에 처리 안내 팝업 (1.5초)
               └ 접촉 → 중화 (오염원/방호복 HP 실시간 변화)
-        └ 오염원 중화 완료 → Scanner(기본)로 복귀, Z키 전환 잠금
-              ├ 남은 오염원 있음 → 시작 지점으로 자동 복귀(3차 이동) 후 루프 반복
-              └ 마지막 오염원 → 그 자리에서 클리어 처리
+        └ 오염원 중화 완료 → Scanner(기본)로 복귀, Z키 전환 잠금 → 페이드아웃 후 제거
+              ├ 남은 오염원 있음 → 우측 x=769까지 직접 이동 → 화면 페이드아웃
+              │     → 시작 위치·1차 범위·배경 오프셋 리셋 → 페이드인 (맵 이어짐) → 루프 반복
+              └ 마지막 오염원 → 페이드아웃 후 clearPanelDelay(기본 1초) → ClearSet 패널
 결과
   ├ 클리어  : 방호복 ≥ 1 & 시간 잔여 & 전체 오염원 중화 → ClearSet 패널
-  └ 게임오버: 방호복 0 / 타임오버 → GameOverSet 패널
+  └ 게임오버: 방호복 0 → Die 애니(1회) → dieGameOverDelay(기본 2초) → GameOverSet 패널
+      타임오버(F2 등) → 즉시 GameOverSet 패널
 ```
 
 ---
@@ -66,16 +68,14 @@
 ### 1. 플레이어 (`Player.cs`)
 
 - **방호복:** `maxProtection` / `curProtection` (float), UI는 정수 `%` 표시
-- **상태:** `Idle`, `Move`, `Die` (Animator `State` 파라미터)
+- **상태:** `Idle`, `Move` — Animator `State`(int 0/1) / **사망** — `Die` 트리거 → `Player_Die` 클립 (루프 없음, 1회만)
 - **이동:** `Rigidbody2D.MovePosition` 기반 (트리거 접촉 안정화)
-- **이동 범위(1차):** `leftLimit` ~ `rightLimit`, 오염원 생성 시 `GrowRange()`로 확장
-- **자동 복귀(3차 이동):** 오염원 중화 후 잔여 오염원이 있으면 `AutoReturnToStart()`로 시작 지점까지 자동 이동, 범위를 1차로 리셋
-  - `returnMoveSpeed`(기본 900), `returnStopDistance`(기본 0.2)로 속도·도착 판정 조절
-  - `Rigidbody2D` + `WaitForFixedUpdate` 기반 이동, `SnapToStartPosition()`으로 정확히 복귀
-  - `isReturning` 플래그로 복귀 중 입력·Idle 처리 분리, 게임 종료 시 복귀 코루틴 중단
-- **`StopMovement()`:** 클리어/게임오버 시 `GameManager.FreezePlayOnResult()`에서 호출, 이동·속도 즉시 정지
-- **일시정지·게임 종료 중 입력 차단** (`IsPaused`, `GameEnded`), 복귀 중(`isReturning`)은 예외 처리
-- **사망:** 방호복 0 이하 시 `Die` 상태 → `GameManager.TriggerGameOver()` 호출
+- **이동 범위(1차):** `leftLimit` ~ `rightLimit` (기본 -785 ~ -403), 오염원 생성 시 `GrowRange()`로 확장
+- **맵 구간 전환:** 잔여 오염원이 있을 때 중화 후 `PrepareMapAdvanceWalk()`로 우측 `mapAdvanceRightX`(기본 769)까지 이동 → `PollutantManager`가 페이드 전환 후 시작 위치·배경 리셋
+- **`AutoReturnToStart()`:** 코드에만 남음 (현재 `PollutantManager`에서는 미사용)
+- **`StopMovement()`:** 클리어/게임오버·사망 대기 중 `GameManager`에서 호출, 이동·속도 즉시 정지
+- **일시정지·게임 종료 중 입력 차단** (`IsPaused`, `GameEnded`), 맵 전환 중(`returningToStart`)은 예외 처리
+- **사망:** 방호복 0 → `SetTrigger("Die")` → `dieGameOverDelay`(기본 2초) 후 `GameManager` 게임오버 패널 (방호복 소진만 지연)
 
 ### 2. 오염원 (`Pollutant.cs`)
 
@@ -93,6 +93,9 @@
 - 해제 시 오염원 HP를 `pollutanMaxHp`로 초기화, 슬라이더 숨김
 
 오염원 HP 0 이하 → 중화 SFX 정지 · Scanner 복귀(`ItemSelectManager.ResetToDefault()`) → 페이드아웃 후 제거 · `StageManager.AddClearedPollutant()` 호출.
+
+- **플레이어 사망·게임오버·패널티 중** 접촉 판정·HP·중화 SFX 처리 안 함 (`CanProcessPlayerContact`)
+- **스프라이트 정렬:** `spriteSortingOrder`(기본 0)로 A/B/C 동일 — 플레이어(5)보다 뒤에 그림
 
 ### 3. 아이템 (`Item.cs`, `ItemSelectManager.cs`)
 
@@ -123,7 +126,8 @@ OilPad      → DPS 8
 - 경고 깜빡임(`WarningTxt`) → **Z키 안내**(`GuideTxt`, `itemSelectHintDuration` 기본 2초) → 오염원 스폰 → 페이드 인 → 처리 안내 팝업
 - 안내 문구 2초는 **표시 시간만** 해당. Z키 전환은 경고 표시 후 ~ 오염원 중화까지 유지
 - 생성 시 배경 스크롤 일시정지
-- 오염원 중화 후: 잔여 오염원 있으면 플레이어 자동 복귀, **마지막이면 `GameManager.TriggerClear()`**
+- 오염원 중화 후: 잔여 오염원 있으면 **맵 구간 전환** (`mapEndX`, `mapFadeDuration`) / 마지막이면 페이드아웃 후 `clearPanelDelay` 뒤 `TriggerClear()`
+- 인스펙터: `mapEndX`(769), `mapEndReachDistance`, `mapFadeDuration`, `clearPanelDelay`
 
 ### 5. HP 바 (`WorldSpaceUIFollower.cs`)
 
@@ -136,8 +140,9 @@ OilPad      → DPS 8
 - `GameManager` (씬 싱글톤): 클리어 / 게임 오버 / 일시정지 제어
   - 클리어 조건: 방호복 ≥ 1 & 시간 잔여 & 전체 오염원 중화
   - 게임 오버 원인: `ProtectionDepleted`, `TimeOver`, `Debug`
+  - **방호복 소진:** Die 애니 재생 중 `dieGameOverDelay`(기본 2초) 후 패널·게임오버 SFX (타임오버·F2는 즉시)
   - **`FreezePlayOnResult()`:** 타이머 정지 · `Player.StopMovement()` · `PollutantManager.StopReturnFlow()`
-  - 클리어/게임오버 시 BGM 정지 + 결과 SFX, 스테이지 재시작·다음 스테이지 시 게임 BGM 재생
+  - 클리어/게임오버 시 BGM 정지 + 결과 SFX, 중화 SFX 정지, 스테이지 재시작·다음 스테이지 시 게임 BGM 재생
   - 결과/원인은 **Console 로그로만** 출력 (패널 텍스트는 미사용)
   - `Time.timeScale` 기반 일시정지 (`ESC` / `PauseSet` 패널)
 - `StageManager`: `stageLabel`, `totalPollutants`, `clearedPollutants` 관리 + `IsAllCleared()`
@@ -154,9 +159,9 @@ OilPad      → DPS 8
 
 - DontDestroyOnLoad 싱글톤 (BGM 씬 전환 중 유지)
 - **BGM:** 타이틀 / 게임 (`PlayTitleBGM()` / `PlayGameBGM()` / `StopBGM()`), 씬 로드 시 자동 전환
-- **SFX (PlayOneShot):** 버튼 클릭 · 클리어(`clearSFX`) · 게임오버(`game-overSFX`)
-- **중화 SFX:** 정답 아이템 접촉 중 `neutralizationSFX` 루프 재생, `neutralizationSfxVolume`으로 별도 볼륨 조절
-- BGM / SFX 소스 분리 (`bgmSource`, `sfxSource`)
+- **SFX (PlayOneShot, `sfxSource`):** 버튼 · 클리어 · 게임오버 — `sfxVolume`으로 크기 조절 (`sfxSource.volume`은 항상 1)
+- **중화 SFX (`neutralizationSource` 별도):** 정답 접촉 중 루프, `neutralizationSfxVolume`만 적용 (패널음과 볼륨 간섭 없음)
+- BGM / UI SFX / 중화 SFX 소스 3분리 (`bgmSource`, `sfxSource`, `neutralizationSource`)
 
 ```text
 Assets/Audio/SFX/
@@ -215,7 +220,7 @@ Assets/
 │   └── Item/          # Scanner, Neutralizer, GeneralPad, OilPad
 ├── Audio/SFX/         # 버튼·클리어·게임오버·중화 효과음
 ├── UI/                # HUD·슬롯·결과 패널용 스프라이트 (2026-05-31 UI 교체 분 포함)
-└── Animations/        # Player Idle / Move
+└── Animations/        # Player Idle / Move / Die (Animator: State int, Die Trigger)
 ```
 
 ### HUD_Canvas 구성 (주요 패널)
@@ -244,7 +249,8 @@ HUD_Canvas
 ### 결과 테스트
 
 - **클리어:** `StageManager.totalPollutants`를 작게(예: 1) 두고 실제 중화, 또는 `F1`
-- **게임 오버:** 오염원에 계속 접촉해 방호복 소진, `Timer.startSeconds`를 짧게 두고 타임오버, 또는 `F2`
+- **게임 오버:** 방호복 소진 시 Die 애니 → 약 2초 후 패널 / 타임오버·`F2`는 즉시 패널
+- **맵 전환:** 오염원 1개 중화 후 우측 끝(769)까지 걸어가 페이드 확인
 
 ### 디버그 로그
 
@@ -269,25 +275,36 @@ HUD_Canvas
 - **아이템 선택 단계형 로직** (이동 중 Scanner 고정 → 경고 후 전환 → 중화 후 리셋)
 - 아이템 선택 HUD (`Z`, Scanner 딤 처리)
 - **결과·중화 SFX** (클리어 / 게임오버 / 중화 루프) 및 BGM 연동
-- **플레이어 자동 복귀 안정화** (FixedUpdate 이동, 도착 거리, 게임 종료 시 중단)
-- **결과 시 플레이 동결** (`FreezePlayOnResult`, 복귀 코루틴·타이머 정지)
+- **맵 구간 전환** (중화 후 x=769 이동 → 페이드 → 시작 위치·배경 리셋)
+- **결과 시 플레이 동결** (`FreezePlayOnResult`, 맵 전환·타이머 정지)
 - **TitleScene / GameScene UI·오디오 클립 연결** (로컬, 미푸시)
 - 접촉 시 방호복 / 오염원 HP 초당 감소 (정답 아이템일 때만 오염원 감소)
 - 접촉 해제 시 오염원 HP 초기화
 - 오염원/방호복 HP 바 (월드 추적, 중화 모드 중에만 표시)
-- 오염원 중화 후 플레이어 자동 복귀(3차 이동) 및 루프
-- 스테이지 클리어 / 게임 오버 판정 및 패널 연동
+- 오염원 중화 후 맵 구간 전환(페이드) 및 루프
+- **플레이어 Die 애니** + 방호복 소진 시 게임오버 패널 지연
+- 스테이지 클리어(마지막 오염원 페이드 후 지연) / 게임 오버 판정 및 패널 연동
 - 일시정지(ESC / 패널 버튼) 및 `Time.timeScale` 처리
 - 디버그 강제 클리어/게임오버(F1/F2)
 
 ### 미구현 / 보류
 
-- 사망 Die 애니메이션 + 페이드아웃 (코드 롤백 상태)
+- 사망 후 페이드아웃 연출 (Die 애니만 적용, 페이드 코루틴 없음)
 - 멀티 스테이지 진행 (씬 분리 또는 StageData 기반 — 설계 검토 단계)
 
 ---
 
 ## 변경 이력
+
+### 2026-06-01
+
+| 영역 | 내용 |
+|------|------|
+| 맵 전환 | 오염원 중화 후 자동 복귀 대신 x=`mapEndX`(769)까지 이동 → 페이드 → 시작 위치·`Background.ResetScrollOffset()` |
+| 클리어 | 마지막 오염원: 페이드아웃 완료 후 `clearPanelDelay`(기본 1초) 뒤 ClearSet |
+| 사망 | Animator `Die` 트리거 → `Player_Die`(루프 OFF), `dieGameOverDelay`(기본 2초) 후 GameOverSet |
+| 오염원 | 사망·게임오버 중 접촉·중화 SFX 차단, A/B/C `spriteSortingOrder` 통일 |
+| 오디오 | `neutralizationSource` 분리 — 중화 루프가 패널·버튼 SFX 볼륨을 깎지 않음 |
 
 ### 2026-05-31 (로컬 작업 · GitHub 미푸시)
 
@@ -353,4 +370,6 @@ Docs/       README.md
 - 오염원 타입별 `pollutanMaxHp` / `pollutantDps`는 `Pollutant.SetHpByType()`, 아이템 DPS는 `Item.GetDps()`에서 설정
 - 결과 패널은 **활성화만** 담당하고, 상세 정보는 Console 로그로 출력
 - `DontDestroyOnLoad`는 상태 유지가 필요한 `AudioManager`에만 사용 (UI/씬 매니저는 씬별 컴포넌트로 유지)
+- 플레이어 스프라이트 시트(`LabNPCs`)는 애니 프레임마다 **Bottom Center** 피벗 통일 권장 (높이 다른 프레임 시 발 위치 흔들림 방지)
+- `PollutantManager.mapFadeOverlay` 비우면 실행 시 검은 전체 화면 오버레이 자동 생성
 - 로컬 변경 사항은 Git에 커밋되지 않았을 수 있으므로, 배포 전 `git status`로 확인 권장

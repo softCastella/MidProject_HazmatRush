@@ -92,6 +92,16 @@ public class Background : MonoBehaviour
         isPaused = true; // 배경 스크롤을 멈춥니다.
     }
 
+    // 맵 구간 전환 시 처음 화면과 같이 스크롤 오프셋을 초기화합니다.
+    public void ResetScrollOffset()
+    {
+        offsetX = 0f;
+        currentScrollSpeed = 0f;
+        scrollVelocity = 0f;
+        if (rend != null && rend.material != null && !string.IsNullOrEmpty(textureProperty))
+            rend.material.SetTextureOffset(textureProperty, Vector2.zero);
+    }
+
     // 배경 스크롤을 다시 시작합니다.
     public void ResumeScroll()
     {

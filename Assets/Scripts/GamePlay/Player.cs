@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
     public float returnStopDistance = 0.2f; // 이 거리 안이면 복귀 완료
     public float leftLimit = -785f; // 왼쪽 이동 제한
     public float rightLimit = -403f; // 오른쪽 이동 제한
+    public float mapAdvanceRightX = 769f; // 오염원 중화 후 맵 전환 구간 끝 X
     public float maxProtection = 100f; // 방호복 최대 수치
     public float curProtection; // 현재 방호복 수치
     public TMP_Text protectionNumText; // 방호복 수치 표시 텍스트
@@ -37,6 +38,9 @@ public class Player : MonoBehaviour
     private Vector3 startPosition; // 게임 시작 시 플레이어 위치
     private PlayerState currentState = PlayerState.Idle;
     private bool isReturning = false;
+    private bool dieAnimPlayed = false;
+
+    public bool IsDead => currentState == PlayerState.Die;
 
     void Awake()
     {
@@ -98,7 +102,8 @@ public class Player : MonoBehaviour
             {
                 isMoving = false;
                 hasInput = false;
-                SetState(currentState == PlayerState.Die ? PlayerState.Die : PlayerState.Idle);
+                if (currentState != PlayerState.Die)
+                    SetState(PlayerState.Idle);
             }
             return;
         }
@@ -143,6 +148,15 @@ public class Player : MonoBehaviour
     {
         leftLimit = startLeft;
         rightLimit = startRight;
+    }
+
+    // 오염원 중화 후 맵 끝까지 우측 이동만 허용합니다.
+    public void PrepareMapAdvanceWalk()
+    {
+        ResetRange();
+        rightLimit = mapAdvanceRightX;
+        canMove = true;
+        isReturning = false;
     }
 
     public void StopMovement()
@@ -279,6 +293,13 @@ public class Player : MonoBehaviour
         SnapToStartPosition();
 
         transform.localScale = new Vector3(1f, 1f, 1f);
+        dieAnimPlayed = false;
+        if (anim != null)
+        {
+            anim.ResetTrigger("Die");
+            anim.SetInteger("State", 0);
+            anim.Play("Player_Idle", 0, 0f);
+        }
         SetState(PlayerState.Idle);
         canMove = true;
         isMoving = false;
@@ -286,7 +307,7 @@ public class Player : MonoBehaviour
         gameObject.SetActive(true);
     }
 
-    void SnapToStartPosition()
+    public void SnapToStartPosition()
     {
         if (rb != null)
         {
@@ -299,6 +320,20 @@ public class Player : MonoBehaviour
     private void SetState(PlayerState nextState)
     {
         if (currentState == nextState)
+            return;
+
+        if (nextState == PlayerState.Die)
+        {
+            currentState = PlayerState.Die;
+            if (anim != null && !dieAnimPlayed)
+            {
+                dieAnimPlayed = true;
+                anim.SetTrigger("Die");
+            }
+            return;
+        }
+
+        if (currentState == PlayerState.Die)
             return;
 
         currentState = nextState;
