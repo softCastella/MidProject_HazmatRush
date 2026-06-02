@@ -1,17 +1,25 @@
+using System;
 using System.IO;
 using Newtonsoft.Json;
 using UnityEngine;
 
 public static class GameSaveManager
 {
+    private const string SaveFolderName = "HazmatRush_Save";
     private const string SaveFileName = "gamesave.json";
 
-    public static string SaveFilePath => Path.Combine(Application.persistentDataPath, SaveFileName);
+    public static string SaveDirectoryPath =>
+        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), SaveFolderName);
+
+    public static string SaveFilePath => Path.Combine(SaveDirectoryPath, SaveFileName);
 
     public static void Save(GameSaveData data)
     {
         if (data == null)
             return;
+
+        if (!Directory.Exists(SaveDirectoryPath))
+            Directory.CreateDirectory(SaveDirectoryPath);
 
         string json = JsonConvert.SerializeObject(data);
         File.WriteAllText(SaveFilePath, json);
