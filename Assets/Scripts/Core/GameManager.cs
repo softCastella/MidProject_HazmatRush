@@ -55,6 +55,13 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Debug.LogWarning("[GameManager] 중복 GameManager 제거");
+            Destroy(gameObject);
+            return;
+        }
+
         Instance = this;
         Time.timeScale = 1f;
 
@@ -156,6 +163,9 @@ public class GameManager : MonoBehaviour
         if (gameEnded || isPaused)
             return;
 
+        if (pollutantManager != null && pollutantManager.BlocksPause)
+            return;
+
         isPaused = true;
         Time.timeScale = 0f;
         if (pauseSet != null)
@@ -208,7 +218,7 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("[GameManager] 오대응 패널티 시작 - 전체 정지");
 
-        yield return new WaitForSeconds(wrongItemPenaltySeconds);
+        yield return new WaitForSecondsRealtime(wrongItemPenaltySeconds);
 
         if (guideTxt != null)
             guideTxt.HideGuide();
@@ -366,7 +376,7 @@ public class GameManager : MonoBehaviour
         if (AudioManager.Instance != null)
             AudioManager.Instance.StopNeutralizationSfx();
 
-        yield return new WaitForSeconds(dieGameOverDelay);
+        yield return new WaitForSecondsRealtime(dieGameOverDelay);
 
         gameOverPending = false;
         gameOverDelayRoutine = null;
@@ -404,12 +414,12 @@ public class GameManager : MonoBehaviour
 
     private string GetCauseText(GameOverCause cause)
     {
-        return cause switch
-        {
-            GameOverCause.ProtectionDepleted => "방호복 내구도 소진",
-            GameOverCause.TimeOver => "시간 초과 (제한 시간 내 정화 실패)",
-            GameOverCause.Debug => "디버그 강제 종료",
-            _ => "알 수 없음"
-        };
+        if (cause == GameOverCause.ProtectionDepleted)
+            return "방호복 내구도 소진";
+        if (cause == GameOverCause.TimeOver)
+            return "시간 초과 (제한 시간 내 정화 실패)";
+        if (cause == GameOverCause.Debug)
+            return "디버그 강제 종료";
+        return "알 수 없음";
     }
 }

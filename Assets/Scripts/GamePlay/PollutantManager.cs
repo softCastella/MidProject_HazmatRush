@@ -38,6 +38,9 @@ public class PollutantManager : MonoBehaviour
     private bool returningToStart = false;
     private bool mapTransitioning = false;
 
+    // 맵 전환·스폰 준비 중에는 ESC 일시정지를 막습니다 (timeScale=0이면 코루틴이 멈춤).
+    public bool BlocksPause => returningToStart || mapTransitioning || awaitingSpawn;
+
     // 현재 누적된 이동 시간. Player가 이동 중일 때만 시간 누적을 합니다.
     private float moveTime = 0f;
 
@@ -73,6 +76,8 @@ public class PollutantManager : MonoBehaviour
                 Destroy(activePollutants[i].gameObject);
         }
 
+        Pollutant.ResetActiveCount();
+
         if (warningTxt != null)
             warningTxt.HideWarning();
         if (guideTxt != null)
@@ -85,6 +90,8 @@ public class PollutantManager : MonoBehaviour
 
     void Awake()
     {
+        Pollutant.ResetActiveCount();
+
         // Player를 Inspector에 할당하지 않았다면 씬에서 자동으로 검색합니다.
         if (player == null)
             player = FindAnyObjectByType<Player>();
@@ -186,7 +193,7 @@ public class PollutantManager : MonoBehaviour
     private IEnumerator TriggerClearAfterDelay()
     {
         if (clearPanelDelay > 0f)
-            yield return new WaitForSeconds(clearPanelDelay);
+            yield return new WaitForSecondsRealtime(clearPanelDelay);
 
         if (GameManager.Instance != null && !GameManager.Instance.GameEnded)
             GameManager.Instance.TriggerClear();
@@ -409,12 +416,17 @@ public class PollutantManager : MonoBehaviour
                 poll.appearDuration = spawnFadeDuration;
                 poll.disappearDuration = despawnFadeDuration;
                 poll.pollutantSlider = pollutantSlider;
+                created.SetActive(true);
 
                 // 3단계: 페이드인이 거의 끝날 때 팝업 표시
                 string popupMsg = poll.PopupText;
                 Debug.Log(popupMsg);
                 if (popupUI != null)
                     StartCoroutine(ShowPopupAfterFadeIn(popupMsg, spawnFadeDuration));
+            }
+            else
+            {
+                created.SetActive(true);
             }
 
             if (scroll != null)
@@ -450,7 +462,7 @@ public class PollutantManager : MonoBehaviour
     private IEnumerator ShowPopupAfterFadeIn(string message, float fadeInDuration)
     {
         // 페이드인이 거의 끝날 때 (80% 시점) 팝업 표시
-        yield return new WaitForSeconds(fadeInDuration * 0.8f);
+        yield return new WaitForSecondsRealtime(fadeInDuration * 0.8f);
         if (popupUI != null)
             popupUI.Show(message, popupShowDuration);
     }

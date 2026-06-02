@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MidProject — 학생 프로젝트 완료·발표 자료 (초안)</title>
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --card: #ffffff;
+      --text: #1a2332;
+      --muted: #5c6b7a;
+      --accent: #1e6b5c;
+      --accent-light: #e8f4f1;
+      --border: #dde3ea;
+      --warn: #9a6b00;
+      --ok: #1a7f4e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+      color: var(--text);
+      background: var(--bg);
+    }
+    .wrap { max-width: 920px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+    header.cover {
+      background: linear-gradient(135deg, #1e6b5c 0%, #2d4a6f 100%);
+      color: #fff;
+      padding: 2.5rem 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+    }
+    header.cover h1 { margin: 0 0 0.5rem; font-size: 1.85rem; font-weight: 700; }
+    header.cover .sub { opacity: 0.92; font-size: 1.05rem; }
+    header.cover .meta { margin-top: 1.25rem; font-size: 0.9rem; opacity: 0.85; }
+    nav.toc {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+    nav.toc h2 { margin: 0 0 0.75rem; font-size: 1rem; color: var(--muted); }
+    nav.toc ol { margin: 0; padding-left: 1.25rem; }
+    nav.toc a { color: var(--accent); text-decoration: none; }
+    nav.toc a:hover { text-decoration: underline; }
+    nav.toc .part { margin-top: 0.75rem; font-weight: 600; color: var(--muted); font-size: 0.85rem; }
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+    section.appendix { border-style: dashed; background: #fafbfc; }
+    section h2 {
+      margin: 0 0 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--accent-light);
+      font-size: 1.35rem;
+      color: var(--accent);
+    }
+    section h3 { margin: 1.25rem 0 0.5rem; font-size: 1.05rem; }
+    p { margin: 0.5rem 0; }
+    ul, ol { margin: 0.5rem 0; padding-left: 1.4rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+      margin: 0.75rem 0;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.55rem 0.75rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: var(--accent-light); font-weight: 600; }
+    .fill { background: #f8fafc; color: var(--muted); font-style: italic; }
+    .tag-ok { color: var(--ok); font-weight: 600; }
+    .tag-partial { color: var(--warn); font-weight: 600; }
+    .tag-no { color: #a33; font-weight: 600; }
+    pre.flow {
+      background: #f0f3f6;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      overflow-x: auto;
+      white-space: pre;
+      font-family: Consolas, "Courier New", monospace;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .shot-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+    .shot {
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      min-height: 140px;
+      padding: 0.75rem;
+      background: #f8fafc;
+      text-align: center;
+    }
+    .shot strong { display: block; margin-bottom: 0.35rem; color: var(--accent); font-size: 0.95rem; }
+    .shot span { font-size: 0.82rem; color: var(--muted); }
+    .timeline td:first-child { width: 72px; font-weight: 600; white-space: nowrap; }
+    .note {
+      background: #fff9e6;
+      border-left: 4px solid #e6b800;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0;
+      font-size: 0.92rem;
+    }
+    .script {
+      background: var(--accent-light);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 2rem;
+    }
+    @media (max-width: 640px) {
+      .grid-2, .shot-grid { grid-template-columns: 1fr; }
+    }
+    @media print {
+      body { background: #fff; }
+      .wrap { max-width: 100%; }
+      section, nav.toc { break-inside: avoid; page-break-inside: avoid; }
+      header.cover { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <header class="cover">
+      <h1>2D 오염 대응 시뮬레이션 게임</h1>
+      <p class="sub">학생 프로젝트 · 완료 보고서 · 발표 자료 (초안)</p>
+      <p class="meta">
+        프로젝트명: MidProject · Unity 6000.4.8f1 · C#<br />
+        제출일: 2026년 __월 __일
+      </p>
+    </header>
+
+    <nav class="toc">
+      <h2>목차</h2>
+      <p class="part">■ 발표·보고 (교수·동료용)</p>
+      <ol>
+        <li><a href="#cover-info">표지·제출 정보</a></li>
+        <li><a href="#presentation-plan">발표 구성 (약 7분)</a></li>
+        <li><a href="#summary">프로젝트 요약</a></li>
+        <li><a href="#background">기획 배경</a></li>
+        <li><a href="#goal">게임 규칙·컨셉</a></li>
+        <li><a href="#goals-result">초기 목표 vs 최종 결과</a></li>
+        <li><a href="#screenshots">시연 화면 (캡처 삽입)</a></li>
+        <li><a href="#learnings">어려웠던 점·배운 점</a></li>
+        <li><a href="#status-brief">구현 현황 요약</a></li>
+        <li><a href="#demo">시연 체크리스트</a></li>
+        <li><a href="#closing">마무리·제작 정보</a></li>
+      </ol>
+      <p class="part">■ 부록 (기술 상세·제출 서류용)</p>
+      <ol start="12">
+        <li><a href="#tech">기술 스택</a></li>
+        <li><a href="#scenes">씬·게임 흐름</a></li>
+        <li><a href="#systems">핵심 시스템</a></li>
+        <li><a href="#data">데이터·저장</a></li>
+        <li><a href="#appendix-detail">구현·안정성 상세</a></li>
+      </ol>
+    </nav>
+
+    <!-- ========== 발표·보고 본문 ========== -->
+
+    <section id="cover-info">
+      <h2>1. 표지·제출 정보</h2>
+      <p class="note">아래 <span class="fill">회색 이탤릭</span> 칸은 발표 전에 직접 채워 넣으세요.</p>
+      <table>
+        <tr><th style="width:28%">항목</th><th>내용</th></tr>
+        <tr><td>과목명</td><td class="fill">(예: 게임 프로그래밍 / 졸업작품 / 캡스톤)</td></tr>
+        <tr><td>지도 교수</td><td class="fill">(이름)</td></tr>
+        <tr><td>팀명 / 조</td><td class="fill">(팀명 또는 개인)</td></tr>
+        <tr><td>제작자</td><td class="fill">(학번 · 이름)</td></tr>
+        <tr><td>개발 기간</td><td class="fill">(예: 2026.03 ~ 2026.06)</td></tr>
+        <tr><td>발표 일시</td><td class="fill">(날짜 · 발표 시간 __분)</td></tr>
+      </table>
+    </section>
+
+    <section id="presentation-plan">
+      <h2>2. 발표 구성 (약 7분 기준)</h2>
+      <p>PPT로 옮길 때는 <strong>한 섹션 = 슬라이드 1~2장</strong> 정도로 나누면 됩니다.</p>
+      <table class="timeline">
+        <thead>
+          <tr><th>시간</th><th>내용</th><th>하는 일</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>0:00</td><td>인사·주제</td><td>「유해 물질 대응을 연습하는 2D Unity 게임」한 줄 소개</td></tr>
+          <tr><td>0:30</td><td>기획 배경</td><td>왜 만들었는지 — 안전·교육 목적 (§3)</td></tr>
+          <tr><td>1:30</td><td>게임 설명</td><td>오염원 3종·아이템 매칭·방호복·시간 (§5 표)</td></tr>
+          <tr><td>2:30</td><td><strong>라이브 시연</strong></td><td>시작 → 경고 → Z키 → 정답 중화 → (가능하면) 클리어 (§10)</td></tr>
+          <tr><td>5:00</td><td>구현 하이라이트</td><td>3스테이지·저장·이어하기·로딩 씬 (§6·§9)</td></tr>
+          <tr><td>6:00</td><td>어려움·배운 점</td><td>2~3가지만 쉬운 말로 (§8)</td></tr>
+          <tr><td>6:30</td><td>한계·마무리</td><td>미구현 1~2개 + 소감 + Q&amp;A (§9·§11)</td></tr>
+        </tbody>
+      </table>
+      <h3>발표 멘트 (도입 30초 예시)</h3>
+      <div class="script">
+        안녕하세요. 오늘 발표 주제는 <strong>2D 오염 대응 시뮬레이션 게임</strong>입니다.
+        플레이어는 현장처럼 이동하다 오염원을 만나고, 물질 종류에 맞는 장비를 고른 뒤
+        제한 시간 안에 중화하는 게임입니다. 잠시 후 직접 플레이 화면도 보여 드리겠습니다.
+      </div>
+    </section>
+
+    <section id="summary">
+      <h2>3. 프로젝트 요약</h2>
+      <p>
+        <strong>MidProject</strong>는 2D 횡스크롤에서 화학·유해 오염물질을 탐지하고,
+        <strong>오염원 유형에 맞는 대응 아이템</strong>으로만 중화하는 Unity 게임입니다.
+      </p>
+      <p>
+        방호복 HP와 제한 시간을 지키며 스테이지별 오염원을 모두 처리하면 클리어합니다.
+        틀린 아이템으로 접촉하면 방호복만 줄고, 오염원은 줄지 않습니다.
+      </p>
+      <p><strong>한 줄 플레이 루프:</strong> 이동 → 경고 → 아이템 선택(Z) → 접촉 중화 → 맵 진행 또는 클리어</p>
+    </section>
+
+    <section id="background">
+      <h2>4. 기획 배경</h2>
+      <h3>왜 이 게임인가</h3>
+      <ul>
+        <li>화학·유해 물질 사고 현장에서는 <strong>물질 종류 파악 → 맞는 대응</strong>이 중요합니다.</li>
+        <li>실제 훈련은 비용·안전 부담이 크므로, <strong>게임으로 반복 연습</strong>할 수 있는 환경을 목표로 했습니다.</li>
+        <li>「틀린 도구를 쓰면 피해만 커진다」는 규칙을 플레이로 체험하게 하고 싶었습니다.</li>
+      </ul>
+      <h3>대상·기대 효과</h3>
+      <ul>
+        <li><strong>대상:</strong> 게임/Unity 학습자, 안전 교육 콘텐츠 시연용</li>
+        <li><strong>효과:</strong> 오염원 타입(A/B/C)과 대응 수단(중화제·패드 등)의 관계를 짧은 플레이로 기억</li>
+      </ul>
+      <p class="fill">(선택) 수업·팀 미션에서 요구한 범위: ___________________________</p>
+    </section>
+
+    <section id="goal">
+      <h2>5. 게임 규칙·컨셉</h2>
+      <h3>플레이어가 할 일</h3>
+      <ul>
+        <li>가이드 종료 후 좌우 이동, 일정 시간 이동 시 오염원 경고</li>
+        <li>Z키로 대응 아이템 선택 후 접촉해 중화</li>
+        <li>스테이지 오염원을 시간 내 전부 처리 → 클리어</li>
+        <li>방호복 0 또는 시간 초과 → 게임 오버</li>
+      </ul>
+      <h3>오염원·아이템 (발표 슬라이드용)</h3>
+      <table>
+        <thead>
+          <tr><th>오염원</th><th>예시</th><th>맞는 아이템</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>A 부식성</td><td>염산, 황산</td><td>중화제</td></tr>
+          <tr><td>B 유류</td><td>폐유, 윤활유</td><td>오일 흡착패드</td></tr>
+          <tr><td>C 혼합</td><td>폐산 혼합액</td><td>범용 패드</td></tr>
+          <tr><td colspan="3">스캐너 — 탐지용(이동 중), 중화 데미지 없음</td></tr>
+        </tbody>
+      </table>
+      <h3>조작</h3>
+      <table>
+        <tr><th>키</th><th>동작</th></tr>
+        <tr><td>← → / A D</td><td>이동</td></tr>
+        <tr><td>Z</td><td>아이템 변경 (경고 후 ~ 중화 전)</td></tr>
+        <tr><td>ESC</td><td>일시정지</td></tr>
+      </table>
+    </section>
+
+    <section id="goals-result">
+      <h2>6. 초기 목표 vs 최종 결과</h2>
+      <table>
+        <thead>
+          <tr><th>구분</th><th>처음 목표</th><th>최종 결과</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>핵심 플레이</td><td>이동·접촉·아이템 매칭 중화</td><td class="tag-ok">완료</td></tr>
+          <tr><td>스테이지</td><td>1스테이지 MVP</td><td class="tag-ok">JSON 3스테이지 (난이도·오염원 조합 증가)</td></tr>
+          <tr><td>씬 구성</td><td>타이틀 + 게임</td><td class="tag-ok">타이틀 + 로딩 + 게임</td></tr>
+          <tr><td>저장</td><td>(선택) 이어하기</td><td class="tag-ok">클리어 시 저장, 타이틀 이어하기</td></tr>
+          <tr><td>연출</td><td>경고·페이드·BGM/SFX</td><td class="tag-ok">완료 (사망 페이드아웃은 보류)</td></tr>
+          <tr><td>점수·별점</td><td>시간 있으면</td><td class="tag-no">미구현</td></tr>
+          <tr><td>배경 스테이지별 변경</td><td>데이터만 준비</td><td class="tag-no">JSON 필드만, 연동 미완</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section id="screenshots">
+      <h2>7. 시연 화면 (캡처 삽입)</h2>
+      <p>Unity Play 중 <strong>Win + Shift + S</strong> 등으로 캡처한 뒤, 아래 칸에 이미지를 붙이거나 PPT에 넣으세요.</p>
+      <div class="shot-grid">
+        <div class="shot">
+          <strong>① 타이틀</strong>
+          <span>Start만 / Continue(이어하기) 화면</span>
+        </div>
+        <div class="shot">
+          <strong>② 로딩</strong>
+          <span>LoadingScene 페이드·진행 바</span>
+        </div>
+        <div class="shot">
+          <strong>③ 경고·Z키 안내</strong>
+          <span>WarningTxt + GuideTxt</span>
+        </div>
+        <div class="shot">
+          <strong>④ 중화 접촉</strong>
+          <span>HP 바 + 정답 아이템</span>
+        </div>
+        <div class="shot">
+          <strong>⑤ 맵 전환</strong>
+          <span>우측 이동 후 페이드 (선택)</span>
+        </div>
+        <div class="shot">
+          <strong>⑥ 클리어 / 게임오버</strong>
+          <span>ClearSet 또는 GameOverSet</span>
+        </div>
+      </div>
+      <p class="note">HTML에 사진을 넣으려면: <code>&lt;img src="images/title.png" alt="타이틀" style="max-width:100%"&gt;</code> — <code>Assets/Docs/images/</code> 폴더에 png 저장 후 경로 연결.</p>
+    </section>
+
+    <section id="learnings">
+      <h2>8. 어려웠던 점·배운 점</h2>
+      <p>발표에서는 아래 3가지만 말해도 충분합니다. (코드 이름은 슬라이드에 작게만)</p>
+      <table>
+        <thead>
+          <tr><th>어려움</th><th>해결·배운 것</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>접촉할 때 방호복·오염원 HP가 동시에 변함</td>
+            <td>접촉 유지 중에만 데미지를 주고, <strong>맞는 아이템일 때만</strong> 오염원 HP가 줄도록 순서를 정리함. Unity 트리거(Trigger) 이해.</td>
+          </tr>
+          <tr>
+            <td>씬이 여러 개(타이틀·로딩·게임)일 때 진행이 끊김</td>
+            <td>로딩 씬에서 게임 씬을 미리 읽고, <strong>이어할 스테이지 번호</strong>를 넘기는 방식으로 연결. JSON으로 스테이지 데이터 분리.</td>
+          </tr>
+          <tr>
+            <td>경고·페이드·맵 이동이 겹치면 버그</td>
+            <td>코루틴(시간 지연)과 일시정지가 충돌하지 않게, 맵 전환 중에는 pause를 막고 대기 시간은 실시간 기준으로 처리.</td>
+          </tr>
+        </tbody>
+      </table>
+      <h3>Unity·C#에서 배운 것 (소갬용)</h3>
+      <ul>
+        <li>2D 이동(Rigidbody2D), UI(TextMeshPro), Animator 상태 전환</li>
+        <li>씬 전환, 싱글톤으로 BGM 유지, JSON 파일 읽기</li>
+        <li>기능을 나누는 방법 (플레이어 / 오염원 / 게임 진행 / UI)</li>
+      </ul>
+      <p class="fill">개인 소감 (2~3문장): _________________________________________________</p>
+    </section>
+
+    <section id="status-brief">
+      <h2>9. 구현 현황 요약 (발표용)</h2>
+      <table>
+        <tr><th>완료</th><td>핵심 플레이, 3스테이지, 타이틀·로딩·저장·이어하기, BGM/SFX, 일시정지, 맵 전환</td></tr>
+        <tr><th>미완·보류</th><td>별점/점수, 스테이지별 배경 자동 변경, 게임오버 시 저장, 사망 페이드 연출</td></tr>
+      </table>
+    </section>
+
+    <section id="demo">
+      <h2>10. 시연 체크리스트</h2>
+      <p>발표 전날·당일 Play로 한 번씩 확인하세요.</p>
+      <ol>
+        <li>TitleScene — 저장 없으면 <strong>시작하기만</strong></li>
+        <li>1스테이지 클리어 → 타이틀 — <strong>이어하기</strong> 버튼 보임</li>
+        <li>이어하기 → 저장된 스테이지부터 시작</li>
+        <li>경고 → Z키 안내 → 오염원 등장·팝업</li>
+        <li>정답 아이템: 오염원 HP 감소 / 오답: 방호복만 감소</li>
+        <li>(시간 되면) 중간 오염원 후 맵 끝 이동·페이드</li>
+        <li>마지막 오염원 클리어 → 클리어 패널</li>
+      </ol>
+      <p class="note">시연 중 F1/F2 디버그 키는 교수님 앞에서 쓰지 않는 것을 권장합니다.</p>
+    </section>
+
+    <section id="closing">
+      <h2>11. 마무리·제작 정보</h2>
+      <div class="script">
+        정리하면, 본 프로젝트는 <strong>오염원 유형별 대응 훈련</strong>을 2D 게임으로 구현했고,
+        3개 스테이지·저장·이어하기·로딩까지 포함한 <strong>플레이 가능한 결과물</strong>을 완성했습니다.
+        아쉬운 점은 점수 시스템과 배경 자동 변경이며, 이후 과제로 남겼습니다. 들어주셔서 감사합니다.
+      </div>
+      <table>
+        <tr><th style="width:28%">역할 분담</th><td class="fill">(예: 기획 OOO / 프로그래밍 OOO / UI OOO)</td></tr>
+        <tr><th>참고 자료</th><td>README.md, Unity Asset (Misc18 Loading Effect 등)</td></tr>
+        <tr><th>Q&amp;A 예상</th><td class="fill">(예: 왜 저장은 클리어만? / 실제 사고와 차이?)</td></tr>
+      </table>
+    </section>
+
+    <!-- ========== 부록 ========== -->
+
+    <section id="tech" class="appendix">
+      <h2>부록 A. 기술 스택</h2>
+      <table>
+        <tr><th>항목</th><th>내용</th></tr>
+        <tr><td>엔진</td><td>Unity 6000.4.8f1 (2D)</td></tr>
+        <tr><td>언어</td><td>C#</td></tr>
+        <tr><td>UI</td><td>UGUI, TextMeshPro</td></tr>
+        <tr><td>데이터</td><td>JSON (Assets/Data/stage_data.json), Newtonsoft.Json</td></tr>
+        <tr><td>에디터</td><td>CSV → JSON 변환 도구</td></tr>
+        <tr><td>로딩</td><td>LoadingScene + CanvasGroup 페이드 + 프리팹 워밍업</td></tr>
+      </table>
+    </section>
+
+    <section id="scenes" class="appendix">
+      <h2>부록 B. 씬·게임 흐름</h2>
+      <table>
+        <tr><th>씬</th><th>역할</th></tr>
+        <tr><td>TitleScene</td><td>Start / Continue(저장 있을 때)</td></tr>
+        <tr><td>LoadingScene</td><td>비동기 로드, 워밍업, 페이드</td></tr>
+        <tr><td>GameScene</td><td>본편 플레이</td></tr>
+      </table>
+      <pre class="flow">Title → (시작/이어하기) → Loading → Game
+클리어 시 gamesave.json 저장 (문서/HazmatRush_Save)
+인게임: 다음 스테이지 / 재시작 (로딩 없이)</pre>
+    </section>
+
+    <section id="systems" class="appendix">
+      <h2>부록 C. 핵심 시스템 (스크립트)</h2>
+      <table>
+        <tr><th>영역</th><th>주요 파일</th><th>역할</th></tr>
+        <tr><td>플레이어</td><td>Player.cs</td><td>이동, 방호복, Die</td></tr>
+        <tr><td>오염원</td><td>Pollutant.cs</td><td>접촉 판정, HP, 페이드</td></tr>
+        <tr><td>스폰·맵</td><td>PollutantManager.cs</td><td>경고→스폰, 맵 전환, 클리어 연동</td></tr>
+        <tr><td>아이템</td><td>ItemSelectManager.cs</td><td>Z키, Scanner 규칙</td></tr>
+        <tr><td>진행</td><td>GameManager.cs, StageManager.cs</td><td>클리어/게임오버/일시정지, JSON 스테이지</td></tr>
+        <tr><td>씬·저장</td><td>SceneLoadManager.cs, GameSaveManager.cs</td><td>씬 전환, JSON 저장</td></tr>
+        <tr><td>오디오</td><td>AudioManager.cs</td><td>BGM/SFX/중화 루프</td></tr>
+      </table>
+      <p>스크립트 약 23개 — Assets/Scripts (Core / GamePlay / UI)</p>
+    </section>
+
+    <section id="data" class="appendix">
+      <h2>부록 D. 데이터·저장</h2>
+      <h3>스테이지 (stage_data.json)</h3>
+      <table>
+        <tr><th>스테이지</th><th>라벨</th><th>오염원</th><th>수</th><th>시간(초)</th></tr>
+        <tr><td>1</td><td>Stage 1-1</td><td>A</td><td>2</td><td>60</td></tr>
+        <tr><td>2</td><td>Stage 1-2</td><td>A|B</td><td>3</td><td>55</td></tr>
+        <tr><td>3</td><td>Stage 1-3</td><td>A|B|C</td><td>4</td><td>50</td></tr>
+      </table>
+      <h3>저장</h3>
+      <ul>
+        <li>시점: 스테이지 클리어 시만</li>
+        <li>경로: 문서\HazmatRush_Save\gamesave.json</li>
+        <li>내용: 이어할 스테이지 번호, 마지막 클리어 정보</li>
+      </ul>
+    </section>
+
+    <section id="appendix-detail" class="appendix">
+      <h2>부록 E. 구현·안정성 상세</h2>
+      <table>
+        <thead>
+          <tr><th>기능</th><th>상태</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>타이틀·로딩·게임·저장·3스테이지</td><td class="tag-ok">완료</td></tr>
+          <tr><td>접촉·아이템·맵전환·일시정지·오디오</td><td class="tag-ok">완료</td></tr>
+          <tr><td>bgIndex 배경 / 별점 / 게임오버 저장</td><td class="tag-no">미구현</td></tr>
+        </tbody>
+      </table>
+      <h3>개발 중 맞춘 타이밍 이슈 (요약)</h3>
+      <ul>
+        <li>오염원 등장 페이드: 생성 후 시간 설정 → 활성화 순서</li>
+        <li>맵 전환 중 일시정지 방지</li>
+        <li>패널티·클리어·사망 대기: 실시간 기준 대기</li>
+      </ul>
+    </section>
+
+    <footer>
+      MidProject · Assets/Docs/completion-report-draft.html<br />
+      학생 발표·완료 보고 초안 — 브라우저 열기 / 인쇄 → PDF 저장
+    </footer>
+
+  </div>
+</body>
+</html>

@@ -87,6 +87,11 @@ public class Pollutant : MonoBehaviour
     private Player currentPlayer;      // 접촉 중인 플레이어 캐시
 
     public static int activeCount = 0;    //활성화된 오염원 개수
+
+    public static void ResetActiveCount()
+    {
+        activeCount = 0;
+    }
     private SpriteRenderer spriteRenderer;    //스프라이트 렌더러
     private Renderer meshRenderer;    //메시 렌더러
     private Renderer[] childRenderers;    //자식 렌더러
@@ -269,8 +274,6 @@ public class Pollutant : MonoBehaviour
             pollutanCurHp = Mathf.Max(0, pollutanCurHp - itemDamage);
 
         UpdatePollutantHpBar();
-
-        Debug.Log($"[Pollutant] 오염원 HP 감소: -{itemDamage:F2} (itemDps={itemDps:F2}) / 현재 HP: {pollutanCurHp:F2}");
 
         if (pollutanCurHp <= 0f && !isFadingOut)
         {

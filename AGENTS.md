@@ -18,6 +18,7 @@
 - Unity `6000.4.8f1`
 - 씬: `Assets/Scenes/TitleScene.unity`, `GameScene.unity`
 - 스크립트 루트: `Assets/Scripts/`
+- 발표·보고서 등 문서 HTML: `Assets/Docs/` (프로젝트 루트 `Docs/` 사용 안 함)
 
 ---
 
@@ -213,15 +214,51 @@ Cursor에서 확인: **Settings → Rules** 또는 채팅 입력창 근처 Rules
 | 접촉 해제 시 오염원 HP 초기화 | ✅ |
 | 판정 로그 (올바른/틀린) | ✅ |
 | Die 애니 + 페이드 사망 | ❌ 롤백됨 — 요청 시에만 작업 |
-| GameManager / StageManager 게임 흐름 | ❌ 골격만 |
+| GameManager / StageManager / JSON 스테이지 | ✅ |
+| 타이틀 Start·Continue, 저장(클리어 시) | ✅ |
+| LoadingScene + SceneLoadManager | ✅ |
 
 ---
 
-## 7. 변경 이력 (수동으로 적기)
+## 7. 코드 최적화 (초보자·AI 공통)
+
+이 프로젝트에서 **최적화 = 읽기 쉬운 코드**입니다. CPU·메모리 미세 튜닝보다 **중복 제거·이름·흐름**을 우선합니다.
+
+### 해도 되는 것
+
+| 방법 | 예시 |
+|------|------|
+| 같은 코드 2번 이상 → **같은 파일 안** `private` 메서드로 묶기 | `SceneLoadUI.PlayButtonSfx()`, `SceneLoadManager.BeginGame()` |
+| `if`로 분기 (초보자에게 익숙한 형태) | `GetCauseText` — `switch` 표현식 대신 `if` 연속 |
+| 주석 한 줄 | **왜** 그렇게 했는지 (비즈니스 규칙) |
+| null 체크 후 `return` | `if (player == null) return;` |
+
+### 하지 말 것 (초보·유지보수 기준)
+
+| 하지 말 것 | 이유 |
+|------------|------|
+| LINQ, 람다, 제네릭 헬퍼 | 문법 부담 |
+| 새 인터페이스·추상 클래스·`Manager` 클래스 추가 | 파일·개념이 늘어남 |
+| `PollutantManager`·`Player` **통째 구조 변경** | 버그 위험 큼 |
+| “깔끔해 보이게” 파일 전체 교체 | diff 추적 어려움 |
+
+### 파일별 정리 우선순위 (필요할 때만)
+
+1. **Core** (`SceneLoad*`, `GameSave*`, `GameManager`) — 씬·저장 흐름
+2. **GamePlay** — 접촉·HP (`Pollutant`, `Player`) — **동작 건드리지 않고** 로그·주석만
+3. **UI** — 표시·버튼
+
+저장 경로: `Documents/HazmatRush_Save/gamesave.json` — `GameSaveManager.SaveFilePath`
+
+---
+
+## 8. 변경 이력 (수동으로 적기)
 
 | 날짜 | 내용 |
 |------|------|
 | 2026-05-28 | 접촉·중화·판정 로그 시스템, Item.ItemType 구조, README/AGENTS.md 작성 |
+| 2026-06-01 | AGENTS 7절 코드 최적화 가이드, SceneLoad 중복 정리 |
+| 2026-06-01 | 타이밍 보완: 오염원 스폰 페이드·Realtime 대기·맵전환 중 pause 차단·activeCount 리셋 |
 | | *(이 아래에 본인이 직접 추가)* |
 
 ---

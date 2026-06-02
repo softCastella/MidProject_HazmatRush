@@ -21,42 +21,42 @@ public class SceneLoadUI : MonoBehaviour
             continueGroup.SetActive(hasSave);
     }
 
-    public void StartButton()
+    private void PlayButtonSfx()
     {
         if (AudioManager.Instance != null)
             AudioManager.Instance.PlayButtonSfx();
+    }
 
-        if (SceneLoadManager.Instance == null)
-        {
-            Debug.LogWarning("[SceneLoadUI] SceneLoadManager가 없습니다.");
+    private bool HasSceneLoader()
+    {
+        if (SceneLoadManager.Instance != null)
+            return true;
+
+        Debug.LogWarning("[SceneLoadUI] SceneLoadManager가 없습니다.");
+        return false;
+    }
+
+    public void StartButton()
+    {
+        PlayButtonSfx();
+        if (!HasSceneLoader())
             return;
-        }
         SceneLoadManager.Instance.StartButton();
     }
 
     public void ContinueButton()
     {
-        if (AudioManager.Instance != null)
-            AudioManager.Instance.PlayButtonSfx();
-
-        if (SceneLoadManager.Instance == null)
-        {
-            Debug.LogWarning("[SceneLoadUI] SceneLoadManager가 없습니다.");
+        PlayButtonSfx();
+        if (!HasSceneLoader())
             return;
-        }
         SceneLoadManager.Instance.ContinueButton();
     }
 
     public void TitleButton()
     {
-        // if (AudioManager.Instance != null)
-        //     AudioManager.Instance.PlayButtonSfx();
-
-        if (SceneLoadManager.Instance == null)
-        {
-            Debug.LogWarning("[SceneLoadUI] SceneLoadManager가 없습니다.");
+        PlayButtonSfx();
+        if (!HasSceneLoader())
             return;
-        }
         SceneLoadManager.Instance.TitleButton();
     }
 }

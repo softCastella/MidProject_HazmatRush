@@ -33,13 +33,7 @@ public class SceneLoadManager : MonoBehaviour
 
     public void StartButton()
     {
-        pendingStageIndex = 0;
-        nextSceneName = gameSceneName;
-
-        if (string.IsNullOrEmpty(loadingSceneName))
-            LoadScene(gameSceneName);
-        else
-            LoadScene(loadingSceneName);
+        BeginGame(0);
     }
 
     public void ContinueButton()
@@ -47,11 +41,17 @@ public class SceneLoadManager : MonoBehaviour
         GameSaveData data = GameSaveManager.Load();
         if (data == null)
         {
-            StartButton();
+            BeginGame(0);
             return;
         }
 
-        pendingStageIndex = data.continueStageIndex;
+        BeginGame(data.continueStageIndex);
+    }
+
+    // 시작·이어하기 공통: 스테이지 번호 정한 뒤 로딩 씬(또는 게임 씬)으로 이동
+    private void BeginGame(int stageIndex)
+    {
+        pendingStageIndex = stageIndex;
         nextSceneName = gameSceneName;
 
         if (string.IsNullOrEmpty(loadingSceneName))

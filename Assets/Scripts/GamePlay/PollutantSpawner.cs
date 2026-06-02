@@ -32,7 +32,9 @@ public class PollutantSpawner : MonoBehaviour
             return null;
         }
 
-        // 선택된 위치에서 오염물 프리팹을 생성합니다.
-        return Instantiate(prefab, SpawnPosition, Quaternion.identity);
+        // 비활성으로 생성 → PollutantManager가 appearDuration 설정 후 활성화 (OnEnable 페이드 타이밍)
+        GameObject obj = Instantiate(prefab, SpawnPosition, Quaternion.identity);
+        obj.SetActive(false);
+        return obj;
     }
 }
