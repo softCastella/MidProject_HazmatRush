@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5309983141381289673}
   - component: {fileID: 248315110763612334}
   - component: {fileID: 6836094328250049790}
-  - component: {fileID: 1441931973241198443}
+  - component: {fileID: 7442971227749678473}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -130,13 +130,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
   moveSpeed: 200
+  returnMoveSpeed: 900
+  returnStopDistance: 0.2
   leftLimit: -785
   rightLimit: -403
+  mapAdvanceRightX: 769
   maxProtection: 100
   curProtection: 100
+  protectionNumText: {fileID: 0}
+  protectionSlider: {fileID: 0}
   isMoving: 0
   hasInput: 0
   canMove: 0
+  itemSelectManager: {fileID: 0}
 --- !u!50 &6836094328250049790
 Rigidbody2D:
   serializedVersion: 5
@@ -164,7 +170,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!70 &1441931973241198443
+--- !u!70 &7442971227749678473
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -198,6 +204,6 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 2, y: -3}
-  m_Size: {x: 86.2, y: 180}
+  m_Offset: {x: 0, y: 87.5}
+  m_Size: {x: 85, y: 175}
   m_Direction: 0

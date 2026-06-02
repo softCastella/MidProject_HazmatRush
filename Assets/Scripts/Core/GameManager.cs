@@ -35,7 +35,8 @@ public class GameManager : MonoBehaviour
     public float wrongItemPenaltySeconds = 2f;
 
     [Header("Game Over")]
-    public float dieGameOverDelay = 2f; // Die 애니 후 게임오버 패널까지 대기(초)
+    [Tooltip("방호복 0 시 Player가 Die+페이드 후 CompletePlayerDeathSequence 호출. 비상용 대기(초).")]
+    public float dieGameOverFallbackDelay = 4f;
 
     [Header("Debug")]
     public bool enableDebugKeys = true; // F1: 강제 클리어, F2: 강제 게임오버
@@ -285,7 +286,10 @@ public class GameManager : MonoBehaviour
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.SetBgmPauseDim(false);
-            AudioManager.Instance.PlayGameBGM();
+            if (stageManager != null)
+                AudioManager.Instance.PlayStageBgm(stageManager.GetCurrentBgmIndex());
+            else
+                AudioManager.Instance.PlayGameBGM();
         }
     }
 
@@ -350,27 +354,45 @@ public class GameManager : MonoBehaviour
         if (gameEnded || gameOverPending)
             return;
 
-        if (cause == GameOverCause.ProtectionDepleted && dieGameOverDelay > 0f)
-        {
-            gameOverDelayRoutine = StartCoroutine(GameOverAfterDieDelay(cause));
+        if (cause == GameOverCause.ProtectionDepleted)
             return;
-        }
 
         FinishGameOver(cause);
     }
 
-    private IEnumerator GameOverAfterDieDelay(GameOverCause cause)
+    // 방호복 0: Die 애니·페이드 연출 시작 (패널은 CompletePlayerDeathSequence에서)
+    public void BeginPlayerDeathSequence()
     {
+        if (gameEnded || gameOverPending)
+            return;
+
         gameOverPending = true;
         FreezePlayOnResult();
         if (AudioManager.Instance != null)
             AudioManager.Instance.StopNeutralizationSfx();
 
-        yield return new WaitForSeconds(dieGameOverDelay);
+        if (dieGameOverFallbackDelay > 0f)
+            gameOverDelayRoutine = StartCoroutine(PlayerDeathFallbackRoutine());
+    }
 
-        gameOverPending = false;
+    public void CompletePlayerDeathSequence()
+    {
+        if (gameEnded)
+            return;
+
+        CancelPendingGameOver();
+        FinishGameOver(GameOverCause.ProtectionDepleted);
+    }
+
+    private IEnumerator PlayerDeathFallbackRoutine()
+    {
+        yield return new WaitForSeconds(dieGameOverFallbackDelay);
         gameOverDelayRoutine = null;
-        FinishGameOver(cause);
+        if (gameEnded || !gameOverPending)
+            yield break;
+
+        Debug.LogWarning("[GameManager] 사망 연출 타임아웃 → 게임오버 패널 표시");
+        CompletePlayerDeathSequence();
     }
 
     private void FinishGameOver(GameOverCause cause)
