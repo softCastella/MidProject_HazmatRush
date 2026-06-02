@@ -12,6 +12,7 @@ public class AudioManager : MonoBehaviour
     [Header("BGM Clips")]
     public AudioClip titleBGM;
     public AudioClip gameBGM;
+    public AudioClip[] stageBGMs;
 
     [Header("SFX")]
     public AudioClip buttonClickClip;
@@ -54,7 +55,7 @@ public class AudioManager : MonoBehaviour
         }
         else if (Instance != this)
         {
-            Instance.CopyClipsIfEmpty(titleBGM, gameBGM, buttonClickClip, clearClip, gameOverClip, neutralizationClip);
+            Instance.CopyClipsIfEmpty(titleBGM, gameBGM, stageBGMs, buttonClickClip, clearClip, gameOverClip, neutralizationClip);
             Destroy(gameObject);
         }
     }
@@ -215,6 +216,17 @@ public class AudioManager : MonoBehaviour
         PlayBGM(gameBGM);
     }
 
+    public void PlayStageBGMByIndex(int index)
+    {
+        if (stageBGMs != null && stageBGMs.Length > 0 && index >= 0 && index < stageBGMs.Length)
+        {
+            PlayBGM(stageBGMs[index]);
+            return;
+        }
+
+        PlayGameBGM();
+    }
+
     public void StopBGM()
     {
         if (bgmSource == null)
@@ -241,12 +253,14 @@ public class AudioManager : MonoBehaviour
         bgmSource.volume = volume;
     }
 
-    void CopyClipsIfEmpty(AudioClip title, AudioClip game, AudioClip buttonClick, AudioClip clear, AudioClip gameOver, AudioClip neutralization)
+    void CopyClipsIfEmpty(AudioClip title, AudioClip game, AudioClip[] stageBgms, AudioClip buttonClick, AudioClip clear, AudioClip gameOver, AudioClip neutralization)
     {
         if (titleBGM == null && title != null)
             titleBGM = title;
         if (gameBGM == null && game != null)
             gameBGM = game;
+        if ((stageBGMs == null || stageBGMs.Length == 0) && stageBgms != null && stageBgms.Length > 0)
+            stageBGMs = stageBgms;
         if (buttonClickClip == null && buttonClick != null)
             buttonClickClip = buttonClick;
         if (clearClip == null && clear != null)

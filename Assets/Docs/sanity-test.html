@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>세니티 테스트 — MidProject</title>
+  <style>
+    body { font-family: "Malgun Gothic", sans-serif; max-width: 1050px; margin: 1.25rem auto; padding: 0 1rem; line-height: 1.55; color: #1a2332; font-size: 0.88rem; }
+    h1 { color: #1e6b5c; font-size: 1.35rem; }
+    .meta { color: #5a6578; font-size: 0.9rem; }
+    h2 { font-size: 1rem; margin: 1.25rem 0 0.4rem; padding: 0.35rem 0.6rem; background: #e8f4f1; border-radius: 4px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+    th, td { border: 1px solid #dde3ea; padding: 0.4rem 0.55rem; vertical-align: top; }
+    th { background: #e8f4f1; }
+    .chk { width: 2.4em; text-align: center; }
+    .num { width: 4.5em; font-weight: 600; color: #2d4a6e; white-space: nowrap; }
+    .name { width: 10em; font-weight: 600; }
+    td.detail ul { margin: 0.15rem 0 0 1rem; padding: 0; }
+    .ok { color: #1a7f4e; }
+    .flow { background: #fff9e6; border-left: 4px solid #e6b800; padding: 0.5rem 0.75rem; margin: 0.75rem 0; }
+    a { color: #1e6b5c; }
+  </style>
+</head>
+<body>
+
+<h1>세니티 테스트 (약 15분)</h1>
+<p class="meta">
+  <strong>전체·상세:</strong> <a href="qa-checklist.html">qa-checklist.html</a> (같은 표 형식, 항목 더 많음)<br />
+  TitleScene Play → 아래 표를 <strong>위에서 순서대로</strong> 체크
+</p>
+
+<div class="flow">
+  Play 전: Console <strong>Collapse 끄기</strong> · 신규 테스트면 <code>Documents\HazmatRush_Save\gamesave.json</code> 삭제
+</div>
+
+<h2>A. 필수 한 판 (시나리오 1 요약)</h2>
+<table>
+  <thead>
+    <tr><th class="chk">✓</th><th class="num">번호</th><th class="name">이름</th><th>구체 사항</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td><td class="num">A-01</td><td class="name">타이틀 Start</td>
+      <td class="detail"><ul><li>Play → <strong>Start</strong></li><li class="ok">✔ 로딩 → 게임 씬</li></ul></td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td><td class="num">A-02</td><td class="name">가이드·이동</td>
+      <td class="detail"><ul><li>안내 중 이동 안 됨 → 끝나면 이동·타이머</li></ul></td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td><td class="num">A-03</td><td class="name">경고·스폰</td>
+      <td class="detail"><ul><li>우측 2~3초 이동</li><li class="ok">✔ 경고 → 오염원 등장</li></ul></td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td><td class="num">A-04</td><td class="name">Z키</td>
+      <td class="detail"><ul><li>경고 전 Z 안 됨 · 후 Z 됨</li></ul></td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td><td class="num">A-05</td><td class="name">접촉 3종</td>
+      <td class="detail"><ul><li>Scanner: 방호복만↓</li><li>오답: HP 유지</li><li><strong>중화제</strong>: 둘 다↓</li></ul></td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td><td class="num">A-06</td><td class="name">해제·중화</td>
+      <td class="detail"><ul><li>떼면 HP 초기화</li><li>1마리 중화·Scanner 복귀</li></ul></td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td><td class="num">A-07</td><td class="name">ESC</td>
+      <td class="detail"><ul><li class="ok">✔ pause · 입력 막힘</li></ul></td>
+    </tr>
+  </tbody>
+</table>
+<p class="meta">상세 단계 → qa-checklist <strong>1-01 ~ 1-14</strong></p>
+
+<h2>B. 저장 · 이어하기 (선택)</h2>
+<table>
+  <thead>
+    <tr><th class="chk">✓</th><th class="num">번호</th><th class="name">이름</th><th>구체 사항</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td><td class="num">B-01</td><td class="name">클리어 저장</td>
+      <td class="detail"><ul><li>1-1 전부 클리어 → json 생성</li></ul></td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td><td class="num">B-02</td><td class="name">Continue</td>
+      <td class="detail"><ul><li class="ok">✔ Stage 1-2부터 시작</li></ul></td>
+    </tr>
+  </tbody>
+</table>
+<p class="meta">상세 → qa-checklist <strong>2-01 ~ 2-04</strong></p>
+
+<h2>C. 결과 (여유 시)</h2>
+<table>
+  <thead>
+    <tr><th class="chk">✓</th><th class="num">번호</th><th class="name">이름</th><th>구체 사항</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td><td class="num">C-01</td><td class="name">방호복 0</td>
+      <td class="detail"><ul><li>Die → 2초 후 GameOver</li></ul></td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td><td class="num">C-02</td><td class="name">재시작</td>
+      <td class="detail"><ul><li>스테이지·Scanner 리셋</li></ul></td>
+    </tr>
+  </tbody>
+</table>
+<p class="meta">상세 → qa-checklist <strong>3-01 ~ 3-05</strong></p>
+
+<h2>E. 이상할 때만</h2>
+<table>
+  <thead>
+    <tr><th class="chk">✓</th><th class="num">번호</th><th class="name">이름</th><th>구체 사항</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td><td class="num">E-01</td><td class="name">맵 전환 ESC</td>
+      <td class="detail">자동 이동·페이드 중 ESC → pause <strong>안 열림</strong>이 정상</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td><td class="num">E-02</td><td class="name">Console</td>
+      <td class="detail">빨간 Error <strong>0건</strong></td>
+    </tr>
+  </tbody>
+</table>
+<p class="meta">상세·전수(약 87항) → <a href="qa-checklist.html">qa-checklist</a> 섹션 5~13</p>
+
+<p class="meta">Assets/Docs/sanity-test.html</p>
+</body>
+</html>

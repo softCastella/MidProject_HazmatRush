@@ -295,7 +295,10 @@ public class GameManager : MonoBehaviour
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.SetBgmPauseDim(false);
-            AudioManager.Instance.PlayGameBGM();
+            if (stageManager != null)
+                AudioManager.Instance.PlayStageBGMByIndex(stageManager.GetCurrentBgmIndex());
+            else
+                AudioManager.Instance.PlayGameBGM();
         }
     }
 

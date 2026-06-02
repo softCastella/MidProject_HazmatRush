@@ -1274,6 +1274,10 @@ MonoBehaviour:
   gameSceneName: GameScene
   titleBGM: {fileID: 8300000, guid: 7817a6959b6a9c3488523a5f359b1267, type: 3}
   gameBGM: {fileID: 8300000, guid: 066f447fe788e864d952e3d6b7012d26, type: 3}
+  stageBGMs:
+  - {fileID: 8300000, guid: 066f447fe788e864d952e3d6b7012d26, type: 3}
+  - {fileID: 8300000, guid: 83abc802ab2047848afe52bdecb58dc8, type: 3}
+  - {fileID: 8300000, guid: 84c079227e893ec4ca08728ad02ac92a, type: 3}
   buttonClickClip: {fileID: 8300000, guid: a876ecf96443a7b4481789cfa3687850, type: 3}
   clearClip: {fileID: 8300000, guid: 634b6275d8d3e534580994a6cbe4c606, type: 3}
   gameOverClip: {fileID: 8300000, guid: b8401e3cda800cb4bbed739fc5226d87, type: 3}

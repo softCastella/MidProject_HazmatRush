@@ -259,6 +259,7 @@ Cursor에서 확인: **Settings → Rules** 또는 채팅 입력창 근처 Rules
 | 2026-05-28 | 접촉·중화·판정 로그 시스템, Item.ItemType 구조, README/AGENTS.md 작성 |
 | 2026-06-01 | AGENTS 7절 코드 최적화 가이드, SceneLoad 중복 정리 |
 | 2026-06-01 | 타이밍 보완: 오염원 스폰 페이드·Realtime 대기·맵전환 중 pause 차단·activeCount 리셋 |
+| 2026-06-02 | 전체 QA `Assets/Docs/qa-checklist.html` (조건·예외·버그 가능성 열) · 세니티 `sanity-test.html` |
 | | *(이 아래에 본인이 직접 추가)* |
 
 ---

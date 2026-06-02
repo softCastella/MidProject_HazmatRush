@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Unity CLI 설정 — MidProject (youngwoocho02/unity-cli)</title>
+  <style>
+    body { font-family: "Malgun Gothic", sans-serif; max-width: 720px; margin: 2rem auto; padding: 0 1rem; line-height: 1.6; color: #1a2332; }
+    h1 { color: #1e6b5c; }
+    code, pre { background: #f0f3f6; padding: 0.15em 0.4em; border-radius: 4px; font-size: 0.9em; }
+    pre { padding: 1rem; overflow-x: auto; }
+    .ok { color: #1a7f4e; font-weight: 600; }
+    .warn { background: #fff9e6; border-left: 4px solid #e6b800; padding: 0.75rem 1rem; margin: 1rem 0; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.92rem; margin: 0.75rem 0; }
+    th, td { border: 1px solid #dde3ea; padding: 0.5rem 0.75rem; text-align: left; }
+    th { background: #e8f4f1; }
+  </style>
+</head>
+<body>
+  <h1>Unity CLI — youngwoocho02/unity-cli</h1>
+  <p>이 프로젝트는 <strong>MCP가 아닌</strong> <a href="https://github.com/youngwoocho02/unity-cli">unity-cli</a> 로 에디터를 제어합니다.</p>
+
+  <h2>두 가지를 구분</h2>
+  <table>
+    <tr><th>이름</th><th>역할</th></tr>
+    <tr><td><code>unity-cli.exe</code></td><td>PC에 설치된 CLI (터미널·Cursor가 실행)</td></tr>
+    <tr><td><code>unity-connector</code></td><td>Unity 패키지 — 에디터가 켜지면 <strong>HTTP(예: 8090)</strong> 로 대기</td></tr>
+    <tr><td><code>Tools/unity.ps1</code></td><td>별도 — Unity.exe <strong>batchmode</strong> 빌드용 (연결과 무관)</td></tr>
+  </table>
+
+  <p class="ok">CLI 설치됨: <code>C:\Users\user\AppData\Local\unity-cli\unity-cli.exe</code></p>
+
+  <h2>Unity Console에 포트가 안 보일 때</h2>
+  <p>정상입니다. Connector는 Console에 <strong>포트 숫자를 출력하지 않고</strong> 아래 한 줄만 남깁니다.</p>
+  <pre>[UnityCliConnector] HTTP server started</pre>
+  <p>포트는 기본 <strong>8090</strong>이고, 이미 쓰 중이면 8091~8099를 순서대로 시도합니다. 확인 방법:</p>
+  <pre>cd C:\Users\user\Documents\Workspace\MidProject
+unity-cli status</pre>
+  <p>예: <code>Unity (port 8090): ready</code></p>
+  <p>또는 <code>%USERPROFILE%\.unity-cli\instances\*.json</code> 안의 <code>"port":8090</code></p>
+
+  <h2>지금 연결이 안 보일 때 (체크리스트)</h2>
+  <ol>
+    <li><strong>MidProject</strong>를 Unity Hub에서 연다 (다른 프로젝트만 열려 있으면 8090이 다른 경로일 수 있음)</li>
+    <li><code>Packages/manifest.json</code>에 <code>com.youngwoocho02.unity-cli-connector</code> 있는지 확인 → 없으면 Package Manager에서 git URL 추가</li>
+    <li>패키지 import 후 Console에 Connector 관련 로그 없는지 확인</li>
+    <li>PowerShell에서 프로젝트 폴더로 이동 후:
+      <pre>cd C:\Users\user\Documents\Workspace\MidProject
+unity-cli status</pre>
+      <code>Unity: ready</code> 와 포트(예: 8090)가 나오면 성공</li>
+    <li>Cursor는 터미널에서 <code>unity-cli console</code> 등을 실행해 로그를 가져옴 (Unity Console UI “연결” 표시와는 별개)</li>
+  </ol>
+
+  <div class="warn">
+    예전에 본 <strong>8090</strong>은 다른 프로젝트(SpaceShooter) 인스턴스일 수 있습니다.
+    MidProject를 연 상태에서 <code>unity-cli status</code>로 포트를 다시 확인하세요.
+    인스턴스 정보: <code>%USERPROFILE%\.unity-cli\instances\*.json</code>
+  </div>
+
+  <h2>Unity 패키지 (git URL)</h2>
+  <pre>https://github.com/youngwoocho02/unity-cli.git?path=unity-connector</pre>
+
+  <h2>자주 쓰는 명령</h2>
+  <pre>unity-cli status
+unity-cli console --type error,warning,log --lines 30
+unity-cli editor play --wait
+unity-cli editor stop</pre>
+
+  <h2>권장 설정</h2>
+  <p>Unity <strong>Edit → Preferences → General → Interaction Mode → No Throttling</strong> (백그라운드에서 CLI 응답 지연 줄이기)</p>
+
+  <h2>CLI 재설치</h2>
+  <pre>irm https://raw.githubusercontent.com/youngwoocho02/unity-cli/master/install.ps1 | iex</pre>
+
+  <p><small>MidProject · Assets/Docs/unity-cli-setup.html</small></p>
+</body>
+</html>
