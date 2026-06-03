@@ -1185,6 +1185,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoadManager
   titleSceneName: TitleScene
+  introSceneName: IntroStoryScene
   gameSceneName: GameScene
   loadingSceneName: LoadingScene
   nextSceneName: 
@@ -1274,12 +1275,14 @@ MonoBehaviour:
   gameSceneName: GameScene
   titleBGM: {fileID: 8300000, guid: 7817a6959b6a9c3488523a5f359b1267, type: 3}
   gameBGM: {fileID: 8300000, guid: 066f447fe788e864d952e3d6b7012d26, type: 3}
+  stageBgmClips: []
   buttonClickClip: {fileID: 8300000, guid: a876ecf96443a7b4481789cfa3687850, type: 3}
   clearClip: {fileID: 8300000, guid: 634b6275d8d3e534580994a6cbe4c606, type: 3}
   gameOverClip: {fileID: 8300000, guid: b8401e3cda800cb4bbed739fc5226d87, type: 3}
   neutralizationClip: {fileID: 8300000, guid: a115d0dea80c9604dbeacd05fc515122, type: 3}
   bgmSource: {fileID: 0}
   sfxSource: {fileID: 0}
+  neutralizationSource: {fileID: 0}
   bgmVolume: 1
   pauseBgmVolumeRatio: 0.333
   sfxVolume: 1.77
@@ -1771,8 +1774,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uC2DC\uC791\uD558\uAE30"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 27edd4c5debbd304283b7e46f0229c9a, type: 2}
-  m_sharedMaterial: {fileID: -8638374689057110753, guid: 27edd4c5debbd304283b7e46f0229c9a, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: e5a70015320a26045b73a3388148e425, type: 2}
+  m_sharedMaterial: {fileID: -2450841704643121976, guid: e5a70015320a26045b73a3388148e425, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1802,7 +1805,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535

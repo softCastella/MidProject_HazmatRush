@@ -5,16 +5,17 @@ using UnityEngine.UI;
 
 public class LoadingController : MonoBehaviour
 {
-    [Header("씬 전체 페이드 (Canvas 루트 CanvasGroup)")]
-    [Tooltip("Canvas에 붙인 CanvasGroup. Bg·Misc18·문구가 함께 페이드됩니다. Misc18 bl_LoadingEffect 페이드와 별개.")]
+    [Header("씬 전체 페이드 (활성 Canvas 루트 CanvasGroup)")]
+    [Tooltip("비우면 활성 Canvas에 CanvasGroup을 찾거나 추가합니다.")]
     public CanvasGroup sceneFade;
     public float fadeInDuration = 0.5f;
     public float fadeOutDuration = 0.5f;
 
-    [Header("Misc18 / Loading Effect")]
-    public bl_LoadingEffect loadingEffect;
-    [Tooltip("bl_LoadingEffect Loading UI Speed (1~100). 회전만 조절, 씬 페이드 아님")]
-    public float effectRotateSpeed = 12f;
+    [Header("SpinnerRoot (Animator)")]
+    [Tooltip("스피너 연출은 Unity Animator(SpinnerRoot)에서만 설정합니다. 코드는 재생 상태를 바꾸지 않습니다.")]
+    public GameObject spinnerRoot;
+    public Animator spinnerAnimator;
+    public float spinnerAnimSpeed = 1f;
 
     [Header("Load")]
     public Slider progressBar;
@@ -30,32 +31,61 @@ public class LoadingController : MonoBehaviour
         if (cam != null)
             cam.backgroundColor = Color.black;
 
-        if (sceneFade == null)
-        {
-            Canvas canvas = FindAnyObjectByType<Canvas>();
-            if (canvas != null)
-            {
-                sceneFade = canvas.GetComponent<CanvasGroup>();
-                if (sceneFade == null)
-                    sceneFade = canvas.gameObject.AddComponent<CanvasGroup>();
-            }
-        }
-
-        if (loadingEffect == null)
-            loadingEffect = FindAnyObjectByType<bl_LoadingEffect>();
-
-        if (loadingEffect != null)
-        {
-            loadingEffect.isLoading = true;
-            loadingEffect.FadeSpeed = 99f;
-            loadingEffect.SetRotateSpeed(effectRotateSpeed);
-        }
+        EnsureSceneFade();
+        EnsureSpinner();
+        DisableLegacyMisc18Spinner();
     }
 
     void Start()
     {
         loadStartTime = Time.realtimeSinceStartup;
         StartCoroutine(LoadRoutine());
+    }
+
+    void EnsureSceneFade()
+    {
+        if (sceneFade != null)
+            return;
+
+        Canvas[] canvases = FindObjectsByType<Canvas>(FindObjectsSortMode.None);
+        for (int i = 0; i < canvases.Length; i++)
+        {
+            if (!canvases[i].gameObject.activeInHierarchy)
+                continue;
+
+            sceneFade = canvases[i].GetComponent<CanvasGroup>();
+            if (sceneFade == null)
+                sceneFade = canvases[i].gameObject.AddComponent<CanvasGroup>();
+            return;
+        }
+    }
+
+    void EnsureSpinner()
+    {
+        if (spinnerRoot == null)
+        {
+            GameObject found = GameObject.Find("SpinnerRoot");
+            if (found != null)
+                spinnerRoot = found;
+        }
+
+        if (spinnerRoot == null)
+            return;
+
+        spinnerRoot.SetActive(true);
+
+        if (spinnerAnimator == null)
+            spinnerAnimator = spinnerRoot.GetComponent<Animator>();
+
+        if (spinnerAnimator != null)
+            spinnerAnimator.speed = spinnerAnimSpeed;
+    }
+
+    void DisableLegacyMisc18Spinner()
+    {
+        GameObject misc18 = GameObject.Find("Misc18");
+        if (misc18 != null)
+            misc18.SetActive(false);
     }
 
     private IEnumerator LoadRoutine()
