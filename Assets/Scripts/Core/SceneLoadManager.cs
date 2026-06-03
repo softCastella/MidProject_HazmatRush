@@ -6,6 +6,7 @@ public class SceneLoadManager : MonoBehaviour
     public static SceneLoadManager Instance { get; private set; }
 
     public string titleSceneName = "TitleScene";
+    public string introSceneName = "IntroStoryScene";
     public string gameSceneName = "GameScene";
     public string loadingSceneName = "LoadingScene";
 
@@ -36,8 +37,18 @@ public class SceneLoadManager : MonoBehaviour
         pendingStageIndex = 0;
         nextSceneName = gameSceneName;
 
-        if (string.IsNullOrEmpty(loadingSceneName))
+        if (!string.IsNullOrEmpty(introSceneName))
+            LoadScene(introSceneName);
+        else if (string.IsNullOrEmpty(loadingSceneName))
             LoadScene(gameSceneName);
+        else
+            LoadScene(loadingSceneName);
+    }
+
+    public void LoadAfterIntro()
+    {
+        if (string.IsNullOrEmpty(loadingSceneName))
+            LoadScene(string.IsNullOrEmpty(nextSceneName) ? gameSceneName : nextSceneName);
         else
             LoadScene(loadingSceneName);
     }

@@ -18,6 +18,8 @@ public class Player : MonoBehaviour
     public float leftLimit = -785f; // 왼쪽 이동 제한
     public float rightLimit = -403f; // 오른쪽 이동 제한
     public float mapAdvanceRightX = 769f; // 오염원 중화 후 맵 전환 구간 끝 X
+    public float dieAnimWait = 0.55f; // Player_Die 클립 길이에 맞춤
+    public float dieFadeDuration = 0.5f;
     public float maxProtection = 100f; // 방호복 최대 수치
     public float curProtection; // 현재 방호복 수치
     public TMP_Text protectionNumText; // 방호복 수치 표시 텍스트
@@ -39,6 +41,9 @@ public class Player : MonoBehaviour
     private PlayerState currentState = PlayerState.Idle;
     private bool isReturning = false;
     private bool dieAnimPlayed = false;
+    private bool isDeathSequenceRunning = false;
+    private SpriteRenderer spriteRenderer;
+    private SpriteRenderer[] childSpriteRenderers;
 
     public bool IsDead => currentState == PlayerState.Die;
 
@@ -56,6 +61,9 @@ public class Player : MonoBehaviour
             Debug.LogWarning("Player: Animator를 찾지 못했습니다. 이동 애니메이션(State)이 재생되지 않습니다.");
 
         rb = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer == null)
+            childSpriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
     }
 
     void Start()
@@ -269,12 +277,91 @@ public class Player : MonoBehaviour
         Debug.Log($"[Player] 방호복 HP 감소: -{damage:F2} (pollutantDps={pollutantDps:F2}) / 현재 HP: {curProtection:F2}");
 
         if (curProtection <= 0)
+            StartDeathSequence();
+    }
+
+    private void StartDeathSequence()
+    {
+        if (isDeathSequenceRunning || currentState == PlayerState.Die)
+            return;
+
+        isDeathSequenceRunning = true;
+        Debug.Log("플레이어가 사망했습니다.");
+        canMove = false;
+        isMoving = false;
+        hasInput = false;
+        if (rb != null)
+            rb.linearVelocity = Vector2.zero;
+        SetState(PlayerState.Die);
+
+        if (GameManager.Instance != null)
+            GameManager.Instance.BeginPlayerDeathSequence();
+
+        StartCoroutine(DieAndFadeOutRoutine());
+    }
+
+    private IEnumerator DieAndFadeOutRoutine()
+    {
+        if (dieAnimWait > 0f)
+            yield return new WaitForSeconds(dieAnimWait);
+
+        yield return FadeAlphaTo(0f, dieFadeDuration);
+
+        isDeathSequenceRunning = false;
+        if (GameManager.Instance != null)
+            GameManager.Instance.CompletePlayerDeathSequence();
+    }
+
+    private IEnumerator FadeAlphaTo(float targetAlpha, float duration)
+    {
+        if (duration <= 0f)
         {
-            Debug.Log("플레이어가 사망했습니다.");
-            canMove = false;
-            SetState(PlayerState.Die);
-            if (GameManager.Instance != null)
-                GameManager.Instance.TriggerGameOver(GameManager.GameOverCause.ProtectionDepleted);
+            SetSpriteAlpha(targetAlpha);
+            yield break;
+        }
+
+        float startAlpha = GetSpriteAlpha();
+        float time = 0f;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float alpha = Mathf.Lerp(startAlpha, targetAlpha, time / duration);
+            SetSpriteAlpha(alpha);
+            yield return null;
+        }
+
+        SetSpriteAlpha(targetAlpha);
+    }
+
+    private float GetSpriteAlpha()
+    {
+        if (spriteRenderer != null)
+            return spriteRenderer.color.a;
+        if (childSpriteRenderers != null && childSpriteRenderers.Length > 0 && childSpriteRenderers[0] != null)
+            return childSpriteRenderers[0].color.a;
+        return 1f;
+    }
+
+    private void SetSpriteAlpha(float alpha)
+    {
+        if (spriteRenderer != null)
+        {
+            Color color = spriteRenderer.color;
+            color.a = alpha;
+            spriteRenderer.color = color;
+        }
+
+        if (childSpriteRenderers == null)
+            return;
+
+        for (int i = 0; i < childSpriteRenderers.Length; i++)
+        {
+            if (childSpriteRenderers[i] == null)
+                continue;
+            Color color = childSpriteRenderers[i].color;
+            color.a = alpha;
+            childSpriteRenderers[i].color = color;
         }
     }
 
@@ -294,6 +381,8 @@ public class Player : MonoBehaviour
 
         transform.localScale = new Vector3(1f, 1f, 1f);
         dieAnimPlayed = false;
+        isDeathSequenceRunning = false;
+        SetSpriteAlpha(1f);
         if (anim != null)
         {
             anim.ResetTrigger("Die");

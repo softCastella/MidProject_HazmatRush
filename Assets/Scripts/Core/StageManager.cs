@@ -12,6 +12,7 @@ public class StageData
     public float timeLimitSeconds = 60f;
     public string pollutantTypes = "A";
     public int backgroundIndex = 0;
+    public int bgmIndex = 0;
 }
 
 [System.Serializable]
@@ -24,6 +25,7 @@ public class StageJsonRow
     public int totalPollutant;
     public int timeLimit;
     public int bgIndex;
+    public int bgmIndex;
 }
 
 public class StageManager : MonoBehaviour
@@ -88,6 +90,7 @@ public class StageManager : MonoBehaviour
             stages[i].timeLimitSeconds = row.timeLimit;
             stages[i].pollutantTypes = row.pollutantTypes;
             stages[i].backgroundIndex = row.bgIndex;
+            stages[i].bgmIndex = row.bgmIndex;
         }
 
         Debug.Log($"[StageManager] JSON에서 스테이지 {stages.Length}개 로드");
@@ -111,7 +114,21 @@ public class StageManager : MonoBehaviour
         if (timer != null)
             timer.SetStartTime(data.timeLimitSeconds);
 
-        Debug.Log($"[StageManager] 스테이지 로드: {stageLabel} {placeName} ({currentStageIndex + 1}/{stages.Length}) types={data.pollutantTypes}");
+        Background background = FindAnyObjectByType<Background>();
+        if (background != null)
+            background.ChangeBackgroundByIndex(data.backgroundIndex);
+
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlayStageBgm(data.bgmIndex);
+
+        Debug.Log($"[StageManager] 스테이지 로드: {stageLabel} {placeName} ({currentStageIndex + 1}/{stages.Length}) bg={data.backgroundIndex} bgm={data.bgmIndex} types={data.pollutantTypes}");
+    }
+
+    public int GetCurrentBgmIndex()
+    {
+        if (stages == null || stages.Length == 0)
+            return 0;
+        return stages[currentStageIndex].bgmIndex;
     }
 
     public string GetCurrentPollutantTypes()

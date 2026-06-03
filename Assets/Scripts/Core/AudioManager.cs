@@ -12,6 +12,8 @@ public class AudioManager : MonoBehaviour
     [Header("BGM Clips")]
     public AudioClip titleBGM;
     public AudioClip gameBGM;
+    [Tooltip("스테이지별 탐사 BGM. 0=1-1, 1=1-2, 2=1-3 (stage_data.json bgmIndex와 맞출 것)")]
+    public AudioClip[] stageBgmClips;
 
     [Header("SFX")]
     public AudioClip buttonClickClip;
@@ -212,7 +214,17 @@ public class AudioManager : MonoBehaviour
 
     public void PlayGameBGM()
     {
-        PlayBGM(gameBGM);
+        PlayStageBgm(0);
+    }
+
+    public void PlayStageBgm(int index)
+    {
+        AudioClip clip = null;
+        if (stageBgmClips != null && index >= 0 && index < stageBgmClips.Length)
+            clip = stageBgmClips[index];
+        if (clip == null)
+            clip = gameBGM;
+        PlayBGM(clip);
     }
 
     public void StopBGM()

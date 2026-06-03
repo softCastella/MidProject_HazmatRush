@@ -3,10 +3,11 @@
         "stageId": 1,
         "label": "Stage 1-1",
         "placeName": "1F A area",
-        "pollutantTypes": "A",
+        "pollutantTypes": "B",
         "totalPollutant": 2,
         "timeLimit": 60,
-        "bgIndex": 0
+        "bgIndex": 0,
+        "bgmIndex": 0
     },
     {
         "stageId": 2,
@@ -15,7 +16,8 @@
         "pollutantTypes": "A|B",
         "totalPollutant": 3,
         "timeLimit": 55,
-        "bgIndex": 0
+        "bgIndex": 1,
+        "bgmIndex": 1
     },
     {
         "stageId": 3,
@@ -24,6 +26,7 @@
         "pollutantTypes": "A|B|C",
         "totalPollutant": 4,
         "timeLimit": 50,
-        "bgIndex": 0
+        "bgIndex": 2,
+        "bgmIndex": 2
     }
 ]
