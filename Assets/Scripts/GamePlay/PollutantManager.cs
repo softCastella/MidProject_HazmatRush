@@ -15,6 +15,7 @@ public class PollutantManager : MonoBehaviour
     public float itemSelectHintDuration = 2f;
     public GameObject[] pollutants; // 등록된 오염원 프리팹 목록
     public PollutantSpawner spawner;
+    public GasSpawner gasSpawner;
     public Background scroll;
     public PopupUI popupUI;
     public Slider pollutantSlider;
@@ -81,6 +82,10 @@ public class PollutantManager : MonoBehaviour
             scroll.ResumeScroll();
         if (itemSelectManager != null)
             itemSelectManager.ResetToDefault();
+
+        RecoveryItemManager recoveryManager = FindAnyObjectByType<RecoveryItemManager>();
+        if (recoveryManager != null)
+            recoveryManager.ResetForStage();
     }
 
     void Awake()
@@ -112,6 +117,9 @@ public class PollutantManager : MonoBehaviour
 
         if (spawner == null)
             spawner = FindAnyObjectByType<PollutantSpawner>();
+
+        if (gasSpawner == null)
+            gasSpawner = FindAnyObjectByType<GasSpawner>();
 
         if (scroll == null)
             scroll = FindAnyObjectByType<Background>();
@@ -335,20 +343,6 @@ public class PollutantManager : MonoBehaviour
             yield break;
         }
 
-        if (spawner == null)
-        {
-            Debug.LogWarning("PollutantManager: PollutantSpawner가 할당되지 않았습니다.");
-            awaitingSpawn = false;
-            yield break;
-        }
-
-        if (!spawner.isActive)
-        {
-            Debug.LogWarning("PollutantManager: 할당된 스포너가 비활성화되어 있습니다.");
-            awaitingSpawn = false;
-            yield break;
-        }
-
         GameObject selectedPrefab = pool[Random.Range(0, pool.Length)];
         if (selectedPrefab == null)
         {
@@ -358,6 +352,38 @@ public class PollutantManager : MonoBehaviour
         }
 
         Pollutant prefabPoll = selectedPrefab.GetComponent<Pollutant>();
+        bool isGas = prefabPoll != null && prefabPoll.type == Pollutant.PollutantType.TypeD;
+
+        if (isGas)
+        {
+            if (gasSpawner == null)
+            {
+                Debug.LogWarning("PollutantManager: TypeD인데 GasSpawner가 없어 PollutantSpawner를 사용합니다.");
+            }
+            else if (!gasSpawner.isActive)
+            {
+                Debug.LogWarning("PollutantManager: GasSpawner가 비활성화되어 있습니다.");
+                awaitingSpawn = false;
+                yield break;
+            }
+        }
+
+        if (!isGas || gasSpawner == null)
+        {
+            if (spawner == null)
+            {
+                Debug.LogWarning("PollutantManager: PollutantSpawner가 할당되지 않았습니다.");
+                awaitingSpawn = false;
+                yield break;
+            }
+
+            if (!spawner.isActive)
+            {
+                Debug.LogWarning("PollutantManager: 할당된 스포너가 비활성화되어 있습니다.");
+                awaitingSpawn = false;
+                yield break;
+            }
+        }
 
         // 경고 중에도 플레이어 이동을 막지 않도록 변경했습니다.
         // 대신 텍스트와 타이머 동작만 보여주기 위함입니다.
@@ -378,7 +404,7 @@ public class PollutantManager : MonoBehaviour
         if (guideTxt != null)
         {
             yield return StartCoroutine(guideTxt.ShowItemSelectHintRoutine(
-                "Z키로 대응 아이템을 골라주세요", itemSelectHintDuration));
+                "X/Z키로 대응 아이템을 골라주세요", itemSelectHintDuration));
         }
         else
         {
@@ -400,7 +426,11 @@ public class PollutantManager : MonoBehaviour
         }
 
         // 2단계: 오염원 생성 (페이드인 연출)
-        GameObject created = spawner.Spawn(selectedPrefab);
+        GameObject created = null;
+        if (prefabPoll != null && prefabPoll.type == Pollutant.PollutantType.TypeD && gasSpawner != null)
+            created = gasSpawner.Spawn(selectedPrefab);
+        else
+            created = spawner.Spawn(selectedPrefab);
         if (created != null)
         {
             Pollutant poll = created.GetComponent<Pollutant>();
@@ -519,6 +549,7 @@ public class PollutantManager : MonoBehaviour
             case 'A': return Pollutant.PollutantType.TypeA;
             case 'B': return Pollutant.PollutantType.TypeB;
             case 'C': return Pollutant.PollutantType.TypeC;
+            case 'D': return Pollutant.PollutantType.TypeD;
             default: return Pollutant.PollutantType.TypeA;
         }
     }

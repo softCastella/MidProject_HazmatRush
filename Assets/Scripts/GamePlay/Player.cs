@@ -280,6 +280,20 @@ public class Player : MonoBehaviour
             StartDeathSequence();
     }
 
+    public void AddProtection(float amount)
+    {
+        if (amount <= 0f)
+            return;
+        if (currentState == PlayerState.Die)
+            return;
+        if (GameManager.Instance != null && GameManager.Instance.GameEnded)
+            return;
+
+        curProtection = Mathf.Min(maxProtection, curProtection + amount);
+        UpdateProtectionText();
+        UpdateProtectionBar();
+    }
+
     private void StartDeathSequence()
     {
         if (isDeathSequenceRunning || currentState == PlayerState.Die)

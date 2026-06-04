@@ -67,6 +67,17 @@ public class Timer : MonoBehaviour
         UpdateTimeText();
     }
 
+    public void AddSeconds(float seconds)
+    {
+        if (seconds <= 0f)
+            return;
+        if (GameManager.Instance != null && GameManager.Instance.GameEnded)
+            return;
+
+        currentSeconds += seconds;
+        UpdateTimeText();
+    }
+
     private void UpdateTimeText()
     {
         if (timeText == null)

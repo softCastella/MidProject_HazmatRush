@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 8f0a5831660dcad439a3ec8338ff9621
+guid: 06556294b3eabd74d9460efdf5e0a13a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3623928026652440398
-    second: Gemini_Generated_Image_nupqfznupqfznupq_0
+      213: 6508046395202309429
+    second: KakaoTalk_20260604_145453731-removebg-preview 1_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Gemini_Generated_Image_nupqfznupqfznupq_0
+      name: KakaoTalk_20260604_145453731-removebg-preview 1_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1376
-        height: 768
+        x: 177
+        y: 89
+        width: 257
+        height: 251
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: e4773300757ca4230800000000000000
-      internalID: 3623928026652440398
+      spriteID: 53d8bcf17b9315a50800000000000000
+      internalID: 6508046395202309429
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Gemini_Generated_Image_nupqfznupqfznupq_0: 3623928026652440398
+      KakaoTalk_20260604_145453731-removebg-preview 1_0: 6508046395202309429
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

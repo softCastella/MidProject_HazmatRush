@@ -23,7 +23,7 @@
         "stageId": 3,
         "label": "Stage 1-3",
         "placeName": "1F C area",
-        "pollutantTypes": "A|B|C",
+        "pollutantTypes": "A|B|C|D",
         "totalPollutant": 4,
         "timeLimit": 50,
         "bgIndex": 2,

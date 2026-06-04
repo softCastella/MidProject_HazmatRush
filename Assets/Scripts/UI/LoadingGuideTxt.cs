@@ -12,12 +12,13 @@ public class LoadingGuideTxt : MonoBehaviour
     private CanvasGroup canvasGroup;
     private Coroutine loopRoutine;
 
-    // C키로 회복 아이템을 사용할 수 있어요. (회복 기능 연결 후 Messages에 추가)
+    // C/V키로 회복 아이템 선택, Space로 사용 (회복 아이템 연결 후)
 
     private static readonly string[] Messages =
     {
         "A, <-키로 왼쪽이동, D, -> 키로 오른쪽 이동이 가능해요.",
-        "오염원 경고가 뜨고 Z, X키(좌,우)로 중화 아이템을 선택할 수 있어요.",
+        "오염원 경고가 뜨고 X, Z키(좌,우)로 중화 아이템을 선택할 수 있어요.",
+        "C, V키로 회복 아이템을 고르고 Space키로 사용할 수 있어요.",
         "ESC키로 일시정지가 가능해요."
     };
 
