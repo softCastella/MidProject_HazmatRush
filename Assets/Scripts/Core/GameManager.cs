@@ -20,8 +20,12 @@ public class GameManager : MonoBehaviour
 
     [Header("Result Panels")]
     public GameObject clearSet;     // HUD_Canvas/Result_HUD/ClearSet
+    public ClearPanelUI clearPanelUI;
     public GameObject gameOverSet;  // HUD_Canvas/Result_HUD/GameOverSet
     public GameObject nextStageButton; // ClearSet/nextStageBtn
+
+    [Header("Stage Score")]
+    public StageScoreTracker stageScoreTracker;
 
     [Header("Pause")]
     public GameObject pauseSet;     // HUD_Canvas/Pause_HUD
@@ -73,6 +77,10 @@ public class GameManager : MonoBehaviour
             itemManager = FindAnyObjectByType<ItemManager>();
         if (itemSelectManager == null)
             itemSelectManager = FindAnyObjectByType<ItemSelectManager>();
+        if (stageScoreTracker == null)
+            stageScoreTracker = FindAnyObjectByType<StageScoreTracker>();
+        if (clearPanelUI == null && clearSet != null)
+            clearPanelUI = clearSet.GetComponent<ClearPanelUI>();
 
         if (clearSet != null)
             clearSet.SetActive(false);
@@ -233,15 +241,15 @@ public class GameManager : MonoBehaviour
         if (!protectionOk || !timerOk)
             return;
 
-        ShowClear();
+        ShowClear(false);
     }
 
-    // 디버그: 조건 무시하고 강제 클리어
+    // 디버그: 조건 무시하고 강제 클리어 (별 3개)
     public void ForceClear()
     {
         if (gameEnded)
             return;
-        ShowClear();
+        ShowClear(true);
     }
 
     public void RestartCurrentStage()
@@ -295,6 +303,9 @@ public class GameManager : MonoBehaviour
 
     private void ResetStagePlay()
     {
+        if (stageScoreTracker != null)
+            stageScoreTracker.Reset();
+
         if (player != null)
             player.ResetForStage();
         if (pollutantManager != null)
@@ -316,7 +327,7 @@ public class GameManager : MonoBehaviour
             pollutantManager.StopReturnFlow();
     }
 
-    private void ShowClear()
+    private void ShowClear(bool perfectStars)
     {
         gameEnded = true;
         FreezePlayOnResult();
@@ -330,12 +341,22 @@ public class GameManager : MonoBehaviour
         if (nextStageButton != null)
             nextStageButton.SetActive(stageManager != null && stageManager.HasNextStage());
 
-        int cleared = stageManager != null ? stageManager.clearedPollutants : 0;
-        int total = stageManager != null ? stageManager.totalPollutants : 0;
-        int remainSec = timer != null ? Mathf.CeilToInt(timer.currentSeconds) : 0;
-        int protection = player != null ? Mathf.FloorToInt(player.curProtection) : 0;
+        StageClearResult result = new StageClearResult();
+        if (stageScoreTracker != null)
+        {
+            if (perfectStars)
+                result = stageScoreTracker.BuildPerfectResult(player, timer, stageManager);
+            else
+                result = stageScoreTracker.BuildResult(player, timer, stageManager);
+        }
 
-        Debug.Log($"[GameManager] 스테이지 클리어 - 오염원수 {cleared}/{total} / 남은 시간: {remainSec:00}초 / 방호복 내구도: {protection:00}%");
+        if (clearPanelUI != null)
+            clearPanelUI.Apply(result);
+
+        if (perfectStars)
+            Debug.Log($"[GameManager] (디버그) 강제 클리어 - 별 {result.starCount}/3");
+        else
+            Debug.Log($"[GameManager] 스테이지 클리어 - 별 {result.starCount}/3 / 오염원 {result.clearedPollutants}/{result.totalPollutants} / 방호복 {result.protectionPercent}% / 틀린 아이템 {result.wrongItemCount}회 / 남은 시간 {result.remainSeconds:00}초");
 
         if (stageManager != null)
         {

@@ -228,8 +228,15 @@ public class Pollutant : MonoBehaviour
                 lastJudgeMatched = isMatched;
 
                 // 틀린 아이템으로 접촉하면 오대응 패널티(스테이지 1-1 전용)를 발동합니다.
-                if (!isMatched && GameManager.Instance != null)
-                    GameManager.Instance.TriggerWrongItemPenalty();
+                if (!isMatched)
+                {
+                    StageScoreTracker scoreTracker = FindAnyObjectByType<StageScoreTracker>();
+                    if (scoreTracker != null)
+                        scoreTracker.RegisterWrongItem();
+
+                    if (GameManager.Instance != null)
+                        GameManager.Instance.TriggerWrongItemPenalty();
+                }
             }
         }
 
@@ -291,6 +298,10 @@ public class Pollutant : MonoBehaviour
         StopNeutralizationSfxLocal();
         pollutanCurHp = pollutanMaxHp;
         Debug.Log($"[Pollutant] 접촉 해제 -> HP 초기화: {pollutanCurHp:F2}/{pollutanMaxHp:F2}");
+
+        StageScoreTracker scoreTracker = FindAnyObjectByType<StageScoreTracker>();
+        if (scoreTracker != null)
+            scoreTracker.RegisterPollutantReset();
 
         Player player = other.GetComponent<Player>();
         HideBars(player);
