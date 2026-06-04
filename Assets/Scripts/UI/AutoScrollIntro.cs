@@ -11,10 +11,27 @@ public class AutoScrollIntro : MonoBehaviour
     public bool loadNextSceneAfterScroll = true;
     public float endDelay = 0.5f;
 
+    private Coroutine scrollRoutine;
+    private bool sceneLoading;
+
     private void Start()
     {
         if (playOnStart)
-            StartCoroutine(AutoScroll());
+            scrollRoutine = StartCoroutine(AutoScroll());
+    }
+
+    public void SkipIntro()
+    {
+        if (sceneLoading)
+            return;
+
+        if (scrollRoutine != null)
+        {
+            StopCoroutine(scrollRoutine);
+            scrollRoutine = null;
+        }
+
+        GoToLoadingScene();
     }
 
     public IEnumerator AutoScroll()
@@ -42,10 +59,21 @@ public class AutoScrollIntro : MonoBehaviour
         if (!loadNextSceneAfterScroll)
             yield break;
 
+        GoToLoadingScene();
+    }
+
+    private void GoToLoadingScene()
+    {
+        if (sceneLoading)
+            return;
+
+        sceneLoading = true;
+
         if (SceneLoadManager.Instance == null)
         {
             Debug.LogWarning("[AutoScrollIntro] SceneLoadManager가 없어 다음 씬으로 넘어가지 않습니다.");
-            yield break;
+            sceneLoading = false;
+            return;
         }
 
         SceneLoadManager.Instance.LoadAfterIntro();
