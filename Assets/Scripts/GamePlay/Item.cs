@@ -8,7 +8,8 @@ public class Item : MonoBehaviour
         Scanner,
         Neutralizer,
         GeneralPad,
-        OilPad
+        OilPad,
+        GasValve
     }
 
     //아이템 디폴트타입은 스캐너이다.
@@ -33,6 +34,7 @@ public class Item : MonoBehaviour
             ItemType.Neutralizer => 12f,
             ItemType.GeneralPad => 14f,
             ItemType.OilPad => 8f,
+            ItemType.GasValve => 12f,
             _ => 0f
         };
     }

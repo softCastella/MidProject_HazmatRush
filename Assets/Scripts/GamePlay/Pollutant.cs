@@ -11,6 +11,7 @@ public class Pollutant : MonoBehaviour
         TypeA, //부식성 오염원
         TypeB, //유류 오염원
         TypeC, //혼합화학액 오염원
+        TypeD, //가스 오염원
     }
 
     //오염원 타입 (경고 메시지에 사용)
@@ -18,7 +19,8 @@ public class Pollutant : MonoBehaviour
     {
         "부식성",
         "유류",
-        "혼합화학액"
+        "혼합화학액",
+        "가스"
     };
 
     //오염원 오염물질 구체적 이름 예(팝업 메시지에 사용)
@@ -27,6 +29,7 @@ public class Pollutant : MonoBehaviour
         new[] { "염산", "황산", "질산" },
         new[] { "폐유", "윤활유", "기계유", "연료유" },
         new[] { "폐산 혼합액", "세정 폐액", "공정 폐액", "화학 슬러지 액상" },
+        new[] { "독성가스", "염소가스", "암모니아가스", "일산화탄소" },
     };
     
     //오염원 추천 아이템(팝업매세지에 사용)
@@ -34,7 +37,8 @@ public class Pollutant : MonoBehaviour
     {
         "중화제",
         "오일패드", 
-        "범용패드"
+        "범용패드",
+        "가스밸브"
     };
 
 
@@ -51,6 +55,7 @@ public class Pollutant : MonoBehaviour
         PollutantType.TypeA => Item.ItemType.Neutralizer, //부식성 오염원 추천 아이템 타입
         PollutantType.TypeB => Item.ItemType.OilPad, //유류 오염원 추천 아이템 타입
         PollutantType.TypeC => Item.ItemType.GeneralPad, //혼합화학액 오염원 추천 아이템 타입
+        PollutantType.TypeD => Item.ItemType.GasValve, //가스 오염원 추천 아이템 타입
         _ => Item.ItemType.Scanner, //기타 오염원 추천 아이템 타입
     };
     //오염원 추천 아이템 슬롯 인덱스
@@ -151,6 +156,10 @@ public class Pollutant : MonoBehaviour
             case PollutantType.TypeC: // 혼합오염원
                 pollutanMaxHp = 55;
                 pollutanDps = 9;
+                break;
+            case PollutantType.TypeD: // 가스 오염원
+                pollutanMaxHp = 24;
+                pollutanDps = 5;
                 break;
         }
     }

@@ -1,18 +1,39 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class AutoScrollIntro : MonoBehaviour
 {
     public ScrollRect scrollRect;
-    public float duration = 12f;   // 위에서 아래로 내려가는 시간
-    public float startDelay = 1f;  // 시작 전 잠깐 대기
+    public float duration = 12f;
+    public float startDelay = 1f;
     public bool playOnStart = true;
     public bool loadNextSceneAfterScroll = true;
     public float endDelay = 0.5f;
 
+    [Header("씬 전환")]
+    public CanvasGroup fadeGroup;
+    public float fadeOutDuration = 0.5f;
+    public string fallbackLoadingSceneName = "LoadingScene";
+
     private Coroutine scrollRoutine;
     private bool sceneLoading;
+
+    void Awake()
+    {
+        if (fadeGroup == null)
+        {
+            Canvas canvas = GetComponentInParent<Canvas>();
+            if (canvas != null)
+            {
+                fadeGroup = canvas.GetComponent<CanvasGroup>();
+                if (fadeGroup == null)
+                    fadeGroup = canvas.gameObject.AddComponent<CanvasGroup>();
+                fadeGroup.alpha = 1f;
+            }
+        }
+    }
 
     private void Start()
     {
@@ -22,16 +43,7 @@ public class AutoScrollIntro : MonoBehaviour
 
     public void SkipIntro()
     {
-        if (sceneLoading)
-            return;
-
-        if (scrollRoutine != null)
-        {
-            StopCoroutine(scrollRoutine);
-            scrollRoutine = null;
-        }
-
-        GoToLoadingScene();
+        BeginExitToLoading();
     }
 
     public IEnumerator AutoScroll()
@@ -39,7 +51,14 @@ public class AutoScrollIntro : MonoBehaviour
         Canvas.ForceUpdateCanvases();
         yield return null;
 
-        scrollRect.verticalNormalizedPosition = 1f; // 맨 위에서 시작
+        if (scrollRect == null)
+        {
+            Debug.LogWarning("[AutoScrollIntro] scrollRect가 없습니다.");
+            BeginExitToLoading();
+            yield break;
+        }
+
+        scrollRect.verticalNormalizedPosition = 1f;
         yield return new WaitForSeconds(startDelay);
 
         float t = 0f;
@@ -59,23 +78,55 @@ public class AutoScrollIntro : MonoBehaviour
         if (!loadNextSceneAfterScroll)
             yield break;
 
-        GoToLoadingScene();
+        BeginExitToLoading();
     }
 
-    private void GoToLoadingScene()
+    private void BeginExitToLoading()
     {
         if (sceneLoading)
             return;
 
         sceneLoading = true;
 
-        if (SceneLoadManager.Instance == null)
+        if (scrollRoutine != null)
         {
-            Debug.LogWarning("[AutoScrollIntro] SceneLoadManager가 없어 다음 씬으로 넘어가지 않습니다.");
-            sceneLoading = false;
-            return;
+            StopCoroutine(scrollRoutine);
+            scrollRoutine = null;
         }
 
-        SceneLoadManager.Instance.LoadAfterIntro();
+        StartCoroutine(ExitToLoadingRoutine());
+    }
+
+    private IEnumerator ExitToLoadingRoutine()
+    {
+        if (fadeGroup != null && fadeOutDuration > 0f)
+        {
+            float startAlpha = fadeGroup.alpha;
+            float time = 0f;
+
+            while (time < fadeOutDuration)
+            {
+                time += Time.deltaTime;
+                fadeGroup.alpha = Mathf.Lerp(startAlpha, 0f, time / fadeOutDuration);
+                yield return null;
+            }
+
+            fadeGroup.alpha = 0f;
+        }
+
+        if (SceneLoadManager.Instance != null)
+        {
+            SceneLoadManager.Instance.LoadAfterIntro();
+            yield break;
+        }
+
+        Debug.LogWarning("[AutoScrollIntro] SceneLoadManager 없음 → LoadingScene 직접 로드");
+        if (string.IsNullOrEmpty(fallbackLoadingSceneName))
+        {
+            sceneLoading = false;
+            yield break;
+        }
+
+        SceneManager.LoadScene(fallbackLoadingSceneName);
     }
 }

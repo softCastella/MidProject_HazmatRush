@@ -19,7 +19,7 @@ public class ItemSelectManager : MonoBehaviour
             itemManager = FindAnyObjectByType<ItemManager>();
 
         if (itemTypes == null || itemTypes.Length == 0)
-            itemTypes = new[] { Item.ItemType.Scanner, Item.ItemType.Neutralizer, Item.ItemType.GeneralPad, Item.ItemType.OilPad };
+            itemTypes = new[] { Item.ItemType.Scanner, Item.ItemType.Neutralizer, Item.ItemType.GeneralPad, Item.ItemType.OilPad, Item.ItemType.GasValve };
     }
 
     void Start()
@@ -34,6 +34,8 @@ public class ItemSelectManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Z))
             SelectNextItem();
+        else if (Input.GetKeyDown(KeyCode.X))
+            SelectPrevItem();
     }
 
     public void ResetToDefault()
@@ -80,6 +82,37 @@ public class ItemSelectManager : MonoBehaviour
             selectedIndex++;
             if (selectedIndex > lastTreatmentIndex || selectedIndex <= ScannerIndex)
                 selectedIndex = FirstTreatmentIndex;
+        }
+
+        UpdateUI();
+        Debug.Log($"선택된 아이템: {GetSelectedItemName()} (index={selectedIndex}, type={SelectedItemType})");
+    }
+
+    public void SelectPrevItem()
+    {
+        if (!itemSwitchEnabled)
+            return;
+
+        if (itemPrefabs == null || itemPrefabs.Length == 0)
+        {
+            Debug.LogWarning("ItemSelectManager: itemPrefabs가 비어 있어 아이템 변경을 수행할 수 없습니다.");
+            return;
+        }
+
+        int lastTreatmentIndex = itemPrefabs.Length - 1;
+        if (lastTreatmentIndex < FirstTreatmentIndex)
+            return;
+
+        if (!hasPickedFirstItem)
+        {
+            hasPickedFirstItem = true;
+            selectedIndex = FirstTreatmentIndex;
+        }
+        else
+        {
+            selectedIndex--;
+            if (selectedIndex < FirstTreatmentIndex)
+                selectedIndex = lastTreatmentIndex;
         }
 
         UpdateUI();
@@ -136,6 +169,8 @@ public class ItemSelectManager : MonoBehaviour
             return Item.ItemType.GeneralPad;
         if (lower.Contains("blue") || lower.Contains("oil") || lower.Contains("absorb"))
             return Item.ItemType.OilPad;
+        if (lower.Contains("gas") || lower.Contains("valve"))
+            return Item.ItemType.GasValve;
         return Item.ItemType.Scanner;
     }
 
