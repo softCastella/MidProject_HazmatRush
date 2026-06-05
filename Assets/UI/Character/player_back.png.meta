@@ -1,19 +1,16 @@
 fileFormatVersion: 2
-guid: 2a89296d55743b4439c5cc020e12b559
+guid: c1735ab0d96b9114983179209cad43b2
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2937269487991173069
-    second: "developer_logo-\uB2E4\uC74C\uC5D0\uC11C-\uBCC0\uD658-png_0"
+      213: -8894531281158279759
+    second: player_back_0
   - first:
-      213: 1793506061370990785
-    second: "developer_logo-\uB2E4\uC74C\uC5D0\uC11C-\uBCC0\uD658-png_1"
+      213: 3605640222510527537
+    second: player_back_1
   - first:
-      213: -9131326371684795218
-    second: "developer_logo-\uB2E4\uC74C\uC5D0\uC11C-\uBCC0\uD658-png_2"
-  - first:
-      213: 2715504491704455829
-    second: "developer_logo-\uB2E4\uC74C\uC5D0\uC11C-\uBCC0\uD658-png_3"
+      213: -4715734581024710762
+    second: player_back_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,7 +43,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -55,12 +52,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
-  alignment: 0
-  spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  alignment: 7
+  spritePivot: {x: 0.5, y: 0}
+  spritePixelsToUnits: 0.2
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -122,89 +119,67 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "developer_logo-\uB2E4\uC74C\uC5D0\uC11C-\uBCC0\uD658-png_0"
+      name: player_back_0
       rect:
         serializedVersion: 2
-        x: 28
-        y: 74
-        width: 89
-        height: 76
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 3
+        y: 0
+        width: 17
+        height: 34
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: dcfae49790743c820800000000000000
-      internalID: 2937269487991173069
+      spriteID: 1bde5fecce6409480800000000000000
+      internalID: -8894531281158279759
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "developer_logo-\uB2E4\uC74C\uC5D0\uC11C-\uBCC0\uD658-png_1"
+      name: player_back_1
       rect:
         serializedVersion: 2
-        x: 88
-        y: 30
-        width: 29
-        height: 80
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 26
+        y: 0
+        width: 19
+        height: 35
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1c0278aa240d3e810800000000000000
-      internalID: 1793506061370990785
+      spriteID: 134b99acdaec90230800000000000000
+      internalID: 3605640222510527537
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: "developer_logo-\uB2E4\uC74C\uC5D0\uC11C-\uBCC0\uD658-png_2"
+      name: player_back_2
       rect:
         serializedVersion: 2
-        x: 120
-        y: 74
-        width: 74
-        height: 58
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 51
+        y: 0
+        width: 17
+        height: 34
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: eac32977b03074180800000000000000
-      internalID: -9131326371684795218
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: "developer_logo-\uB2E4\uC74C\uC5D0\uC11C-\uBCC0\uD658-png_3"
-      rect:
-        serializedVersion: 2
-        x: 192
-        y: 77
-        width: 47
-        height: 39
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5929506a2f86fa520800000000000000
-      internalID: 2715504491704455829
+      spriteID: 69f1ff232685e8eb0800000000000000
+      internalID: -4715734581024710762
       vertices: []
       indices: 
       edges: []
@@ -213,7 +188,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 
     internalID: 0
     vertices: []
     indices: 
@@ -223,10 +198,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "developer_logo-\uB2E4\uC74C\uC5D0\uC11C-\uBCC0\uD658-png_0": 2937269487991173069
-      "developer_logo-\uB2E4\uC74C\uC5D0\uC11C-\uBCC0\uD658-png_1": 1793506061370990785
-      "developer_logo-\uB2E4\uC74C\uC5D0\uC11C-\uBCC0\uD658-png_2": -9131326371684795218
-      "developer_logo-\uB2E4\uC74C\uC5D0\uC11C-\uBCC0\uD658-png_3": 2715504491704455829
+      player_back_0: -8894531281158279759
+      player_back_1: 3605640222510527537
+      player_back_2: -4715734581024710762
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

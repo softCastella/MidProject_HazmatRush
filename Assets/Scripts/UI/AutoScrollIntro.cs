@@ -12,8 +12,8 @@ public class AutoScrollIntro : MonoBehaviour
     public bool loadNextSceneAfterScroll = true;
     public float endDelay = 0.5f;
 
-    [Header("씬 전환")]
-    public CanvasGroup fadeGroup;
+    [Header("씬 전환 (검은 화면으로 암전)")]
+    public Image fadeOverlay;
     public float fadeOutDuration = 0.5f;
     public string fallbackLoadingSceneName = "LoadingScene";
 
@@ -22,17 +22,12 @@ public class AutoScrollIntro : MonoBehaviour
 
     void Awake()
     {
-        if (fadeGroup == null)
-        {
-            Canvas canvas = GetComponentInParent<Canvas>();
-            if (canvas != null)
-            {
-                fadeGroup = canvas.GetComponent<CanvasGroup>();
-                if (fadeGroup == null)
-                    fadeGroup = canvas.gameObject.AddComponent<CanvasGroup>();
-                fadeGroup.alpha = 1f;
-            }
-        }
+        Camera cam = Camera.main;
+        if (cam != null)
+            cam.backgroundColor = Color.black;
+
+        EnsureFadeOverlay();
+        SetOverlayAlpha(0f);
     }
 
     private void Start()
@@ -99,19 +94,23 @@ public class AutoScrollIntro : MonoBehaviour
 
     private IEnumerator ExitToLoadingRoutine()
     {
-        if (fadeGroup != null && fadeOutDuration > 0f)
-        {
-            float startAlpha = fadeGroup.alpha;
-            float time = 0f;
+        EnsureFadeOverlay();
 
+        if (fadeOverlay != null && fadeOutDuration > 0f)
+        {
+            float time = 0f;
             while (time < fadeOutDuration)
             {
                 time += Time.deltaTime;
-                fadeGroup.alpha = Mathf.Lerp(startAlpha, 0f, time / fadeOutDuration);
+                SetOverlayAlpha(Mathf.Lerp(0f, 1f, time / fadeOutDuration));
                 yield return null;
             }
 
-            fadeGroup.alpha = 0f;
+            SetOverlayAlpha(1f);
+        }
+        else if (fadeOverlay != null)
+        {
+            SetOverlayAlpha(1f);
         }
 
         if (SceneLoadManager.Instance != null)
@@ -128,5 +127,48 @@ public class AutoScrollIntro : MonoBehaviour
         }
 
         SceneManager.LoadScene(fallbackLoadingSceneName);
+    }
+
+    private void EnsureFadeOverlay()
+    {
+        if (fadeOverlay != null)
+            return;
+
+        Transform found = transform.root.Find("FadeOverlay");
+        if (found != null)
+        {
+            fadeOverlay = found.GetComponent<Image>();
+            if (fadeOverlay != null)
+                return;
+        }
+
+        Canvas canvas = GetComponentInParent<Canvas>();
+        if (canvas == null)
+            return;
+
+        GameObject go = new GameObject("FadeOverlay");
+        go.transform.SetParent(canvas.transform, false);
+        go.transform.SetAsLastSibling();
+
+        RectTransform rt = go.AddComponent<RectTransform>();
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.offsetMin = Vector2.zero;
+        rt.offsetMax = Vector2.zero;
+
+        fadeOverlay = go.AddComponent<Image>();
+        fadeOverlay.color = new Color(0f, 0f, 0f, 0f);
+        fadeOverlay.raycastTarget = false;
+    }
+
+    private void SetOverlayAlpha(float alpha)
+    {
+        if (fadeOverlay == null)
+            return;
+
+        Color color = fadeOverlay.color;
+        color.a = Mathf.Clamp01(alpha);
+        fadeOverlay.color = color;
+        fadeOverlay.raycastTarget = color.a > 0.01f;
     }
 }

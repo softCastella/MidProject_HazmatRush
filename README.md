@@ -1,27 +1,50 @@
 # MidProject
 
-2D 횡스크롤 환경에서 오염물질을 탐지·중화하는 Unity 게임 프로젝트입니다.  
-방호복을 유지하면서 이동하고, 오염원 유형에 맞는 아이템으로 오염원을 제거하는 것이 핵심 플레이입니다.
+2D 횡스크롤 환경에서 오염물질을 탐지·중화하는 Unity 게임입니다.  
+방호복을 유지하며 이동하고, 오염원 유형에 맞는 아이템으로 오염원을 제거하는 것이 핵심 플레이입니다.
 
-- **엔진:** Unity `6000.4.8f1`
-- **언어:** C#
-- **주요 씬:** `TitleScene`, `GameScene`
+| 항목 | 내용 |
+|------|------|
+| **엔진** | Unity `6000.4.8f1` |
+| **언어** | C# |
+| **씬** | `SplashScene` → `TitleScene` → `IntroStoryScene` → `LoadingScene` → `GameScene` |
+| **스테이지 데이터** | `Assets/Data/stage_data.json` (`mapPollutants` 포함) |
+| **AI·협업 규칙** | [AGENTS.md](AGENTS.md) |
+| **버그·수정 기록** | [Bug 폴더](Assets/Docs/Bug/) — 최근: [클리어·가이드·VFX](Assets/Docs/Bug/2026-06-05-시각미상-클리어-가이드-중화VFX-fixes.md) |
 
 ---
 
 ## 게임 개요
 
-플레이어는 제한된 구간(`x: -785` ~ `-403`)을 좌우로 이동하며 오염원에 접근합니다.  
-이동 중 일정 시간이 지나면 경고 후 오염원이 생성되고, 접촉 시 방호복 HP와 오염원 HP가 실시간으로 변합니다.  
-스테이지의 모든 오염원을 시간 내에 중화하면 클리어, 방호복이 소진되거나 시간이 초과되면 게임 오버입니다.
+플레이어는 제한된 구간(1차: `x` 약 **-785 ~ -403**)을 좌우로 이동하며 오염원에 접근합니다.  
+이동 중 일정 시간이 지나면 경고 후 오염원이 **등장**하고, 접촉 시 방호복 HP와 오염원 HP가 실시간으로 변합니다.
 
-| 오염원 타입 | 예시 물질 | 추천 아이템 | HP | 처치 시간(추천 아이템) |
-|-----------|----------|------------|----|----------------------|
-| TypeA (부식성) | 염산, 황산, 질산 | 중화제 (`Neutralizer`) | 40 | 약 3.3초 |
-| TypeB (유류) | 폐유, 윤활유 등 | 오일 흡착패드 (`OilPad`) | 20 | 약 2.5초 |
-| TypeC (혼합화학액) | 폐산 혼합액, 화학 슬러지 등 | 범용 흡착 패드 (`GeneralPad`) | 55 | 약 3.9초 |
+- 스테이지의 **예정 오염원을 모두** 중화해야 구간을 나갈 수 있습니다 (중화 A~C + 가스 D, 아직 등장 전인 것 포함).
+- `totalPollutant`만큼 중화하면 스테이지 클리어. 방호복 0 또는 시간 초과 시 게임 오버.
+- 클리어 시 **별 3개** — 오염원 전부 중화 / 방호복 50% 이상 / 틀린 아이템 0회 (별은 **왼쪽부터** 달성 개수만큼 채움).
 
-`Scanner`는 탐지용이며 오염원 HP에는 데미지를 주지 않습니다.
+### 오염원 (A~C 중화 · D 가스)
+
+| 타입 | 예시 물질 | 추천 아이템 | HP | DPS(플레이어) |
+|------|----------|------------|-----|----------------|
+| **TypeA** 부식성 | 염산, 황산, 질산 | 중화제 `Neutralizer` | 40 | 6 |
+| **TypeB** 유류 | 폐유, 윤활유 등 | 오일패드 `OilPad` | 20 | 4 |
+| **TypeC** 혼합화학액 | 폐산 혼합액 등 | 범용패드 `GeneralPad` | 55 | 9 |
+| **TypeD** 가스 | 독성가스, 일산화탄소 등 | 가스밸브 `GasValve` | 24 | 5 |
+
+- **A~C:** 한 번에 하나만 활성. 중화 전까지 다음 A~C 경고·등장 없음.
+- **D(가스):** A~C와 별도 타이머로 등장 가능, 동시 존재 가능. 접촉 해제 시 A~C와 동일하게 **HP 초기화** (`pollutanMaxHp`).
+- 가스 접촉 + 가스밸브 정답 시 **밸브 애니**(`Player_Valve`) + **밸브 SFX** (`squeakyValveSFX`). 가스 접촉 중 **중화 VFX 없음**.
+
+### 아이템 DPS (중화용)
+
+| 아이템 | DPS | 비고 |
+|--------|-----|------|
+| `Scanner` | 0 | 이동·탐지 기본 |
+| `Neutralizer` | 12 | |
+| `GeneralPad` | 14 | |
+| `OilPad` | 8 | |
+| `GasValve` | 12 | 가스 전용 |
 
 ---
 
@@ -29,160 +52,167 @@
 
 | 입력 | 동작 |
 |------|------|
-| `←` / `→` 또는 `A` / `D` | 좌우 이동 |
-| `Z` | 아이템 변경 *(경고 표시 후 ~ 오염원 중화 전만 가능, 아래 **아이템 선택** 참고)* |
-| `ESC` | 일시정지 / 재개 토글 |
-| `F1` (디버그) | 강제 클리어 |
-| `F2` (디버그) | 강제 게임 오버 |
+| `←` `→` / `A` `D` | 좌우 이동 |
+| **`Z`** | 중화 아이템 **이전**(왼쪽) — 경고 후 ~ 해당 구간 오염원 처리 전 |
+| **`X`** | 중화 아이템 **다음**(오른쪽) |
+| **`K`** | **키 가이드** 패널 열기/닫기 (`KeyGuidePannel`) |
+| **`I`** | **아이템 가이드** 패널 열기/닫기 (`ItemGuide`) |
+| `C` / `V` | 회복 아이템 선택 (왼쪽 / 오른쪽) |
+| `Space` | 회복 아이템 사용 |
+| `ESC` | 일시정지 / 재개 |
+| `F1` | (디버그) 강제 클리어 |
+| `F2` | (디버그) 강제 게임 오버 |
 
-가이드 텍스트가 끝나면 이동·타이머·배경 스크롤이 활성화됩니다.
+가이드 텍스트가 끝나면 이동·타이머·배경 스크롤이 활성화됩니다.  
+로딩 씬에서도 이동·Z/X·C/V·**K/I**·ESC 안내가 순환 표시됩니다.
 
 ---
 
-## 플레이 흐름
+## 씬 흐름
 
 ```text
-게임 시작
-  └ 안내 문구 표시 (페이드 인 → 유지 → 페이드 아웃)
-        └ 종료 시 플레이어 이동 / 타이머 / 배경 스크롤 활성화
-  └ 플레이어 우측 이동 (1차 범위)
-        └ 누적 이동 시간 도달 → 경고 문구 깜빡임 (WarningTxt)
-              └ GuideTxt: "Z키로 대응 아이템을 골라주세요" (약 2초, 표시만)
-              └ 오염원 생성 (페이드 인)
-                    └ 페이드 인 ~80% 시점에 처리 안내 팝업 (1.5초)
-              └ 접촉 → 중화 (오염원/방호복 HP 실시간 변화)
-        └ 오염원 중화 완료 → Scanner(기본)로 복귀, Z키 전환 잠금 → 페이드아웃 후 제거
-              ├ 남은 오염원 있음 → 우측 x=769까지 직접 이동 → 화면 페이드아웃
-              │     → 시작 위치·1차 범위·배경 오프셋 리셋 → 페이드인 (맵 이어짐) → 루프 반복
-              └ 마지막 오염원 → 페이드아웃 후 clearPanelDelay(기본 1초) → ClearSet 패널
-결과
-  ├ 클리어  : 방호복 ≥ 1 & 시간 잔여 & 전체 오염원 중화 → ClearSet 패널
-  └ 게임오버: 방호복 0 → Die 애니(1회) → dieGameOverDelay(기본 2초) → GameOverSet 패널
-      타임오버(F2 등) → 즉시 GameOverSet 패널
+SplashScene
+  └ 로고 페이드인·확대 → splashSFX → 페이드아웃 → TitleScene
+TitleScene
+  └ 시작 → IntroStoryScene (스토리 스크롤)
+  └ 이어하기 → LoadingScene (인트로 생략 가능)
+IntroStoryScene
+  └ 종료 → LoadingScene
+LoadingScene
+  └ stage_data + 오염원·회복 아이템 배치 확정 (PollutantSpawnPlan, RecoveryItemSpawnPlan)
+  └ 조작 안내 문구 순환 (LoadingGuideTxt)
+  └ GameScene 로드
+GameScene
+  └ 스테이지 플레이 → 클리어 / 게임오버
 ```
+
+> **BGM:** 타이틀·게임 씬만 BGM 재생(페이드 인/아웃). 스플래시·인트로·로딩에서는 BGM 없음(`StopBGM`).
+
+---
+
+## 플레이 흐름 (한 구간)
+
+```text
+시작 가이드 종료 → 이동·타이머·배경 ON
+  └ 1차 범위(-785~-403)에서 우측 이동 (누적 시간)
+        └ 경고 (WarningTxt) + Z/X 안내 (GuideTxt)
+        └ 오염원 등장 (로딩 때 만든 인스턴스 활성화 + 페이드인)
+              └ 팝업: 물질·추천 아이템 안내
+        └ 접촉: 판정 로그 → 방호복 감소 → 정답 아이템만 오염원 HP 감소
+              └ 정답 A~C: 중화 VFX + 중화 SFX 루프
+              └ D+가스밸브: 밸브 애니 + 밸브 SFX (중화 VFX 없음)
+              └ 오답: 방호복만 감소, 중화 VFX·오염원 HP 감소 없음
+  └ 해당 구간 예정 오염원(중화+가스) 전부 처리 전
+        → 맵 전환 불가, 배경 스크롤 정지
+  └ 전부 처리 후
+        ├ 스테이지에 남은 오염원 있음 → x=769까지 이동 → 페이드 → 시작 위치·배경 리셋 → 반복
+        └ 마지막 오염원 → Player_Clear 2초 → ClearSet (별점 + 조건별 텍스트)
+```
+
+사망 시: `Player_Die` **2초** → GameOverSet + 게임오버 SFX.
 
 ---
 
 ## 핵심 시스템
 
-### 1. 플레이어 (`Player.cs`)
+### 플레이어 (`Player.cs`)
 
-- **방호복:** `maxProtection` / `curProtection` (float), UI는 정수 `%` 표시
-- **상태:** `Idle`, `Move` — Animator `State`(int 0/1) / **사망** — `Die` 트리거 → `Player_Die` 클립 (루프 없음, 1회만)
-- **이동:** `Rigidbody2D.MovePosition` 기반 (트리거 접촉 안정화)
-- **이동 범위(1차):** `leftLimit` ~ `rightLimit` (기본 -785 ~ -403), 오염원 생성 시 `GrowRange()`로 확장
-- **맵 구간 전환:** 잔여 오염원이 있을 때 중화 후 `PrepareMapAdvanceWalk()`로 우측 `mapAdvanceRightX`(기본 769)까지 이동 → `PollutantManager`가 페이드 전환 후 시작 위치·배경 리셋
-- **`AutoReturnToStart()`:** 코드에만 남음 (현재 `PollutantManager`에서는 미사용)
-- **`StopMovement()`:** 클리어/게임오버·사망 대기 중 `GameManager`에서 호출, 이동·속도 즉시 정지
-- **일시정지·게임 종료 중 입력 차단** (`IsPaused`, `GameEnded`), 맵 전환 중(`returningToStart`)은 예외 처리
-- **사망:** 방호복 0 → `SetTrigger("Die")` → `dieGameOverDelay`(기본 2초) 후 `GameManager` 게임오버 패널 (방호복 소진만 지연)
+- 방호복 `curProtection` / `maxProtection` (float), UI는 정수 %
+- 이동: `Rigidbody2D.MovePosition`, 1차 범위 `leftLimit`~`rightLimit`
+- 첫 오염원 등장 후 `UnlockMapSegmentMovement()` — 1차 우측 한계(`-403`) 해제, 맵 끝(`769`)까지 이동
+- **중화 VFX:** 접촉 중이고 **추천 아이템과 일치**할 때만 (틀린 도구면 OFF)
+- 가스 밸브 연출: `SetValveAnimActive` — `Player_Valve` + 밸브 SFX
+- **클리어:** `PlayClearAnim()` — `Clear` 트리거 → `Player_Clear`(Loop)
+- **사망:** Die 애니 → 페이드 (`dieAnimDelay` 후 패널은 `GameManager`에서 처리)
+- 맵 전환: `PrepareMapAdvanceWalk()` → `mapAdvanceRightX`(기본 769)
 
-### 2. 오염원 (`Pollutant.cs`)
+### 오염원 (`Pollutant.cs`)
 
-접촉 중 (`OnTriggerStay2D`):
+**A~C / D 공통:** `OnTriggerStay2D` → `ApplyPlayerContactDamage` — 판정 로그 → 방호복 DPS → 정답일 때만 오염원 HP.  
+**D 연출만 분기:** 가스밸브 정답 시 밸브 애니·SFX (중화 VFX 없음).
 
-1. 아이템 판정 로그 (올바른/틀린 + 추천·선택 타입)
-2. 플레이어 방호복 감소 (`pollutantDps × Δt`)
-3. **추천 아이템과 일치할 때만** 오염원 HP 감소 (`itemDps × Δt`) + **중화 SFX 루프 재생**
-4. 틀린 아이템·접촉 해제·중화 완료 시 중화 SFX 정지
-5. 오염원 HP 슬라이더 값 갱신
+접촉 해제(전 타입): 오염원 HP `pollutanMaxHp`로 리셋.  
+오염원 제거 시 아이템 선택 **유지** (스캐너/중화제로 자동 초기화 안 함).
 
-접촉 시작/해제 (`OnTriggerEnter2D` / `OnTriggerExit2D`):
+### 오염원 스폰·구간 (`PollutantManager.cs`, `PollutantSpawnPlan.cs`)
 
-- 접촉 시 방호복·오염원 HP 슬라이더 표시 + 추적 타겟 연결
-- 해제 시 오염원 HP를 `pollutanMaxHp`로 초기화, 슬라이더 숨김
+| 단계 | 동작 |
+|------|------|
+| **로딩** | `PollutantSpawnPlan.Prepare` — 스테이지별 A~C/D 개수·위치·타입 확정 |
+| **GameScene Start** | 비활성으로 미리 생성 (`SetActive(false)`) |
+| **등장** | 경고 코루틴 후 해당 슬롯 `SetActive(true)` (Instantiate 최소화) |
+| **구간 이탈** | `CanLeaveCurrentSegment()` — 활성 없음 + 미등장 큐 없음 + 남은 프리로드 없음 |
 
-오염원 HP 0 이하 → 중화 SFX 정지 · Scanner 복귀(`ItemSelectManager.ResetToDefault()`) → 페이드아웃 후 제거 · `StageManager.AddClearedPollutant()` 호출.
+- `PollutantSpawner`: 인덱스 0~2 = A~C, 3~6 = D
+- `mapPollutants`: 스테이지를 맵(화면) 단위로 나눔 — 맵당 오염원 수, 맵 클리어 후 `AdvanceMap()`
+- `clearPanelDelay`: 마지막 오염원 페이드 후 클리어 연출까지 대기
 
-- **플레이어 사망·게임오버·패널티 중** 접촉 판정·HP·중화 SFX 처리 안 함 (`CanProcessPlayerContact`)
-- **스프라이트 정렬:** `spriteSortingOrder`(기본 0)로 A/B/C 동일 — 플레이어(5)보다 뒤에 그림
+### 아이템 선택 (`ItemSelectManager.cs`)
 
-### 3. 아이템 (`Item.cs`, `ItemSelectManager.cs`)
+- 이동 중: `Scanner` 고정, Z/X 불가
+- **첫** 경고 후: `OnWarningShown()` → 중화제 기본, Z/X 순환 (Scanner 제외)
+- **이후** 경고: 이미 고른 중화 도구 **유지**
+- 스테이지 재시작만 `ResetToDefault()` → Scanner
 
-```text
-Scanner     → DPS 0  (이동 중 기본 선택, 탐지용)
-Neutralizer → DPS 12
-GeneralPad  → DPS 14
-OilPad      → DPS 8
-```
+### 결과 연출 (`GameManager.cs`)
 
-**아이템 선택 규칙 (`ItemSelectManager`, `Z` 키)**
+| 설정 | 기본 | 동작 |
+|------|------|------|
+| `clearAnimDelay` | 2초 | 클리어 애니 후 ClearSet·SFX |
+| `dieAnimDelay` | 2초 | Die 애니 후 GameOverSet·SFX |
 
-| 상황 | 선택 상태 | Z키 |
-|------|----------|-----|
-| 이동 중 | Scanner 고정 | 전환 불가 |
-| 경고 표시 ~ 첫 Z 전 | Scanner | 전환 가능 |
-| 첫 Z 이후 (오염원 HP > 0) | 중화제 / 범용패드 / 오일패드 순환 | Scanner 슬롯 딤 처리 |
-| 오염원 HP = 0 | Scanner로 복귀 | 전환 불가 (이동 중과 동일) |
-| 게임오버·클리어·스테이지 재시작 | Scanner 초기화 | 위 규칙 다시 적용 |
+### HUD 가이드 (`HelpGuideToggle.cs`)
 
-- 경고가 뜨면 `OnWarningShown()`으로 전환 허용, 오염원 중화 시 `ResetToDefault()`로 Scanner 복귀
-- 첫 Z 입력: Scanner → 중화제(index 1), 이후 1→2→3 순환 (Scanner 제외)
-- `ItemManager`가 선택 슬롯 밝게 / 비선택·Scanner 딤 처리
+- `HUD_Canvas`에 부착
+- `KeyGuidePannel` / `ItemGuide` — 기본 비활성, **K** / **I** 토글
+- Hierarchy: **부모만** 끄고 자식 UI는 켜 둠
 
-### 4. 오염원 생성 (`PollutantManager.cs`)
+### 스테이지·결과 (`StageManager.cs`, `StageScoreTracker.cs`, `ClearPanelUI.cs`)
 
-- 플레이어가 **이동 중**일 때만 시간 누적 (2~3초)
-- 경고 깜빡임(`WarningTxt`) → **Z키 안내**(`GuideTxt`, `itemSelectHintDuration` 기본 2초) → 오염원 스폰 → 페이드 인 → 처리 안내 팝업
-- 안내 문구 2초는 **표시 시간만** 해당. Z키 전환은 경고 표시 후 ~ 오염원 중화까지 유지
-- 생성 시 배경 스크롤 일시정지
-- 오염원 중화 후: 잔여 오염원 있으면 **맵 구간 전환** (`mapEndX`, `mapFadeDuration`) / 마지막이면 페이드아웃 후 `clearPanelDelay` 뒤 `TriggerClear()`
-- 인스펙터: `mapEndX`(769), `mapEndReachDistance`, `mapFadeDuration`, `clearPanelDelay`
+- `stage_data.json`: `pollutantTypes`, `totalPollutant`, `timeLimit`, `bgIndex`, `bgmIndex`
+- 별 조건: 오염원 전부 / 방호복 ≥50% / 틀린 아이템 0회
+- UI 별: `starCount`만큼 **좌→우** 채움
 
-### 5. HP 바 (`WorldSpaceUIFollower.cs`)
+### 스플래시 (`SplashController.cs`)
 
-- HUD_Canvas의 `protectionSlider` / `pollutantSlider`를 월드 좌표로 추적
-- 플레이어 머리 위 / 오염원 위에 떠서 표시
-- **중화 모드(접촉) 중에만** 표시, 둘 중 하나 소멸 시 숨김
+- `SplashScene` 첫 실행 — 로고 페이드인·확대 → 샤인 → 페이드아웃 → `TitleScene`
+- SFX: `AudioManager.PlaySplashSfx()` — 페이드인 `splashSfxDelay` 후 재생
 
-### 6. 결과·진행 관리 (`GameManager.cs`, `StageManager.cs`)
+### 오디오 (`AudioManager.cs`, DontDestroyOnLoad)
 
-- `GameManager` (씬 싱글톤): 클리어 / 게임 오버 / 일시정지 제어
-  - 클리어 조건: 방호복 ≥ 1 & 시간 잔여 & 전체 오염원 중화
-  - 게임 오버 원인: `ProtectionDepleted`, `TimeOver`, `Debug`
-  - **방호복 소진:** Die 애니 재생 중 `dieGameOverDelay`(기본 2초) 후 패널·게임오버 SFX (타임오버·F2는 즉시)
-  - **`FreezePlayOnResult()`:** 타이머 정지 · `Player.StopMovement()` · `PollutantManager.StopReturnFlow()`
-  - 클리어/게임오버 시 BGM 정지 + 결과 SFX, 중화 SFX 정지, 스테이지 재시작·다음 스테이지 시 게임 BGM 재생
-  - 결과/원인은 **Console 로그로만** 출력 (패널 텍스트는 미사용)
-  - `Time.timeScale` 기반 일시정지 (`ESC` / `PauseSet` 패널)
-- `StageManager`: `stageLabel`, `totalPollutants`, `clearedPollutants` 관리 + `IsAllCleared()`
-- `Timer`: `GameEnded` 시 카운트다운 추가 감소 방지
+| 슬라이더 / 설정 | 용도 |
+|----------------|------|
+| `bgmVolume` / `bgmFadeDuration` | 타이틀·게임 BGM + 페이드 인/아웃 |
+| `neutralizationSfxVolume` | A~C 중화 루프 |
+| `valveSfxVolume` | 가스 밸브 루프 |
+| `sfxVolume` | 버튼·클리어·게임오버·스플래시 |
 
-### 7. 씬 전환 (`SceneLoadManager.cs`)
+**씬별 BGM:** `TitleScene` / `GameScene`만 재생. 그 외는 페이드 아웃 후 정지.
 
-- 타이틀 ↔ 게임 씬 로드 (`StartButton()` / `TitleButton()`)
-- **씬마다 존재하는 일반 컴포넌트** (DontDestroyOnLoad 미사용)
-  - 싱글톤+DontDestroyOnLoad로 두면 새 씬의 인스턴스가 파괴되어 버튼 OnClick 참조가 끊기는 문제가 있어 일반 컴포넌트로 유지
-- 씬 로드 시 `Time.timeScale = 1f` 복구
+### 회복 아이템 (`RecoveryItemSpawnPlan`, `RecoveryItemManager`)
 
-### 8. 오디오 (`AudioManager.cs`)
+- 로딩 시 배치 확정 → `GameScene`에서 스폰
+- `C`/`V` 선택, `Space` 사용
 
-- DontDestroyOnLoad 싱글톤 (BGM 씬 전환 중 유지)
-- **BGM:** 타이틀 / 게임 (`PlayTitleBGM()` / `PlayGameBGM()` / `StopBGM()`), 씬 로드 시 자동 전환
-- **SFX (PlayOneShot, `sfxSource`):** 버튼 · 클리어 · 게임오버 — `sfxVolume`으로 크기 조절 (`sfxSource.volume`은 항상 1)
-- **중화 SFX (`neutralizationSource` 별도):** 정답 접촉 중 루프, `neutralizationSfxVolume`만 적용 (패널음과 볼륨 간섭 없음)
-- BGM / UI SFX / 중화 SFX 소스 3분리 (`bgmSource`, `sfxSource`, `neutralizationSource`)
+### 기타
 
-```text
-Assets/Audio/SFX/
-├── selectionSFX.ogg      # 버튼
-├── clearSFX.ogg          # 클리어
-├── game-overSFX.ogg      # 게임오버
-└── neutralizationSFX.wav # 중화 (루프)
-```
+| 모듈 | 역할 |
+|------|------|
+| `GameManager` | 클리어·게임오버·일시정지·디버그 키 |
+| `SceneLoadManager` | 씬 전환, `pendingStageIndex` |
+| `LoadingController` / `LoadingGuideTxt` | 페이드·플랜 준비·조작 안내 |
+| `Background` | 스크롤, 오염원 활성/구간 미완료 시 정지 |
+| `WorldSpaceUIFollower` | 방호복·오염원 HP 바 |
 
-### 9. UI
+---
 
-| 스크립트 | 역할 |
-|---------|------|
-| `GuideTxt` | 시작 가이드, 종료 후 이동/타이머/배경 활성화 · **경고 후 Z키 아이템 선택 안내** (`ShowItemSelectHintRoutine`) |
-| `WarningTxt` | 오염원 발견 경고 깜빡임만 (`ShowWarningRoutine`) |
-| `PopupUI` | 오염물질·추천 아이템 안내 팝업 |
-| `Timer` | 제한 시간, 0 도달 시 게임 오버 트리거 |
-| `Background` | 무한 스크롤 배경 (`player.hasInput` 연동, 경계 Repeat) |
-| `ItemManager` | 선택 아이템 HUD (비선택·Scanner 딤 처리) |
-| `ItemSelectManager` | Scanner 기본 / 경고 후 전환 / 중화 후 리셋 |
-| `StageManager` (HUD) | `StageInfo/StageTxt`, `PollutantCountTxt` — 스테이지·장소·오염원 수 표시 |
+## 스테이지 예시 (`stage_data.json`)
+
+| 스테이지 | 오염원 타입 | total | 제한 시간 |
+|----------|------------|-------|-----------|
+| 1-1 | C \| D | 2 | 60초 |
+| 1-2 | A \| B | 3 | 55초 |
+| 1-3 | A \| B \| C \| D | 4 | 50초 |
 
 ---
 
@@ -190,196 +220,124 @@ Assets/Audio/SFX/
 
 ```text
 Assets/
+├── Data/stage_data.json
 ├── Scenes/
+│   ├── SplashScene.unity
 │   ├── TitleScene.unity
+│   ├── IntroStoryScene.unity
+│   ├── LoadingScene.unity
 │   └── GameScene.unity
 ├── Scripts/
-│   ├── Core/
-│   │   ├── SceneLoadManager.cs
-│   │   ├── ItemSelectManager.cs
-│   │   ├── GameManager.cs
-│   │   ├── AudioManager.cs
-│   │   └── StageManager.cs
-│   ├── GamePlay/
-│   │   ├── Player.cs
-│   │   ├── Pollutant.cs
-│   │   ├── PollutantManager.cs
-│   │   ├── PollutantSpawner.cs
-│   │   └── Item.cs
-│   └── UI/
-│       ├── GuideTxt.cs
-│       ├── WarningTxt.cs
-│       ├── PopupUI.cs
-│       ├── Timer.cs
-│       ├── Background.cs
-│       ├── ItemManager.cs
-│       ├── UIItem.cs
-│       └── WorldSpaceUIFollower.cs
-├── Prefabs/
-│   ├── Game/          # Player, PollutantA/B/C, PollutantSpawner
-│   └── Item/          # Scanner, Neutralizer, GeneralPad, OilPad
-├── Audio/SFX/         # 버튼·클리어·게임오버·중화 효과음
-├── UI/                # HUD·슬롯·결과 패널용 스프라이트 (2026-05-31 UI 교체 분 포함)
-└── Animations/        # Player Idle / Move / Die (Animator: State int, Die Trigger)
+│   ├── Core/          GameManager, StageManager, ItemSelectManager, AudioManager, …
+│   ├── GamePlay/      Player, Pollutant, PollutantManager, Item, …
+│   └── UI/            GuideTxt, HelpGuideToggle, LoadingGuideTxt, SplashController, …
+├── Prefabs/Game/      Player, PollutantA~D
+├── Prefabs/Item/      Scanner, Neutralizer, pads, GasValve
+├── Audio/SFX/
+├── Docs/Bug/          버그·수정 기록
+└── Animations/        Player Idle / Move / Die / Valve / Clear
 ```
 
-### HUD_Canvas 구성 (주요 패널)
+### Hierarchy (GameScene)
 
-```text
-HUD_Canvas
-├── Protection / StageInfo / Timer / ItemContainer ...
-├── protectionSlider / pollutantSlider   (WorldSpaceUIFollower)
-├── Result_HUD
-│   ├── ClearSet       (GameManager.clearSet)
-│   └── GameOverSet    (GameManager.gameOverSet)
-└── Pause_HUD
-    └── PauseSet       (GameManager.pauseSet)
-```
+| 이름 | 역할 |
+|------|------|
+| Player | 이동·방호복·애니·중화 VFX |
+| PollutantManager | 경고·등장·맵 전환 |
+| HUD_Canvas | `HelpGuideToggle`, `KeyGuidePannel`, `ItemGuide` |
+| ItemSelectManager | Z/X 아이템 |
+| AudioManager | BGM·SFX (DontDestroyOnLoad) |
 
-> 패널 표시 규칙: 부모(`Result_HUD`, `Pause_HUD`)는 항상 활성, 자식 세트(`ClearSet`/`GameOverSet`/`PauseSet`)는 비활성 상태로 두면 코드가 토글합니다.
+### Inspector 체크
+
+| 오브젝트 | 확인 |
+|----------|------|
+| **GameManager** | `clearAnimDelay`, `dieAnimDelay`, `clearSet`, `gameOverSet` |
+| **HUD_Canvas** | `HelpGuideToggle` — 패널 참조 |
+| **Player** Animator | `Clear` 트리거 → `Player_Clear` (Loop) |
+| **AudioManager** | `splashClip`, `squeakyValveClip`, 볼륨·페이드 설정 |
+| **ItemSelectManager** | `itemPrefabs` 5종 |
 
 ---
 
 ## 실행 방법
 
-1. Unity Hub에서 프로젝트 폴더 열기 (`6000.4.8f1` 권장)
-2. `Assets/Scenes/TitleScene.unity` 또는 `GameScene.unity` 실행
-3. Play 후 가이드 종료 → 이동 → 오염원 접촉 테스트
+1. Unity `6000.4.8f1`로 프로젝트 열기
+2. **권장:** `SplashScene` 실행 후 Play
+3. 정상 플로우: 스플래시 → 타이틀 → 인트로 → 로딩 → 게임
 
-### 결과 테스트
+### 플레이 테스트 체크리스트
 
-- **클리어:** `StageManager.totalPollutants`를 작게(예: 1) 두고 실제 중화, 또는 `F1`
-- **게임 오버:** 방호복 소진 시 Die 애니 → 약 2초 후 패널 / 타임오버·`F2`는 즉시 패널
-- **맵 전환:** 오염원 1개 중화 후 우측 끝(769)까지 걸어가 페이드 확인
-
-### 디버그 로그
-
-```text
-올바른 아이템입니다. 추천 = ..., 선택 = ...
-[Player] 방호복 HP 감소: -0.xx ...
-[Pollutant] 오염원 HP 감소: -0.xx ...    (정답 아이템일 때만 실제 감소)
-[GameManager] 스테이지 클리어 - 오염원수 x/x / 남은 시간: xx초 / 방호복 내구도: xx%
-[GameManager] 게임 오버 - 원인: ...
-```
+- [ ] 스플래시 SFX·타이틀 BGM 페이드 인
+- [ ] 로딩 씬 K/I 안내 문구 표시
+- [ ] 가이드 후 좌우 이동, 경고 → 오염원 등장
+- [ ] **Z 왼쪽 / X 오른쪽** 아이템 전환
+- [ ] **K / I** 가이드 패널 토글 (기본 숨김)
+- [ ] 정답: 오염원 HP + 중화 VFX / 오답: 방호복만 + VFX 없음
+- [ ] 오염원 1마리 제거 후 선택 아이템 유지
+- [ ] 가스: 밸브 애니 + 밸브 SFX
+- [ ] 클리어: Clear 애니 2초 → 패널
+- [ ] 사망: Die 애니 2초 → 게임오버 패널
+- [ ] 클리어 별 **왼쪽부터** N개
 
 ---
 
-## 현재 구현 상태
+## 구현 상태
 
 ### 완료
 
-- 타이틀 ↔ 게임 씬 연결 (씬별 SceneLoadManager)
-- 시작 연출: 안내 문구 → 이동/타이머/배경 스크롤 활성화
-- 플레이어 1차 이동 구간 제한 및 무한 배경 스크롤
-- 오염원 경고(깜빡임)·**Z키 아이템 선택 안내(GuideTxt)**·생성·페이드 인/아웃·처리 안내 팝업
-- **아이템 선택 단계형 로직** (이동 중 Scanner 고정 → 경고 후 전환 → 중화 후 리셋)
-- 아이템 선택 HUD (`Z`, Scanner 딤 처리)
-- **결과·중화 SFX** (클리어 / 게임오버 / 중화 루프) 및 BGM 연동
-- **맵 구간 전환** (중화 후 x=769 이동 → 페이드 → 시작 위치·배경 리셋)
-- **결과 시 플레이 동결** (`FreezePlayOnResult`, 맵 전환·타이머 정지)
-- **TitleScene / GameScene UI·오디오 클립 연결** (로컬, 미푸시)
-- 접촉 시 방호복 / 오염원 HP 초당 감소 (정답 아이템일 때만 오염원 감소)
-- 접촉 해제 시 오염원 HP 초기화
-- 오염원/방호복 HP 바 (월드 추적, 중화 모드 중에만 표시)
-- 오염원 중화 후 맵 구간 전환(페이드) 및 루프
-- **플레이어 Die 애니** + 방호복 소진 시 게임오버 패널 지연
-- 스테이지 클리어(마지막 오염원 페이드 후 지연) / 게임 오버 판정 및 패널 연동
-- 일시정지(ESC / 패널 버튼) 및 `Time.timeScale` 처리
-- 디버그 강제 클리어/게임오버(F1/F2)
+- 씬 흐름·`stage_data.json`·로딩 프리스폰·맵 구간 (`mapPollutants`)
+- 접촉 판정·정답만 오염원 HP·가스 HP 초기화·밸브 애니/SFX
+- Z/X 방향, 아이템 선택 유지(맵 중), 틀린 아이템 시 VFX 미재생
+- 스플래시·BGM 씬별 페이드
+- **K/I** HUD 가이드, 로딩 안내
+- **Player_Clear** 클리어 애니 + 2초 후 패널
+- **Player_Die** 2초 후 게임오버 패널
+- 클리어 별 좌→우, 일시정지·재시작
 
-### 미구현 / 보류
+### 미구현·보류
 
-- 사망 후 페이드아웃 연출 (Die 애니만 적용, 페이드 코루틴 없음)
-- 멀티 스테이지 진행 (씬 분리 또는 StageData 기반 — 설계 검토 단계)
+- 멀티 스테이지 자동 진행 UI polish
+- `AGENTS.md` 일부 구버전 설명(ClampPassThrough 등) — README·Bug 문서 기준 우선
 
 ---
 
-## 변경 이력
+## 문서
 
-### 2026-06-01
-
-| 영역 | 내용 |
+| 파일 | 용도 |
 |------|------|
-| 맵 전환 | 오염원 중화 후 자동 복귀 대신 x=`mapEndX`(769)까지 이동 → 페이드 → 시작 위치·`Background.ResetScrollOffset()` |
-| 클리어 | 마지막 오염원: 페이드아웃 완료 후 `clearPanelDelay`(기본 1초) 뒤 ClearSet |
-| 사망 | Animator `Die` 트리거 → `Player_Die`(루프 OFF), `dieGameOverDelay`(기본 2초) 후 GameOverSet |
-| 오염원 | 사망·게임오버 중 접촉·중화 SFX 차단, A/B/C `spriteSortingOrder` 통일 |
-| 오디오 | `neutralizationSource` 분리 — 중화 루프가 패널·버튼 SFX 볼륨을 깎지 않음 |
+| [README.md](README.md) | 프로젝트 개요 (이 파일) |
+| [AGENTS.md](AGENTS.md) | AI·협업·코딩 규칙 |
+| [클리어·가이드·VFX fixes](Assets/Docs/Bug/2026-06-05-시각미상-클리어-가이드-중화VFX-fixes.md) | **최근** — 클리어/사망 연출, K/I 가이드, VFX |
+| [스플래시·오디오 fixes](Assets/Docs/Bug/2026-06-05-시각미상-스플래시-오디오-fixes.md) | 스플래시·BGM |
+| [맵구간 fixes](Assets/Docs/Bug/2026-06-05-오후1825-맵구간-게임플레이-fixes.md) | 맵·스폰 |
+| [gameplay fixes](Assets/Docs/Bug/2026-06-04-시각미상-gameplay-fixes.md) | 접촉·이동·오디오 |
+| [회의록 §4](Assets/Docs/회의록/2026-06-05-시각미상-플레이어-오염원-로직-검토.md) | Pollutant/Player 접촉 규칙 |
 
-### 2026-05-31 (로컬 작업 · GitHub 미푸시)
+---
 
-#### 아이템 선택
+## 변경 이력 (요약)
 
-| 항목 | 내용 |
-|------|------|
-| 이동 중 | Scanner 고정, Z키 전환 불가 |
-| 경고 후 | 전환 허용. 첫 Z 전 Scanner, 이후 Scanner 딤 + 대응 아이템(1→2→3)만 순환 |
-| 중화 완료 | Scanner 복귀, Z 잠금 |
-| 스테이지 리셋 | 게임오버·클리어·재시작 시 Scanner 초기화 |
-
-#### UI / 안내
-
-| 항목 | 내용 |
-|------|------|
-| 경고 | `WarningTxt` — 오염원 발견 깜빡임만 (`ShowWarningRoutine`) |
-| Z키 안내 | `GuideTxt` — "Z키로 대응 아이템을 골라주세요" (기본 2초, **표시만**) |
-| HUD | `ItemManager` — 선택 슬롯 밝게 / Scanner 딤 처리 |
-| 에셋 | `Assets/UI/` Gemini·ChatGPT 생성 아이콘 등 UI 교체 분 추가 |
-| 씬 | `TitleScene.unity`, `GameScene.unity` Inspector 연결 갱신 |
-
-#### 오디오
-
-| SFX | 트리거 |
-|-----|--------|
-| `clearSFX.ogg` | 스테이지 클리어 (BGM 정지 후) |
-| `game-overSFX.ogg` | 게임 오버 (BGM 정지 후) |
-| `neutralizationSFX.wav` | 정답 아이템 접촉 중 루프 (틀린 아이템·해제·중화 완료 시 정지) |
-| `selectionSFX.ogg` | 버튼 클릭 (기존) |
-
-- `neutralizationSfxVolume` — 중화음만 별도 볼륨
-- 스테이지 재시작/다음 스테이지 → 게임 BGM 재생
-
-#### 게임플레이·버그 수정
-
-| 파일 | 변경 |
-|------|------|
-| `Player.cs` | 자동 복귀 FixedUpdate 이동, `returnStopDistance`, `isReturning`, `StopMovement()` |
-| `GameManager.cs` | `FreezePlayOnResult()` — 타이머·이동·복귀 코루틴 일괄 정지 + 결과 SFX |
-| `PollutantManager.cs` | `StopReturnFlow()`, 스테이지 리셋 시 아이템·가이드 초기화 |
-| `Pollutant.cs` | 중화 SFX 재생/정지, HP 0 시 Scanner 리셋 |
-| `Timer.cs` | `GameEnded` 후 시간 추가 감소 방지 |
-
-#### 수정·추가 파일 목록
-
-```text
-Scripts/
-  Core/     AudioManager.cs, GameManager.cs, ItemSelectManager.cs
-  GamePlay/ Player.cs, Pollutant.cs, PollutantManager.cs
-  UI/       GuideTxt.cs, WarningTxt.cs, ItemManager.cs, Timer.cs
-Scenes/     TitleScene.unity, GameScene.unity
-Audio/SFX/  clearSFX.ogg, game-overSFX.ogg, neutralizationSFX.wav
-UI/         아이콘·HUD 스프라이트 (Gemini / ChatGPT 생성분)
-Docs/       README.md
-```
+| 날짜 | 주요 내용 |
+|------|-----------|
+| 2026-06-05 | 클리어/사망 2초 연출, K/I 가이드, 아이템 유지, 틀린 아이템 VFX 수정 — [Bug](Assets/Docs/Bug/2026-06-05-시각미상-클리어-가이드-중화VFX-fixes.md) |
+| 2026-06-05 | 스플래시·BGM, 맵 구간 — [오디오](Assets/Docs/Bug/2026-06-05-시각미상-스플래시-오디오-fixes.md) · [맵](Assets/Docs/Bug/2026-06-05-오후1825-맵구간-게임플레이-fixes.md) |
+| 2026-06-04 | 로딩 프리스폰, 이동/가스/ZX/별점 — [Bug](Assets/Docs/Bug/2026-06-04-시각미상-gameplay-fixes.md) |
 
 ---
 
 ## 개발 메모
 
-- HP 계산은 **float**, UI 표시는 **정수(Floor)** 로 분리
-- 오염원 타입별 `pollutanMaxHp` / `pollutantDps`는 `Pollutant.SetHpByType()`, 아이템 DPS는 `Item.GetDps()`에서 설정
-- 결과 패널은 **활성화만** 담당하고, 상세 정보는 Console 로그로 출력
-- `DontDestroyOnLoad`는 상태 유지가 필요한 `AudioManager`에만 사용 (UI/씬 매니저는 씬별 컴포넌트로 유지)
-- 플레이어 스프라이트 시트(`LabNPCs`)는 애니 프레임마다 **Bottom Center** 피벗 통일 권장 (높이 다른 프레임 시 발 위치 흔들림 방지)
-- `PollutantManager.mapFadeOverlay` 비우면 실행 시 검은 전체 화면 오버레이 자동 생성
-- 로컬 변경 사항은 Git에 커밋되지 않았을 수 있으므로, 배포 전 `git status`로 확인 권장
+- HP는 **float** 계산, UI는 **int** (`FloorToInt`)
+- 타입: `Item.ItemType`, `Pollutant.PollutantType`만 사용
+- `AudioManager`·`SceneLoadManager` — `DontDestroyOnLoad`
+- 가이드 패널: 부모만 비활성, 자식은 활성 유지
+- `Library/`, `Temp/`, `Logs/` — Git·수정 대상 아님
 
-##  폰트, 미디어 저작권
- - Splash Screen Voice : VREW - VOICEVOX: 小夜/SAYO
- - Galmuri Font(© 2019-2023 Minseo Lee (itoupluk427@gmail.com))
- - 시작버튼 SFX
-   Sounds of button selection in the game menu (sound effect) 2번째 사운드
-   [BoostSound] https://www.youtube.com/watch?v=YNSbL-Cek1c
- - TitleBGM, GameSceneBGM
-   generated by SUNO
+---
 
+## 폰트·미디어 저작권
+
+- **Galmuri Font** — © 2019–2023 Minseo Lee
+- **시작 버튼 SFX** — [BoostSound](https://www.youtube.com/watch?v=YNSbL-Cek1c)
+- **Title / Game BGM** — SUNO 생성

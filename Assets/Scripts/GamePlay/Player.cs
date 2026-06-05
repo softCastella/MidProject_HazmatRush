@@ -33,6 +33,9 @@ public class Player : MonoBehaviour
     public bool canMove = false; // 이동 가능 여부
     public ItemSelectManager itemSelectManager;
 
+    [Header("중화모드 VFX (자식 CFXR 등)")]
+    public GameObject neutralizationVfx;
+
     private Animator anim; // 애니메이터 컴포넌트
     private Rigidbody2D rb;
     private float startLeft; // 기본 왼쪽 이동 범위 저장
@@ -44,8 +47,13 @@ public class Player : MonoBehaviour
     private bool isDeathSequenceRunning = false;
     private SpriteRenderer spriteRenderer;
     private SpriteRenderer[] childSpriteRenderers;
+    private ParticleSystem[] neutralizationParticles;
+    private int pollutantTouchCount;
+    private bool valveAnimActive = false;
+    private bool clearAnimActive = false;
 
     public bool IsDead => currentState == PlayerState.Die;
+    public bool IsValveAnimActive => valveAnimActive;
 
     void Awake()
     {
@@ -64,10 +72,20 @@ public class Player : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer == null)
             childSpriteRenderers = GetComponentsInChildren<SpriteRenderer>(true);
+
+        InitNeutralizationVfx();
+    }
+
+    void OnEnable()
+    {
+        InitNeutralizationVfx();
     }
 
     void Start()
     {
+        pollutantTouchCount = 0;
+        InitNeutralizationVfx();
+
         if (protectionNumText == null)
         {
             GameObject protectionObj = GameObject.Find("ProtectionNum");
@@ -156,6 +174,20 @@ public class Player : MonoBehaviour
     {
         leftLimit = startLeft;
         rightLimit = startRight;
+    }
+
+    // 이 맵에서 첫 오염원 등장 후 — 1차(-403) 해제, 맵 안 좌우 자유
+    public void UnlockMapSegmentMovement()
+    {
+        leftLimit = startLeft;
+        rightLimit = mapAdvanceRightX;
+    }
+
+    // 범위 재설정 후에도 현재 위치에서 강제로 밀리지 않게 한계를 맞춤
+    public void EnsureRangeIncludesPosition(float buffer = 0.5f)
+    {
+        float posX = transform.position.x;
+        GrowRange(posX, buffer);
     }
 
     // 오염원 중화 후 맵 끝까지 우측 이동만 허용합니다.
@@ -280,6 +312,233 @@ public class Player : MonoBehaviour
             StartDeathSequence();
     }
 
+    private void ResolveNeutralizationVfx()
+    {
+        if (neutralizationVfx != null)
+            return;
+
+        Transform direct = transform.Find("CFXR Electrified 3");
+        if (direct != null)
+        {
+            neutralizationVfx = direct.gameObject;
+            return;
+        }
+
+        Transform[] all = GetComponentsInChildren<Transform>(true);
+        for (int i = 0; i < all.Length; i++)
+        {
+            if (all[i] == transform)
+                continue;
+            if (all[i].name.Contains("Electrified"))
+            {
+                neutralizationVfx = all[i].gameObject;
+                return;
+            }
+        }
+    }
+
+    private void InitNeutralizationVfx()
+    {
+        ResolveNeutralizationVfx();
+        if (neutralizationVfx == null)
+            return;
+
+        neutralizationParticles = neutralizationVfx.GetComponentsInChildren<ParticleSystem>(true);
+        for (int i = 0; i < neutralizationParticles.Length; i++)
+        {
+            if (neutralizationParticles[i] == null)
+                continue;
+
+            ParticleSystem.MainModule main = neutralizationParticles[i].main;
+            main.playOnAwake = false;
+            neutralizationParticles[i].Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            neutralizationParticles[i].Clear(true);
+        }
+
+        neutralizationVfx.SetActive(false);
+    }
+
+    public bool IsNeutralizationItemSelected()
+    {
+        if (itemSelectManager == null)
+            return false;
+        if (GameManager.Instance != null && (GameManager.Instance.GameEnded || GameManager.Instance.IsPenalty))
+            return false;
+
+        return itemSelectManager.SelectedItemType != Item.ItemType.Scanner;
+    }
+
+    public void AddPollutantTouch()
+    {
+        pollutantTouchCount++;
+        RefreshNeutralizationVfx();
+    }
+
+    public void RemovePollutantTouch()
+    {
+        if (pollutantTouchCount > 0)
+            pollutantTouchCount--;
+        RefreshNeutralizationVfx();
+    }
+
+    public void RefreshNeutralizationVfx()
+    {
+        bool play = false;
+
+        if (pollutantTouchCount > 0 && !valveAnimActive && itemSelectManager != null)
+        {
+            if (GameManager.Instance == null || (!GameManager.Instance.GameEnded && !GameManager.Instance.IsPenalty))
+            {
+                Pollutant[] pollutants = FindObjectsByType<Pollutant>(FindObjectsSortMode.None);
+                for (int i = 0; i < pollutants.Length; i++)
+                {
+                    Pollutant pollutant = pollutants[i];
+                    if (pollutant == null || !pollutant.IsPlayerContactActive())
+                        continue;
+                    if (pollutant.type == Pollutant.PollutantType.TypeD)
+                        continue;
+                    if (itemSelectManager.IsSelectedItemRecommendedFor(pollutant))
+                    {
+                        play = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        SetNeutralizationVfx(play);
+    }
+
+    // 스테이지 클리어 시 Player_Clear (Animator 트리거 "Clear", Loop)
+    public void PlayClearAnim()
+    {
+        if (currentState == PlayerState.Die || clearAnimActive)
+            return;
+        if (anim == null)
+            return;
+
+        clearAnimActive = true;
+        valveAnimActive = false;
+        pollutantTouchCount = 0;
+        SetNeutralizationVfx(false);
+        isMoving = false;
+        hasInput = false;
+        if (rb != null)
+            rb.linearVelocity = Vector2.zero;
+
+        anim.ResetTrigger("Valve");
+        anim.ResetTrigger("Die");
+        EnsureSpriteVisible();
+        anim.SetTrigger("Clear");
+        anim.Play("Player_Clear", 0, 0f);
+    }
+
+    // 가스(D) + 가스밸브 접촉 시 Player_Valve (Animator 트리거 "Valve")
+    public void SetValveAnimActive(bool active)
+    {
+        if (valveAnimActive == active)
+            return;
+        if (active && currentState == PlayerState.Die)
+            return;
+
+        valveAnimActive = active;
+
+        if (AudioManager.Instance != null)
+        {
+            if (active)
+                AudioManager.Instance.PlayValveSfx();
+            else
+                AudioManager.Instance.StopValveSfx();
+        }
+
+        if (anim == null)
+            return;
+
+        if (active)
+        {
+            SetNeutralizationVfx(false);
+            isMoving = false;
+            hasInput = false;
+            if (rb != null)
+                rb.linearVelocity = Vector2.zero;
+
+            anim.ResetTrigger("Die");
+            EnsureSpriteVisible();
+            anim.SetTrigger("Valve");
+            anim.Play("Player_Valve", 0, 0f);
+        }
+        else
+        {
+            anim.ResetTrigger("Valve");
+            if (currentState != PlayerState.Die)
+                ReturnToIdleAfterValve();
+        }
+    }
+
+    private void ReturnToIdleAfterValve()
+    {
+        currentState = PlayerState.Idle;
+        isMoving = false;
+        hasInput = false;
+        EnsureSpriteVisible();
+        if (anim != null)
+        {
+            anim.SetInteger("State", 0);
+            anim.Play("Player_Idle", 0, 0f);
+        }
+    }
+
+    private void EnsureSpriteVisible()
+    {
+        SetSpriteAlpha(1f);
+        if (spriteRenderer != null)
+            spriteRenderer.enabled = true;
+
+        if (childSpriteRenderers == null)
+            return;
+
+        for (int i = 0; i < childSpriteRenderers.Length; i++)
+        {
+            if (childSpriteRenderers[i] != null)
+                childSpriteRenderers[i].enabled = true;
+        }
+    }
+
+    public void SetNeutralizationVfx(bool play)
+    {
+        if (neutralizationVfx == null)
+            return;
+
+        if (!play)
+        {
+            if (neutralizationParticles != null)
+            {
+                for (int i = 0; i < neutralizationParticles.Length; i++)
+                {
+                    if (neutralizationParticles[i] == null)
+                        continue;
+                    neutralizationParticles[i].Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                    neutralizationParticles[i].Clear(true);
+                }
+            }
+
+            neutralizationVfx.SetActive(false);
+            return;
+        }
+
+        if (!neutralizationVfx.activeSelf)
+            neutralizationVfx.SetActive(true);
+
+        if (neutralizationParticles == null)
+            return;
+
+        for (int i = 0; i < neutralizationParticles.Length; i++)
+        {
+            if (neutralizationParticles[i] != null && !neutralizationParticles[i].isPlaying)
+                neutralizationParticles[i].Play();
+        }
+    }
+
     public void AddProtection(float amount)
     {
         if (amount <= 0f)
@@ -294,12 +553,15 @@ public class Player : MonoBehaviour
         UpdateProtectionBar();
     }
 
-    private void StartDeathSequence()
+    public void StartDeathSequence()
     {
         if (isDeathSequenceRunning || currentState == PlayerState.Die)
             return;
 
         isDeathSequenceRunning = true;
+        pollutantTouchCount = 0;
+        valveAnimActive = false;
+        SetNeutralizationVfx(false);
         Debug.Log("플레이어가 사망했습니다.");
         canMove = false;
         isMoving = false;
@@ -308,7 +570,7 @@ public class Player : MonoBehaviour
             rb.linearVelocity = Vector2.zero;
         SetState(PlayerState.Die);
 
-        if (GameManager.Instance != null)
+        if (GameManager.Instance != null && !GameManager.Instance.IsGameOverPending)
             GameManager.Instance.BeginPlayerDeathSequence();
 
         StartCoroutine(DieAndFadeOutRoutine());
@@ -316,14 +578,15 @@ public class Player : MonoBehaviour
 
     private IEnumerator DieAndFadeOutRoutine()
     {
-        if (dieAnimWait > 0f)
-            yield return new WaitForSeconds(dieAnimWait);
+        float hold = dieAnimWait;
+        if (GameManager.Instance != null)
+            hold = GameManager.Instance.dieAnimDelay;
+
+        if (hold > 0f)
+            yield return new WaitForSeconds(hold);
 
         yield return FadeAlphaTo(0f, dieFadeDuration);
-
         isDeathSequenceRunning = false;
-        if (GameManager.Instance != null)
-            GameManager.Instance.CompletePlayerDeathSequence();
     }
 
     private IEnumerator FadeAlphaTo(float targetAlpha, float duration)
@@ -383,6 +646,10 @@ public class Player : MonoBehaviour
     {
         StopAllCoroutines();
         isReturning = false;
+        pollutantTouchCount = 0;
+        valveAnimActive = false;
+        clearAnimActive = false;
+        SetNeutralizationVfx(false);
 
         curProtection = maxProtection;
         UpdateProtectionText();
@@ -400,6 +667,8 @@ public class Player : MonoBehaviour
         if (anim != null)
         {
             anim.ResetTrigger("Die");
+            anim.ResetTrigger("Valve");
+            anim.ResetTrigger("Clear");
             anim.SetInteger("State", 0);
             anim.Play("Player_Idle", 0, 0f);
         }
@@ -437,6 +706,9 @@ public class Player : MonoBehaviour
         }
 
         if (currentState == PlayerState.Die)
+            return;
+
+        if (valveAnimActive || clearAnimActive)
             return;
 
         currentState = nextState;

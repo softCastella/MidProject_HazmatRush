@@ -3,8 +3,9 @@
         "stageId": 1,
         "label": "Stage 1-1",
         "placeName": "1F A area",
-        "pollutantTypes": "B",
+        "pollutantTypes": "C|D",
         "totalPollutant": 2,
+        "mapPollutants": [2],
         "timeLimit": 60,
         "bgIndex": 0,
         "bgmIndex": 0
@@ -15,6 +16,7 @@
         "placeName": "1F B area",
         "pollutantTypes": "A|B",
         "totalPollutant": 3,
+        "mapPollutants": [2, 1],
         "timeLimit": 55,
         "bgIndex": 1,
         "bgmIndex": 1
@@ -25,6 +27,7 @@
         "placeName": "1F C area",
         "pollutantTypes": "A|B|C|D",
         "totalPollutant": 4,
+        "mapPollutants": [2, 2],
         "timeLimit": 50,
         "bgIndex": 2,
         "bgmIndex": 2

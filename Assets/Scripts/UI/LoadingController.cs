@@ -28,6 +28,11 @@ public class LoadingController : MonoBehaviour
     public int recoverySpawnMinCount = 1;
     public int recoverySpawnMaxCount = 3;
 
+    [Header("오염원 배치 (로딩 시 확정)")]
+    public TextAsset stageDataJson;
+    public int pollutantAbcSpawnPointCount = 3;
+    public int pollutantDSpawnPointCount = 4;
+
     private float loadStartTime;
 
     void Awake()
@@ -105,6 +110,11 @@ public class LoadingController : MonoBehaviour
 
         WarmupPrefabs();
         RecoveryItemSpawnPlan.PrepareRandom(recoverySpawnPointCount, recoverySpawnMinCount, recoverySpawnMaxCount);
+
+        int stageIndex = 0;
+        if (SceneLoadManager.Instance != null && SceneLoadManager.Instance.pendingStageIndex >= 0)
+            stageIndex = SceneLoadManager.Instance.pendingStageIndex;
+        PollutantSpawnPlan.Prepare(stageDataJson, stageIndex, pollutantAbcSpawnPointCount, pollutantDSpawnPointCount);
 
         string targetScene = fallbackSceneName;
         if (SceneLoadManager.Instance != null && !string.IsNullOrEmpty(SceneLoadManager.Instance.nextSceneName))

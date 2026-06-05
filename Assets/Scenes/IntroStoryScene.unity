@@ -245,7 +245,7 @@ MonoBehaviour:
   playOnStart: 1
   loadNextSceneAfterScroll: 1
   endDelay: 0.5
-  fadeGroup: {fileID: 0}
+  fadeOverlay: {fileID: 0}
   fadeOutDuration: 0.5
   fallbackLoadingSceneName: LoadingScene
 --- !u!1 &108332223

@@ -23,6 +23,7 @@ public class StageJsonRow
     public string placeName;
     public string pollutantTypes;
     public int totalPollutant;
+    public int[] mapPollutants;
     public int timeLimit;
     public int bgIndex;
     public int bgmIndex;

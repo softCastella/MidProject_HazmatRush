@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 4c97908cc11a7924bbc4646381290b98
+guid: a03b4c23d2e85564aa2dd39b54bae370
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7990248633829071523
-    second: Gemini_Generated_Image_hylv13hylv13hylv-removebg-preview (1)_0
+      213: 8048578383313227285
+    second: Valave_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Gemini_Generated_Image_hylv13hylv13hylv-removebg-preview (1)_0
+      name: Valave_0
       rect:
         serializedVersion: 2
-        x: 22
-        y: 106
-        width: 567
-        height: 224
+        x: 30
+        y: 0
+        width: 638
+        height: 626
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d556191a33fec1190800000000000000
-      internalID: -7990248633829071523
+      spriteID: 51ec54c756b42bf60800000000000000
+      internalID: 8048578383313227285
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Gemini_Generated_Image_hylv13hylv13hylv-removebg-preview (1)_0: -7990248633829071523
+      Valave_0: 8048578383313227285
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

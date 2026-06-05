@@ -1,22 +1,16 @@
 fileFormatVersion: 2
-guid: 84f4e77796d0d7743a78de11724038e4
+guid: 075b0e02bf9f2984cbd7f8317eee89d9
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 8673483250088157698
-    second: Gemini_Generated_Image_c718xgc718xgc718__1_-removebg-preview_0
+      213: -4851044444466554067
+    second: death_add-removebg-preview_(1)_0
   - first:
-      213: -2965861440870294685
-    second: Gemini_Generated_Image_c718xgc718xgc718__1_-removebg-preview_1
+      213: -1140368649073748294
+    second: death_add-removebg-preview_(1)_1
   - first:
-      213: 8911371141214858201
-    second: Gemini_Generated_Image_c718xgc718xgc718__1_-removebg-preview_2
-  - first:
-      213: 5513372553592773108
-    second: Gemini_Generated_Image_c718xgc718xgc718__1_-removebg-preview_3
-  - first:
-      213: 3552187363666227705
-    second: Gemini_Generated_Image_c718xgc718xgc718__1_-removebg-preview_4
+      213: 3830906123929969727
+    second: death_add-removebg-preview_(1)_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -49,7 +43,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -63,7 +57,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 0.35
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -125,111 +119,67 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Gemini_Generated_Image_c718xgc718xgc718__1_-removebg-preview_0
+      name: death_add-removebg-preview_(1)_0
       rect:
         serializedVersion: 2
-        x: 147
-        y: 195
-        width: 378
-        height: 145
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 6
+        y: 8
+        width: 42
+        height: 64
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 2022ec6df076e5870800000000000000
-      internalID: 8673483250088157698
+      spriteID: d2b50f997c0adacb0800000000000000
+      internalID: -4851044444466554067
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Gemini_Generated_Image_c718xgc718xgc718__1_-removebg-preview_1
+      name: death_add-removebg-preview_(1)_1
       rect:
         serializedVersion: 2
-        x: 18
-        y: 88
-        width: 152
-        height: 80
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 65
+        y: 8
+        width: 57
+        height: 55
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 36bd5ebbbb427d6d0800000000000000
-      internalID: -2965861440870294685
+      spriteID: ab697fe61c89c20f0800000000000000
+      internalID: -1140368649073748294
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: Gemini_Generated_Image_c718xgc718xgc718__1_-removebg-preview_2
+      name: death_add-removebg-preview_(1)_2
       rect:
         serializedVersion: 2
-        x: 181
-        y: 88
-        width: 151
-        height: 80
-      alignment: 0
-      pivot: {x: 0, y: 0}
+        x: 141
+        y: 7
+        width: 57
+        height: 35
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 9db67c5a6dc8bab70800000000000000
-      internalID: 8911371141214858201
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Gemini_Generated_Image_c718xgc718xgc718__1_-removebg-preview_3
-      rect:
-        serializedVersion: 2
-        x: 343
-        y: 88
-        width: 149
-        height: 80
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 4f9194b502f638c40800000000000000
-      internalID: 5513372553592773108
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: Gemini_Generated_Image_c718xgc718xgc718__1_-removebg-preview_4
-      rect:
-        serializedVersion: 2
-        x: 504
-        y: 88
-        width: 150
-        height: 80
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 9f1f4f24697eb4130800000000000000
-      internalID: 3552187363666227705
+      spriteID: f34e6bc92dc1a2530800000000000000
+      internalID: 3830906123929969727
       vertices: []
       indices: 
       edges: []
@@ -238,7 +188,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 28c32b8cfa7f68240b22f046f40e0eb6
     internalID: 0
     vertices: []
     indices: 
@@ -248,11 +198,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Gemini_Generated_Image_c718xgc718xgc718__1_-removebg-preview_0: 8673483250088157698
-      Gemini_Generated_Image_c718xgc718xgc718__1_-removebg-preview_1: -2965861440870294685
-      Gemini_Generated_Image_c718xgc718xgc718__1_-removebg-preview_2: 8911371141214858201
-      Gemini_Generated_Image_c718xgc718xgc718__1_-removebg-preview_3: 5513372553592773108
-      Gemini_Generated_Image_c718xgc718xgc718__1_-removebg-preview_4: 3552187363666227705
+      death_add-removebg-preview_(1)_0: -4851044444466554067
+      death_add-removebg-preview_(1)_1: -1140368649073748294
+      death_add-removebg-preview_(1)_2: 3830906123929969727
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
