@@ -45,17 +45,53 @@ public class GuideTxt : MonoBehaviour
         if (background == null)
             background = FindAnyObjectByType<Background>();
 
-        if (!string.IsNullOrEmpty(defaultMessage))
+        if (!string.IsNullOrEmpty(defaultMessage) && IsTutorialStage())
         {
             if (player != null) player.canMove = false;
-            if (background != null) background.PauseScroll();
+        }
+        else if (!string.IsNullOrEmpty(defaultMessage))
+        {
+            introFinished = true;
+            HideGuide();
         }
     }
 
     void Start()
     {
-        if (!string.IsNullOrEmpty(defaultMessage))
-            StartCoroutine(ShowGuideRoutine(defaultMessage, showDuration, showDelay));
+        if (string.IsNullOrEmpty(defaultMessage))
+        {
+            introFinished = true;
+            return;
+        }
+
+        if (!IsTutorialStage())
+        {
+            introFinished = true;
+            HideGuide();
+            if (player != null) player.canMove = true;
+            if (timer != null) timer.isRunning = true;
+            return;
+        }
+
+        StartCoroutine(ShowGuideRoutine(defaultMessage, showDuration, showDelay));
+    }
+
+    // Stage 1-1(튜토리얼)만 시작 가이드·아이템 안내 표시
+    public static bool IsTutorialStage()
+    {
+        return GetStageIndex() == 0;
+    }
+
+    private static int GetStageIndex()
+    {
+        if (SceneLoadManager.Instance != null && SceneLoadManager.Instance.pendingStageIndex >= 0)
+            return SceneLoadManager.Instance.pendingStageIndex;
+
+        StageManager stageManager = FindAnyObjectByType<StageManager>();
+        if (stageManager != null)
+            return stageManager.currentStageIndex;
+
+        return 0;
     }
 
     public void SetGuideText(string message)
@@ -128,7 +164,6 @@ public class GuideTxt : MonoBehaviour
 
         if (player != null) player.canMove = true;
         if (timer != null) timer.isRunning = true;
-        if (background != null) background.ResumeScroll();
     }
 
     private IEnumerator FadeTo(float targetAlpha, float duration)

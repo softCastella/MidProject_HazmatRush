@@ -16,7 +16,7 @@
 **2D 횡스크롤 오염 대응 게임.** 플레이어가 이동하며 오염원에 접촉하고, **맞는 아이템**으로만 오염원 HP를 깎습니다. 접촉 중에는 방호복 HP가 계속 감소합니다.
 
 - Unity `6000.4.8f1`
-- 씬: `Assets/Scenes/TitleScene.unity`, `GameScene.unity`
+- 씬: `SplashScene` → `TitleScene` → `IntroStoryScene` → `LoadingScene` → `GameScene`
 - 스크립트 루트: `Assets/Scripts/`
 
 ---
@@ -66,19 +66,33 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 - **기존 패턴 따르기** — 네이밍, 폴더 구조, `Item.ItemType` 등 프로젝트 관례 유지
 - **Unity 메타 파일** — `.cs` 추가·삭제 시 `.meta`도 함께 고려 (Unity가 자동 생성하는 경우 많음)
 - **HP는 float, UI는 int** — `curProtection`, `pollutanCurHp`는 float로 계산, 화면·`%` 텍스트는 `Mathf.FloorToInt` 등으로 표시
-- **접촉 데미지 순서** (`Pollutant.OnTriggerStay2D`):
+- **접촉 판정·데미지** — `Pollutant.cs` **표준 모델** (A~C/D 동일, 상세: [회의록 §4](Assets/Docs/회의록/2026-06-05-시각미상-플레이어-오염원-로직-검토.md)):
+  - `OnTriggerEnter2D` → `currentPlayer`·HP바·`AddPollutantTouch`
+  - `OnTriggerStay2D` → `currentPlayer` 갱신 + `ApplyPlayerContactDamage` (**데미지는 여기만**)
+  - `OnTriggerExit2D` / `EndPlayerContact` → HP `pollutanMaxHp` 초기화 (가스 포함)
+- **접촉 데미지 순서** (`ApplyPlayerContactDamage`):
   1. 아이템 판정 로그
   2. `player.ApplyPollutantDamage(pollutanDps)`
   3. **추천 아이템 == 선택 아이템**일 때만 오염원 HP 감소
+- **중화 VFX** (`Player.RefreshNeutralizationVfx`): 접촉 중 A~C + `IsSelectedItemRecommendedFor`일 때만. **틀린 도구·스캐너·가스(D)는 VFX 없음** (가스는 밸브 애니만).
+- **아이템 선택**: 오염원 제거 시 `ResetToDefault()` **금지**. `OnWarningShown()` — 첫 경고만 중화제 기본, 이후 선택 유지. 스테이지 리셋만 Scanner 초기화.
+- **결과 패널**: `GameManager` — `clearAnimDelay` / `dieAnimDelay`(기본 2초) 후 ClearSet·GameOverSet. 애니와 패널 동시 표시 금지.
+- **Pollutant/Player 접촉·이동 수정 전** — [gameplay-fixes](Assets/Docs/Bug/2026-06-04-시각미상-gameplay-fixes.md), [클리어·VFX-fixes](Assets/Docs/Bug/2026-06-05-시각미상-클리어-가이드-중화VFX-fixes.md), 회의록 §4 읽고 **4.8 체크리스트** 확인. 증상 패치만 연쇄 추가 금지.
 - **커밋은 사용자가 요청할 때만** — 자동 `git commit` 하지 않음
 - **`Library/`, `Temp/`, `Logs/`** — 수정·커밋 대상 아님
 
 ### 하지 말 것
 
-- 사망 연출(Die 애니 + 페이드 코루틴)을 **사용자 요청 없이** 다시 넣지 않기 (과거 롤백된 영역)
+- Die/Clear **결과 연출 타이밍**(`dieAnimDelay`, `clearAnimDelay`, 패널 코루틴)을 **요청 없이** 바꾸거나 패널을 애니와 동시에 띄우지 않기
+- `RefreshNeutralizationVfx`를 “스캐너가 아니면 ON”으로 단순화하지 않기 (오답 시 VFX 재발)
+- 오염원 HP 0 시 `ItemSelectManager.ResetToDefault()` **다시 넣지 않기**
 - `ItemType` 전역 enum 복구하지 않기 → `Item.ItemType` 사용
 - 접촉 데미지에 `IsEdgeContact` 조건을 **다시 켜지 않기** (접촉 중 데미지가 끊기는 원인이었음)
 - `GrowRange`를 무분별하게 바꾸지 않기 — 이동 범위 버그와 연관됨
+- **D만** `Update` bounds / `OnTriggerStay` early return 등 **접촉 경로 이원화** 금지
+- `IsValveAnimActive`만으로 **무조건 접촉 true** 또는 **플레이어 이동 잠금** 금지 (가스 갇힘·HP 멈춤 원인)
+- 가스(D)·**틀린 A~C 도구** 접촉 중 **중화 VFX(CFXR)** 켜지 않기 — 정답 A~C만 VFX, D는 밸브 애니·SFX만
+- **Solid 벽 콜라이더**로 통과 방지 금지 (떨림)
 
 ### 수정 시 자주 보는 파일
 
@@ -86,6 +100,11 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 |------|------|
 | 이동·방호복·사망 | `Assets/Scripts/GamePlay/Player.cs` |
 | 접촉·오염원 HP·판정 로그 | `Assets/Scripts/GamePlay/Pollutant.cs` |
+| 접촉 판정 규칙·회의 합의 | `Assets/Docs/회의록/2026-06-05-시각미상-플레이어-오염원-로직-검토.md` §4 |
+| 접촉·이동 버그 이력 | `Assets/Docs/Bug/2026-06-04-시각미상-gameplay-fixes.md` |
+| 클리어·VFX·아이템 유지 | `Assets/Docs/Bug/2026-06-05-시각미상-클리어-가이드-중화VFX-fixes.md` |
+| 클리어·사망·결과 패널 | `Assets/Scripts/Core/GameManager.cs` |
+| Docs 파일명 규칙 | `Assets/Docs/문서-이름-규칙.md` |
 | 아이템 DPS·타입 | `Assets/Scripts/GamePlay/Item.cs` |
 | Z키 아이템 선택 | `Assets/Scripts/Core/ItemSelectManager.cs` |
 | 오염원 스폰·경고 | `Assets/Scripts/GamePlay/PollutantManager.cs` |
@@ -99,10 +118,11 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 ### 3.1 먼저 읽을 순서
 
 1. [README.md](README.md) — 전체 그림
-2. `Player.cs` — 이동·방호복
-3. `Pollutant.cs` — 접촉 시 일어나는 일 (가장 중요)
-4. `Item.cs` + `ItemSelectManager.cs` — 아이템 종류와 선택
-5. `PollutantManager.cs` — 오염원이 언제 나타나는지
+2. [회의록 §4 접촉 판정 규칙](Assets/Docs/회의록/2026-06-05-시각미상-플레이어-오염원-로직-검토.md) — Pollutant/Player 수정 전
+3. `Player.cs` — 이동·방호복
+4. `Pollutant.cs` — 접촉 시 일어나는 일 (가장 중요)
+5. `Item.cs` + `ItemSelectManager.cs` — 아이템 종류와 선택
+6. `PollutantManager.cs` — 오염원이 언제 나타나는지
 
 ### 3.2 Unity에서 꼭 아는 위치
 
@@ -133,8 +153,10 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 - [ ] 2~3초 이동 후 `[경고]` 로그·오염원 생성되는가?
 - [ ] 접촉 시 `틀린/올바른 아이템` 로그가 먼저 나오는가?
 - [ ] 접촉 중 `[Player] 방호복 HP 감소`가 반복되는가?
-- [ ] **맞는 아이템**일 때만 `[Pollutant] 오염원 HP`가 실제로 줄어드는가?
+- [ ] **맞는 아이템**일 때만 오염원 HP 감소 + **중화 VFX**가 나오는가?
+- [ ] **틀린 아이템**일 때 방호복만 감소하고 VFX는 **없는가**?
 - [ ] 떨어지면 `접촉 해제 -> HP 초기화` 로그가 나오는가?
+- [ ] 클리어/사망 시 애니 **2초 후** 결과 패널이 뜨는가?
 
 **Console이 멈춘 것처럼 보이면:** `Collapse` 끄기, Clear 후 다시 Play.
 
@@ -159,7 +181,7 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 | **브랜치 규칙** | `main`에 직접 push 안 함 | 실수 방지 |
 | **인스펙터에서 꼭 연결할 참조** | Player → protectionNumText | "NullReference" 디버깅 시간 절약 |
 | **알려진 버그** | "이동이 -403 전에 멈춤 → GrowRange 확인" | 같은 실수 반복 방지 |
-| **다음 할 일 (TODO)** | "Die 애니 다시 넣기" | AI에게 작업 지시할 때 명확 |
+| **다음 할 일 (TODO)** | "스테이지 2 UI" | AI에게 작업 지시할 때 명확 |
 | **스크린샷 / GIF 링크** | 정상 플레이 영상 | 말로 설명하기 어려울 때 |
 | **빌드 방법** | Windows 빌드 설정 | 나중에 배포할 때 |
 | **자주 나는 에러와 해결** | "Animator에 State 파라미터 없음" | 초보가 검색하기 전에 해결 |
@@ -205,15 +227,16 @@ Cursor에서 확인: **Settings → Rules** 또는 채팅 입력창 근처 Rules
 
 | 기능 | 상태 |
 |------|------|
-| 이동 (-785 ~ -403) | ✅ |
+| 씬 흐름 (Splash→Title→Intro→Loading→Game) | ✅ |
+| 이동·맵 구간 (`mapPollutants`) | ✅ |
 | 오염원 경고·스폰·페이드 | ✅ |
-| 아이템 선택 (Z) | ✅ |
+| 아이템 선택 (Z/X), 맵 중 선택 유지 | ✅ |
 | 접촉 시 방호복 감소 | ✅ |
-| 정답 아이템만 오염원 HP 감소 | ✅ |
-| 접촉 해제 시 오염원 HP 초기화 | ✅ |
-| 판정 로그 (올바른/틀린) | ✅ |
-| Die 애니 + 페이드 사망 | ❌ 롤백됨 — 요청 시에만 작업 |
-| GameManager / StageManager 게임 흐름 | ❌ 골격만 |
+| 정답만 오염원 HP·중화 VFX | ✅ |
+| 접촉 해제 시 오염원 HP 초기화 (가스 포함) | ✅ |
+| Die/Clear 애니 → 2초 후 결과 패널 | ✅ |
+| 클리어·게임오버·일시정지·재시작 | ✅ |
+| K/I HUD 가이드 패널 | ✅ |
 
 ---
 
@@ -222,6 +245,7 @@ Cursor에서 확인: **Settings → Rules** 또는 채팅 입력창 근처 Rules
 | 날짜 | 내용 |
 |------|------|
 | 2026-05-28 | 접촉·중화·판정 로그 시스템, Item.ItemType 구조, README/AGENTS.md 작성 |
+| 2026-06-05 | 접촉 판정 표준(회의록 §4), 맵 구간, 스플래시·BGM, 클리어/사망 2초 연출, VFX·아이템 유지, AGENTS·Rules 갱신 |
 | | *(이 아래에 본인이 직접 추가)* |
 
 ---

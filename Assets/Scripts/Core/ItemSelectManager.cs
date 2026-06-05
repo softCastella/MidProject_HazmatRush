@@ -33,9 +33,9 @@ public class ItemSelectManager : MonoBehaviour
             return;
 
         if (Input.GetKeyDown(KeyCode.Z))
-            SelectNextItem();
-        else if (Input.GetKeyDown(KeyCode.X))
             SelectPrevItem();
+        else if (Input.GetKeyDown(KeyCode.X))
+            SelectNextItem();
     }
 
     public void ResetToDefault()
@@ -48,13 +48,15 @@ public class ItemSelectManager : MonoBehaviour
 
     public void OnWarningShown()
     {
-        // 경고 이후부터는 스캐너를 제외하고 첫 대응 아이템을 기본 선택합니다.
-        // (스캐너는 이동/스캔 중에만 유효 → 중화모드 오판정 대상에서 제외)
+        // 경고 이후: 스캐너(이동) <-> 중화도구(Z=왼쪽, X=오른쪽). 정답 아이템은 플레이어가 직접 고름.
         itemSwitchEnabled = true;
-        hasPickedFirstItem = true;
-        selectedIndex = FirstTreatmentIndex;
+        if (!hasPickedFirstItem || selectedIndex == ScannerIndex)
+        {
+            hasPickedFirstItem = true;
+            selectedIndex = FirstTreatmentIndex;
+        }
         UpdateUI();
-        Debug.Log("[ItemSelectManager] 경고 표시 - 아이템 전환 가능 (스캐너 제외, 첫 대응 아이템 기본)");
+        Debug.Log("[ItemSelectManager] 경고 표시 - 아이템 전환 가능 (스캐너 제외, 중화도구 구간)");
     }
 
     public void SelectNextItem()
@@ -201,5 +203,9 @@ public class ItemSelectManager : MonoBehaviour
     {
         if (itemManager != null)
             itemManager.SetSelected(selectedIndex, hasPickedFirstItem);
+
+        Player player = FindAnyObjectByType<Player>();
+        if (player != null)
+            player.RefreshNeutralizationVfx();
     }
 }

@@ -1283,13 +1283,15 @@ MonoBehaviour:
   clearClip: {fileID: 8300000, guid: 634b6275d8d3e534580994a6cbe4c606, type: 3}
   gameOverClip: {fileID: 8300000, guid: b8401e3cda800cb4bbed739fc5226d87, type: 3}
   neutralizationClip: {fileID: 8300000, guid: 874ff708e7a646a40a4d0b29284ffe6c, type: 3}
+  squeakyValveClip: {fileID: 8300000, guid: daf87d00fcf8c8942ac7037ed8cfc410, type: 3}
   bgmSource: {fileID: 0}
   sfxSource: {fileID: 0}
   neutralizationSource: {fileID: 0}
   bgmVolume: 1
   pauseBgmVolumeRatio: 0.333
   sfxVolume: 1.77
-  neutralizationSfxVolume: 0.35
+  neutralizationSfxVolume: 0.2
+  valveSfxVolume: 0.85
 --- !u!4 &1126442490
 Transform:
   m_ObjectHideFlags: 0

@@ -32,9 +32,8 @@ public class Background : MonoBehaviour
 
         player = FindAnyObjectByType<Player>();
 
-        GuideTxt guide = FindAnyObjectByType<GuideTxt>();
-        if (guide == null || string.IsNullOrEmpty(guide.defaultMessage))
-            isPaused = false;
+        // 시작 시 멈춤은 PollutantManager(오염원·경고)가 담당. 여기서는 입력 대기만.
+        isPaused = false;
 
         if (rend.material == null)
             return; // 머티리얼이 없으면 더 이상 실행하지 않습니다.
@@ -63,9 +62,9 @@ public class Background : MonoBehaviour
         if (rend == null || rend.material == null || string.IsNullOrEmpty(textureProperty))
             return; // 준비가 안 된 경우 아무 것도 하지 않습니다.
 
-        bool playerInput = player != null ? player.hasInput : false;
+        bool playerInput = player != null && player.isMoving;
         float inputDirection = 0f;
-        if (playerInput && player != null)
+        if (playerInput)
             inputDirection = player.transform.localScale.x;
 
         bool shouldStop = isPaused;

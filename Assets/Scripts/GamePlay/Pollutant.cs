@@ -83,6 +83,7 @@ public class Pollutant : MonoBehaviour
     public float disappearDuration = 0.7f;//페이드아웃 아웃 속도
     public int spriteSortingOrder = 0; // 플레이어(5)보다 뒤에 그림 — A/B/C 동일
     private bool isFadingOut = false;    //페이드아웃 중인지
+    private bool clearedActiveCount = false; // FadeOut 시작 시 activeCount 선차감 여부
     private bool hasLoggedContactJudge = false; //현재 접촉 구간에서 판정 로그 출력 여부
     private bool lastJudgeMatched = false;      //직전 판정 결과
     private bool hasPlayedNeutralizationSfx = false;
@@ -90,11 +91,34 @@ public class Pollutant : MonoBehaviour
     public Slider pollutantSlider;      // PollutantManager가 주입
     private TMP_Text pollutantHpText;
     private Player currentPlayer;      // 접촉 중인 플레이어 캐시
+    private bool playerInTrigger;      // 트리거 안에 플레이어가 있는지 (bounds 보조 판정용)
+    private bool appearInProgress;       // 등장 페이드 중 — 접촉·데미지 금지
+    private MaterialPropertyBlock particleAlphaBlock;
 
-    public static int activeCount = 0;    //활성화된 오염원 개수
+    public static int activeCount = 0;    // 활성화된 오염원 개수 (A~D 전체)
+    public static int activeAbcCount = 0; // A/B/C만 (맵 진행·동시 1개 제한용)
+    public static bool suppressEnableForPreload = false;
+
+    public static bool HasActiveAbc()
+    {
+        return activeAbcCount > 0;
+    }
+
+    public static bool HasAnyActive()
+    {
+        return activeCount > 0;
+    }
+
+    public bool IsPlayerContactActive()
+    {
+        return playerInTrigger && currentPlayer != null && !isFadingOut;
+    }
     private SpriteRenderer spriteRenderer;    //스프라이트 렌더러
     private Renderer meshRenderer;    //메시 렌더러
     private Renderer[] childRenderers;    //자식 렌더러
+    private ParticleSystem[] particleSystems; // TypeD: 3D 스모크 파티클
+    private bool useParticleVisual;
+    private float particleVisualStrength = 1f;
 
     void Awake()
     {
@@ -104,21 +128,45 @@ public class Pollutant : MonoBehaviour
         if (spriteRenderer == null)
             spriteRenderer = GetComponentInChildren<SpriteRenderer>(true);
 
-        if (spriteRenderer == null)
-            meshRenderer = GetComponent<Renderer>();
+        if (type == PollutantType.TypeD)
+        {
+            particleSystems = GetComponentsInChildren<ParticleSystem>(true);
+            if (particleSystems != null && particleSystems.Length > 0)
+            {
+                useParticleVisual = true;
+                // SetActive(true) 순간 파티클 시뮬이 먼저 돌며 멈춤 방지 — 등장 시에만 켬
+                for (int i = 0; i < particleSystems.Length; i++)
+                {
+                    if (particleSystems[i] != null)
+                        particleSystems[i].gameObject.SetActive(false);
+                }
+            }
 
-        if (spriteRenderer == null && meshRenderer == null)
-            childRenderers = GetComponentsInChildren<Renderer>(true);
+            if (spriteRenderer != null && spriteRenderer.sprite == null)
+                spriteRenderer.enabled = false;
+        }
 
-        if (spriteRenderer == null && meshRenderer == null && (childRenderers == null || childRenderers.Length == 0))
-            Debug.LogWarning($"{name}: Pollutant에서 렌더러를 찾지 못했습니다. SpriteRenderer 또는 Renderer가 필요합니다.");
+        if (!useParticleVisual)
+        {
+            if (spriteRenderer == null)
+                meshRenderer = GetComponent<Renderer>();
+
+            if (spriteRenderer == null && meshRenderer == null)
+                childRenderers = GetComponentsInChildren<Renderer>(true);
+
+            if (spriteRenderer == null && meshRenderer == null && (childRenderers == null || childRenderers.Length == 0))
+                Debug.LogWarning($"{name}: Pollutant에서 렌더러를 찾지 못했습니다. SpriteRenderer 또는 Renderer가 필요합니다.");
+        }
 
         ApplySpriteSortingOrder();
-        SetAlpha(0f);
+        SetVisualStrength(0f);
     }
 
     void ApplySpriteSortingOrder()
     {
+        if (useParticleVisual || type == PollutantType.TypeD)
+            return;
+
         if (spriteRenderer != null)
             spriteRenderer.sortingOrder = spriteSortingOrder;
 
@@ -135,9 +183,16 @@ public class Pollutant : MonoBehaviour
 
     void OnEnable()
     {
+        if (suppressEnableForPreload)
+        {
+            SetVisualStrength(0f);
+            return;
+        }
+
         activeCount++;
-        Debug.Log($"{name}: OnEnable 호출, appearDuration={appearDuration}, spriteRenderer={(spriteRenderer != null)}");
-        StartCoroutine(FadeTo(1f, appearDuration));
+        if (type != PollutantType.TypeD)
+            activeAbcCount++;
+        StartCoroutine(AppearRoutine());
     }
 
     //오염원 체력 및 데미지 설정
@@ -167,7 +222,12 @@ public class Pollutant : MonoBehaviour
     //오염원 삭제 시 활성화된 오염원 개수 감소
     void OnDestroy()
     {
+        if (clearedActiveCount)
+            return;
+
         activeCount = Mathf.Max(0, activeCount - 1);
+        if (type != PollutantType.TypeD)
+            activeAbcCount = Mathf.Max(0, activeAbcCount - 1);
     }
 
     bool CanProcessPlayerContact(Player player)
@@ -181,12 +241,15 @@ public class Pollutant : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        if (appearInProgress)
+            return;
         if (!other.CompareTag("Player")) return;
 
         Player player = other.GetComponent<Player>();
         if (!CanProcessPlayerContact(player))
             return;
 
+        playerInTrigger = true;
         currentPlayer = player;
 
         if (pollutantSlider != null)
@@ -211,18 +274,95 @@ public class Pollutant : MonoBehaviour
             player.protectionSlider.gameObject.SetActive(true);
             player.UpdateProtectionBar();
         }
+
+        player.AddPollutantTouch();
+
+        if (type == PollutantType.TypeD)
+            Debug.Log($"[Pollutant] 가스(D) 콜라이더 접촉: {name}");
     }
 
     void OnTriggerStay2D(Collider2D other)
     {
+        if (appearInProgress)
+            return;
         if (!other.CompareTag("Player"))
             return;
 
         Player player = other.GetComponent<Player>();
+        if (player == null || !CanProcessPlayerContact(player))
+            return;
+
+        playerInTrigger = true;
+        currentPlayer = player;
+        ApplyPlayerContactDamage(player);
+    }
+
+    private bool IsBoundsOverlappingPlayer(Player player, float padding = 0f)
+    {
+        if (player == null)
+            return false;
+
+        Collider2D pollutantCol = GetComponent<Collider2D>();
+        Collider2D playerCol = player.GetComponent<Collider2D>();
+        if (pollutantCol == null || playerCol == null || !pollutantCol.enabled)
+            return false;
+
+        Physics2D.SyncTransforms();
+        Bounds zone = pollutantCol.bounds;
+        if (padding > 0f)
+            zone.Expand(padding);
+
+        return zone.Intersects(playerCol.bounds);
+    }
+
+    private void EndPlayerContact(Player player)
+    {
+        playerInTrigger = false;
+
+        if (player != null)
+        {
+            if (type == PollutantType.TypeD)
+                player.SetValveAnimActive(false);
+            player.RemovePollutantTouch();
+        }
+
+        if (isFadingOut)
+            return;
+
+        hasLoggedContactJudge = false;
+        StopNeutralizationSfxLocal();
+
+        pollutanCurHp = pollutanMaxHp;
+        Debug.Log($"[Pollutant] 접촉 해제 -> HP 초기화: {pollutanCurHp:F2}/{pollutanMaxHp:F2}");
+
+        StageScoreTracker scoreTracker = FindAnyObjectByType<StageScoreTracker>();
+        if (scoreTracker != null)
+            scoreTracker.RegisterPollutantReset();
+
+        HideBars(player);
+        currentPlayer = null;
+    }
+
+    private void ApplyPlayerContactDamage(Player player)
+    {
         if (!CanProcessPlayerContact(player))
         {
             StopNeutralizationSfxLocal();
+            if (type == PollutantType.TypeD)
+                player.SetValveAnimActive(false);
+            player.RefreshNeutralizationVfx();
             return;
+        }
+
+        if (type == PollutantType.TypeD && player.itemSelectManager != null)
+        {
+            Item.ItemType selectedType = player.itemSelectManager.SelectedItemType;
+            bool valveOn = selectedType == RecommendedItemType && selectedType == Item.ItemType.GasValve;
+            player.SetValveAnimActive(valveOn);
+        }
+        else
+        {
+            player.RefreshNeutralizationVfx();
         }
 
         // 1) 접촉 판정 로그를 먼저 출력 (처음 1회 + 결과가 바뀔 때)
@@ -232,7 +372,10 @@ public class Pollutant : MonoBehaviour
             bool isMatched = selectedType == RecommendedItemType;
             if (!hasLoggedContactJudge || isMatched != lastJudgeMatched)
             {
-                Debug.Log($"{(isMatched ? "올바른 아이템입니다." : "틀린 아이템입니다.")} 추천 = {RecommendedItemType}, 선택 = {selectedType}");
+                if (type == PollutantType.TypeD && selectedType == Item.ItemType.GasValve && isMatched)
+                    Debug.Log("올바른 도구입니다.");
+                else
+                    Debug.Log($"{(isMatched ? "올바른 아이템입니다." : "틀린 아이템입니다.")} 추천 = {RecommendedItemType}, 선택 = {selectedType}");
                 hasLoggedContactJudge = true;
                 lastJudgeMatched = isMatched;
 
@@ -259,7 +402,7 @@ public class Pollutant : MonoBehaviour
             Item.ItemType selectedType = player.itemSelectManager.SelectedItemType;
             if (selectedType == RecommendedItemType)
             {
-                if (!hasPlayedNeutralizationSfx)
+                if (type != PollutantType.TypeD && !hasPlayedNeutralizationSfx)
                 {
                     hasPlayedNeutralizationSfx = true;
                     if (AudioManager.Instance != null)
@@ -273,6 +416,9 @@ public class Pollutant : MonoBehaviour
                     if (selectedItem != null)
                         itemDps = selectedItem.GetDps();
                 }
+
+                if (itemDps <= 0f && type == PollutantType.TypeD && selectedType == Item.ItemType.GasValve)
+                    itemDps = 12f;
             }
             else
             {
@@ -286,35 +432,28 @@ public class Pollutant : MonoBehaviour
 
         UpdatePollutantHpBar();
 
-        Debug.Log($"[Pollutant] 오염원 HP 감소: -{itemDamage:F2} (itemDps={itemDps:F2}) / 현재 HP: {pollutanCurHp:F2}");
-
         if (pollutanCurHp <= 0f && !isFadingOut)
         {
             StopNeutralizationSfxLocal();
-            if (player.itemSelectManager != null)
-                player.itemSelectManager.ResetToDefault();
+            if (type == PollutantType.TypeD)
+                player.SetValveAnimActive(false);
+            player.RemovePollutantTouch();
             StartCoroutine(FadeOutAndDestroy());
         }
     }
 
-    //오염원과 플레이어 접촉 해제 시 오염원 체력 초기화
+    //오염원과 플레이어 접촉 해제 시 오염원 체력 초기화 (A~C, D 동일)
     void OnTriggerExit2D(Collider2D other)
     {
-        if (!other.CompareTag("Player") || isFadingOut)
+        if (!other.CompareTag("Player"))
             return;
 
-        hasLoggedContactJudge = false;
-        StopNeutralizationSfxLocal();
-        pollutanCurHp = pollutanMaxHp;
-        Debug.Log($"[Pollutant] 접촉 해제 -> HP 초기화: {pollutanCurHp:F2}/{pollutanMaxHp:F2}");
-
-        StageScoreTracker scoreTracker = FindAnyObjectByType<StageScoreTracker>();
-        if (scoreTracker != null)
-            scoreTracker.RegisterPollutantReset();
-
         Player player = other.GetComponent<Player>();
-        HideBars(player);
-        currentPlayer = null;
+        if (player != null && IsBoundsOverlappingPlayer(player))
+            return;
+
+        playerInTrigger = false;
+        EndPlayerContact(player);
     }
 
     // 플레이어와의 충돌이 가장자리에서만 유효하도록 거리 계산
@@ -324,7 +463,112 @@ public class Pollutant : MonoBehaviour
         return dist >= halfWidth * edgeHitRatio;
     }
 
-    // 투명도 설정 함수
+    private float GetVisualStrength()
+    {
+        if (useParticleVisual)
+            return particleVisualStrength;
+
+        if (spriteRenderer != null)
+            return spriteRenderer.color.a;
+
+        if (meshRenderer != null && meshRenderer.material != null)
+            return meshRenderer.material.color.a;
+
+        return 1f;
+    }
+
+    // 스프라이트 알파 또는 TypeD 파티클 강도(0~1)
+    private void SetVisualStrength(float strength)
+    {
+        if (useParticleVisual)
+        {
+            particleVisualStrength = strength;
+            SetParticleVisualStrength(strength);
+            return;
+        }
+
+        SetAlpha(strength);
+    }
+
+    private void SetParticleVisualStrength(float strength)
+    {
+        if (particleSystems == null)
+            return;
+
+        strength = Mathf.Clamp01(strength);
+
+        for (int i = 0; i < particleSystems.Length; i++)
+        {
+            ParticleSystem ps = particleSystems[i];
+            if (ps == null)
+                continue;
+
+            if (strength <= 0.01f)
+            {
+                if (ps.isPlaying)
+                {
+                    var emissionOff = ps.emission;
+                    emissionOff.enabled = false;
+                    ps.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                }
+                SetParticleRendererAlpha(ps, 0f);
+                continue;
+            }
+
+            if (!isFadingOut)
+            {
+                var emissionOn = ps.emission;
+                if (!emissionOn.enabled)
+                    emissionOn.enabled = true;
+                if (!ps.isPlaying)
+                    ps.Play();
+            }
+
+            SetParticleRendererAlpha(ps, strength);
+        }
+
+        if (spriteRenderer != null && spriteRenderer.enabled)
+            SetAlpha(strength);
+    }
+
+    private void SetParticleRendererAlpha(ParticleSystem ps, float alpha)
+    {
+        if (ps == null)
+            return;
+
+        ParticleSystemRenderer renderer = ps.GetComponent<ParticleSystemRenderer>();
+        if (renderer == null)
+            return;
+
+        if (particleAlphaBlock == null)
+            particleAlphaBlock = new MaterialPropertyBlock();
+
+        renderer.GetPropertyBlock(particleAlphaBlock);
+        Color color = particleAlphaBlock.GetColor("_Color");
+        if (color.maxColorComponent <= 0f && alpha > 0f)
+            color = Color.white;
+        color.a = alpha;
+        particleAlphaBlock.SetColor("_Color", color);
+        particleAlphaBlock.SetColor("_BaseColor", color);
+        renderer.SetPropertyBlock(particleAlphaBlock);
+    }
+
+    private void StopParticleEmission()
+    {
+        if (!useParticleVisual || particleSystems == null)
+            return;
+
+        for (int i = 0; i < particleSystems.Length; i++)
+        {
+            if (particleSystems[i] == null)
+                continue;
+
+            var emission = particleSystems[i].emission;
+            emission.enabled = false;
+        }
+    }
+
+    // 투명도 설정 함수 (A/B/C 스프라이트용)
     private void SetAlpha(float alpha)
     {
         if (spriteRenderer != null)
@@ -357,32 +601,87 @@ public class Pollutant : MonoBehaviour
         }
     }
 
+    private IEnumerator AppearRoutine()
+    {
+        appearInProgress = true;
+        playerInTrigger = false;
+        currentPlayer = null;
+
+        Collider2D col = GetComponent<Collider2D>();
+        if (col != null)
+            col.enabled = false;
+
+        if (type == PollutantType.TypeD)
+        {
+            yield return null;
+            ShowTypeDVisual();
+            if (col != null)
+                col.enabled = true;
+            appearInProgress = false;
+            yield break;
+        }
+
+        yield return FadeTo(1f, appearDuration);
+
+        if (col != null)
+            col.enabled = true;
+
+        appearInProgress = false;
+    }
+
+    private void ShowTypeDVisual()
+    {
+        particleVisualStrength = 1f;
+        if (!useParticleVisual || particleSystems == null)
+            return;
+
+        for (int i = 0; i < particleSystems.Length; i++)
+        {
+            ParticleSystem ps = particleSystems[i];
+            if (ps == null)
+                continue;
+
+            ps.gameObject.SetActive(true);
+            var emission = ps.emission;
+            emission.enabled = true;
+            if (!ps.isPlaying)
+                ps.Play();
+            SetParticleRendererAlpha(ps, 1f);
+        }
+    }
+
     //오염원 등장 페이드인, 사망 페이드 아웃 로직
     private IEnumerator FadeTo(float targetAlpha, float duration)
     {
         if (duration <= 0f)
         {
-            SetAlpha(targetAlpha);
+            SetVisualStrength(targetAlpha);
             yield break;
         }
 
-        float startAlpha = spriteRenderer != null ? spriteRenderer.color.a : (meshRenderer != null ? meshRenderer.material.color.a : 1f);
-        Debug.Log($"{name}: FadeTo 시작, startAlpha={startAlpha}, targetAlpha={targetAlpha}, duration={duration}");
+        float startAlpha = GetVisualStrength();
         float time = 0f;
 
         while (time < duration)
         {
-            time += Time.deltaTime;
+            time += Time.unscaledDeltaTime;
             float alpha = Mathf.Lerp(startAlpha, targetAlpha, time / duration);
-            SetAlpha(alpha);
+            SetVisualStrength(alpha);
             yield return null;
         }
 
-        SetAlpha(targetAlpha);
+        SetVisualStrength(targetAlpha);
     }
 
     private void StopNeutralizationSfxLocal()
     {
+        if (type == PollutantType.TypeD)
+        {
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.StopValveSfx();
+            return;
+        }
+
         if (!hasPlayedNeutralizationSfx)
             return;
 
@@ -394,6 +693,16 @@ public class Pollutant : MonoBehaviour
     private IEnumerator FadeOutAndDestroy()
     {
         isFadingOut = true;
+
+        // 페이드 중에도 다음 오염원 등장 대기가 풀리도록 카운트를 먼저 내림
+        if (!clearedActiveCount)
+        {
+            activeCount = Mathf.Max(0, activeCount - 1);
+            if (type != PollutantType.TypeD)
+                activeAbcCount = Mathf.Max(0, activeAbcCount - 1);
+            clearedActiveCount = true;
+        }
+
         StopNeutralizationSfxLocal();
         HideBars(currentPlayer);
         currentPlayer = null;
@@ -406,7 +715,15 @@ public class Pollutant : MonoBehaviour
         if (col != null)
             col.enabled = false;
 
+        PollutantManager pollutantManager = FindAnyObjectByType<PollutantManager>();
+        if (pollutantManager != null)
+            pollutantManager.RefreshMoveRangeForRemainingPollutants(this);
+
+        if (useParticleVisual)
+            StopParticleEmission();
+
         yield return StartCoroutine(FadeTo(0f, disappearDuration));
+
         Destroy(gameObject);
     }
 

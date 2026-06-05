@@ -1127,6 +1127,12 @@ MonoBehaviour:
   - {fileID: 8137116525753167442, guid: 4386518fa78688549a9a980e25f70c60, type: 3}
   - {fileID: 8137116525753167442, guid: 00d3b12d646313e44b4b94ba8c03059b, type: 3}
   fallbackSceneName: GameScene
+  recoverySpawnPointCount: 4
+  recoverySpawnMinCount: 1
+  recoverySpawnMaxCount: 3
+  stageDataJson: {fileID: 4900000, guid: cbae55230335c17489b65f38a416523c, type: 3}
+  pollutantAbcSpawnPointCount: 3
+  pollutantDSpawnPointCount: 4
 --- !u!4 &663937358
 Transform:
   m_ObjectHideFlags: 0

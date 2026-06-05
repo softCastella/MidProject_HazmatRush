@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ClearPanelUI : MonoBehaviour
 {
-    [Header("Stars (0=클리어, 1=안전, 2=정확)")]
+    [Header("Stars (왼쪽부터 starCount개만 채움)")]
     public Animator[] starAnimators;
 
     [Tooltip("Star.controller 안 State 이름")]
@@ -111,12 +111,12 @@ public class ClearPanelUI : MonoBehaviour
     {
         yield return null;
 
-        bool[] stars = { result.starClear, result.starSafety, result.starAccuracy };
         ResetAllStarsEmpty();
 
-        for (int i = 0; i < starAnimators.Length && i < stars.Length; i++)
+        int fillCount = Mathf.Clamp(result.starCount, 0, starAnimators.Length);
+        for (int i = 0; i < fillCount; i++)
         {
-            if (starAnimators[i] == null || !stars[i])
+            if (starAnimators[i] == null)
                 continue;
 
             yield return PlayStarAndWait(starAnimators[i]);

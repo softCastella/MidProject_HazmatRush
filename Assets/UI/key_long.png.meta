@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: ed64a15260a5164488ee600a540cbf5e
+guid: 7d431f349d21b924884c3c6ab51d0861
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7447824398099991663
-    second: TalkMedia_i_0454f231bd4f.png_0
+      213: 4629715705186544894
+    second: key_long_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,23 +113,23 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: TalkMedia_i_0454f231bd4f.png_0
+      name: key_long_0
       rect:
         serializedVersion: 2
-        x: 5
-        y: 8
-        width: 218
-        height: 99
+        x: 24
+        y: 0
+        width: 1281
+        height: 365
       alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 82, y: 78, z: 90, w: 93}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f6ccc3e64dcfb5760800000000000000
-      internalID: 7447824398099991663
+      spriteID: efce0b297ed004040800000000000000
+      internalID: 4629715705186544894
       vertices: []
       indices: 
       edges: []
@@ -138,7 +138,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 37bf457e3b76de74ea7053bd6d40ae60
     internalID: 0
     vertices: []
     indices: 
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      TalkMedia_i_0454f231bd4f.png_0: 7447824398099991663
+      key_long_0: 4629715705186544894
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

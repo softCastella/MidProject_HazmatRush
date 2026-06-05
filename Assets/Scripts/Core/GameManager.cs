@@ -38,8 +38,14 @@ public class GameManager : MonoBehaviour
     public string wrongItemPenaltyMessage = "잘못된 아이템 선택으로 2초 후에 아이템선택이 가능합니다.";
     public float wrongItemPenaltySeconds = 2f;
 
+    [Header("Clear")]
+    [Tooltip("클리어 애니 재생 후 결과 패널까지 대기(초).")]
+    public float clearAnimDelay = 2f;
+
     [Header("Game Over")]
-    [Tooltip("방호복 0 시 Player가 Die+페이드 후 CompletePlayerDeathSequence 호출. 비상용 대기(초).")]
+    [Tooltip("사망 애니 재생 후 게임오버 패널까지 대기(초).")]
+    public float dieAnimDelay = 2f;
+    [Tooltip("사망 패널 코루틴 실패 시 비상 대기(초).")]
     public float dieGameOverFallbackDelay = 4f;
 
     [Header("Debug")]
@@ -50,6 +56,8 @@ public class GameManager : MonoBehaviour
     public bool GameEnded => gameEnded;
 
     private bool gameOverPending = false;
+    public bool IsGameOverPending => gameOverPending;
+    private GameOverCause pendingDeathCause = GameOverCause.ProtectionDepleted;
     private Coroutine gameOverDelayRoutine;
 
     private bool isPaused = false;
@@ -331,6 +339,16 @@ public class GameManager : MonoBehaviour
     {
         gameEnded = true;
         FreezePlayOnResult();
+        if (player != null)
+            player.PlayClearAnim();
+        StartCoroutine(ShowClearPanelAfterDelay(perfectStars));
+    }
+
+    private IEnumerator ShowClearPanelAfterDelay(bool perfectStars)
+    {
+        if (clearAnimDelay > 0f)
+            yield return new WaitForSeconds(clearAnimDelay);
+
         if (clearSet != null)
             clearSet.SetActive(true);
         if (AudioManager.Instance != null)
@@ -378,22 +396,49 @@ public class GameManager : MonoBehaviour
         if (cause == GameOverCause.ProtectionDepleted)
             return;
 
+        if (cause == GameOverCause.TimeOver && player != null && !player.IsDead)
+        {
+            BeginPlayerDeathSequence(GameOverCause.TimeOver);
+            player.StartDeathSequence();
+            return;
+        }
+
         FinishGameOver(cause);
     }
 
-    // 방호복 0: Die 애니·페이드 연출 시작 (패널은 CompletePlayerDeathSequence에서)
-    public void BeginPlayerDeathSequence()
+    // Die 애니 연출 시작 (패널은 dieAnimDelay 후 ShowGameOverPanelAfterDeathAnim에서)
+    public void BeginPlayerDeathSequence(GameOverCause cause = GameOverCause.ProtectionDepleted)
     {
         if (gameEnded || gameOverPending)
             return;
 
+        pendingDeathCause = cause;
         gameOverPending = true;
         FreezePlayOnResult();
         if (AudioManager.Instance != null)
+        {
             AudioManager.Instance.StopNeutralizationSfx();
+            AudioManager.Instance.StopValveSfx();
+        }
+
+        if (gameOverDelayRoutine != null)
+            StopCoroutine(gameOverDelayRoutine);
+        gameOverDelayRoutine = StartCoroutine(ShowGameOverPanelAfterDeathAnim());
 
         if (dieGameOverFallbackDelay > 0f)
-            gameOverDelayRoutine = StartCoroutine(PlayerDeathFallbackRoutine());
+            StartCoroutine(PlayerDeathFallbackRoutine());
+    }
+
+    private IEnumerator ShowGameOverPanelAfterDeathAnim()
+    {
+        if (dieAnimDelay > 0f)
+            yield return new WaitForSeconds(dieAnimDelay);
+
+        gameOverDelayRoutine = null;
+        if (gameEnded || !gameOverPending)
+            yield break;
+
+        CompletePlayerDeathSequence();
     }
 
     public void CompletePlayerDeathSequence()
@@ -402,7 +447,7 @@ public class GameManager : MonoBehaviour
             return;
 
         CancelPendingGameOver();
-        FinishGameOver(GameOverCause.ProtectionDepleted);
+        FinishGameOver(pendingDeathCause);
     }
 
     private IEnumerator PlayerDeathFallbackRoutine()
@@ -429,6 +474,7 @@ public class GameManager : MonoBehaviour
         {
             AudioManager.Instance.StopBGM();
             AudioManager.Instance.StopNeutralizationSfx();
+            AudioManager.Instance.StopValveSfx();
             AudioManager.Instance.PlayGameOverSfx();
         }
 
