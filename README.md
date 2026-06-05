@@ -375,6 +375,7 @@ Docs/       README.md
 - 로컬 변경 사항은 Git에 커밋되지 않았을 수 있으므로, 배포 전 `git status`로 확인 권장
 
 ##  폰트, 미디어 저작권
+ - Splash Screen Voice : VREW - VOICEVOX: 小夜/SAYO
  - Galmuri Font(© 2019-2023 Minseo Lee (itoupluk427@gmail.com))
  - 시작버튼 SFX
    Sounds of button selection in the game menu (sound effect) 2번째 사운드
