@@ -26,6 +26,13 @@ public class SceneLoadUI : MonoBehaviour
         if (AudioManager.Instance != null)
             AudioManager.Instance.PlayButtonSfx();
 
+        TitleSceneFade titleFade = FindAnyObjectByType<TitleSceneFade>();
+        if (titleFade != null)
+        {
+            titleFade.FadeOutToIntro();
+            return;
+        }
+
         if (SceneLoadManager.Instance == null)
         {
             Debug.LogWarning("[SceneLoadUI] SceneLoadManager가 없습니다.");

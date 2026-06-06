@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class AutoScrollIntro : MonoBehaviour
 {
+    public static bool fadeInFromTitle;
+
     public ScrollRect scrollRect;
     public float duration = 12f;
     public float startDelay = 1f;
@@ -14,6 +16,7 @@ public class AutoScrollIntro : MonoBehaviour
 
     [Header("씬 전환 (검은 화면으로 암전)")]
     public Image fadeOverlay;
+    public float fadeInDuration = 0.8f;
     public float fadeOutDuration = 0.5f;
     public string fallbackLoadingSceneName = "LoadingScene";
 
@@ -23,22 +26,63 @@ public class AutoScrollIntro : MonoBehaviour
     void Awake()
     {
         Camera cam = Camera.main;
-        if (cam != null)
-            cam.backgroundColor = Color.black;
-
         EnsureFadeOverlay();
-        SetOverlayAlpha(0f);
+
+        if (fadeInFromTitle)
+        {
+            if (cam != null)
+                cam.backgroundColor = Color.white;
+            SetOverlayColor(1f, 1f, 1f, 1f);
+        }
+        else
+        {
+            if (cam != null)
+                cam.backgroundColor = Color.black;
+            SetOverlayAlpha(0f);
+        }
     }
 
     private void Start()
     {
-        if (playOnStart)
-            scrollRoutine = StartCoroutine(AutoScroll());
+        if (!playOnStart)
+            return;
+
+        if (fadeInFromTitle)
+        {
+            fadeInFromTitle = false;
+            scrollRoutine = StartCoroutine(FadeInThenScroll());
+            return;
+        }
+
+        scrollRoutine = StartCoroutine(AutoScroll());
     }
 
     public void SkipIntro()
     {
         BeginExitToLoading();
+    }
+
+    private IEnumerator FadeInThenScroll()
+    {
+        EnsureFadeOverlay();
+
+        if (fadeOverlay != null && fadeInDuration > 0f)
+        {
+            SetOverlayColor(1f, 1f, 1f, 1f);
+
+            float time = 0f;
+            while (time < fadeInDuration)
+            {
+                time += Time.deltaTime;
+                float t = Mathf.Clamp01(time / fadeInDuration);
+                float eased = Mathf.SmoothStep(0f, 1f, t);
+                SetOverlayAlpha(1f - eased);
+                yield return null;
+            }
+        }
+
+        SetOverlayAlpha(0f);
+        scrollRoutine = StartCoroutine(AutoScroll());
     }
 
     public IEnumerator AutoScroll()
@@ -95,6 +139,9 @@ public class AutoScrollIntro : MonoBehaviour
     private IEnumerator ExitToLoadingRoutine()
     {
         EnsureFadeOverlay();
+
+        if (fadeOverlay != null)
+            SetOverlayColor(0f, 0f, 0f, fadeOverlay.color.a);
 
         if (fadeOverlay != null && fadeOutDuration > 0f)
         {
@@ -170,5 +217,15 @@ public class AutoScrollIntro : MonoBehaviour
         color.a = Mathf.Clamp01(alpha);
         fadeOverlay.color = color;
         fadeOverlay.raycastTarget = color.a > 0.01f;
+    }
+
+    private void SetOverlayColor(float r, float g, float b, float alpha)
+    {
+        if (fadeOverlay == null)
+            return;
+
+        float a = Mathf.Clamp01(alpha);
+        fadeOverlay.color = new Color(r, g, b, a);
+        fadeOverlay.raycastTarget = a > 0.01f;
     }
 }

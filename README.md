@@ -9,8 +9,9 @@
 | **언어** | C# |
 | **씬** | `SplashScene` → `TitleScene` → `IntroStoryScene` → `LoadingScene` → `GameScene` |
 | **스테이지 데이터** | `Assets/Data/stage_data.json` (`mapPollutants` 포함) |
+| **회복 아이템 정의** | `Assets/Data/recovery_items.json` |
 | **AI·협업 규칙** | [AGENTS.md](AGENTS.md) |
-| **버그·수정 기록** | [Bug 폴더](Assets/Docs/Bug/) — 최근: [클리어·가이드·VFX](Assets/Docs/Bug/2026-06-05-시각미상-클리어-가이드-중화VFX-fixes.md) |
+| **버그·수정 기록** | [Bug 폴더](Assets/Docs/Bug/) — 최근: [씬 전환](Assets/Docs/Bug/2026-06-06-시각미상-씬전환-스플래시-인트로-fixes.md) |
 
 ---
 
@@ -72,12 +73,13 @@
 
 ```text
 SplashScene
-  └ 로고 페이드인·확대 → splashSFX → 페이드아웃 → TitleScene
+  └ 로고 페이드인·확대 → splashSFX → 로고 페이드아웃(1.5s) → TitleScene (타이틀 선로드, 별도 검은 암전 없음)
 TitleScene
-  └ 시작 → IntroStoryScene (스토리 스크롤)
-  └ 이어하기 → LoadingScene (인트로 생략 가능)
+  └ 시작 → 흰 화면 암전(0.25s) + 인트로 선로드 → IntroStoryScene
+  └ 이어하기 → LoadingScene (인트로 생략)
 IntroStoryScene
-  └ 종료 → LoadingScene
+  └ (타이틀에서 온 경우) 흰 화면 SmoothStep 페이드인(0.8s) → 스크롤
+  └ 종료 → 검은 암전(0.5s) → LoadingScene
 LoadingScene
   └ stage_data + 오염원·회복 아이템 배치 확정 (PollutantSpawnPlan, RecoveryItemSpawnPlan)
   └ 조작 안내 문구 순환 (LoadingGuideTxt)
@@ -87,6 +89,8 @@ GameScene
 ```
 
 > **BGM:** 타이틀·게임 씬만 BGM 재생(페이드 인/아웃). 스플래시·인트로·로딩에서는 BGM 없음(`StopBGM`).
+
+> **씬 페이드:** `TitleSceneFade`(타이틀→인트로 흰 암전), `AutoScrollIntro`(인트로 진입 페이드인·종료 검은 암전). 상세: [Bug 2026-06-06](Assets/Docs/Bug/2026-06-06-시각미상-씬전환-스플래시-인트로-fixes.md).
 
 ---
 
@@ -175,8 +179,15 @@ GameScene
 
 ### 스플래시 (`SplashController.cs`)
 
-- `SplashScene` 첫 실행 — 로고 페이드인·확대 → 샤인 → 페이드아웃 → `TitleScene`
+- `SplashScene` 첫 실행 — 로고 페이드인·확대 → 샤인 → 로고 페이드아웃 → `TitleScene`
+- 타이틀 `LoadSceneAsync` **선로드** — 로고 사라진 뒤 흰 화면 대기 최소화
 - SFX: `AudioManager.PlaySplashSfx()` — 페이드인 `splashSfxDelay` 후 재생
+
+### 타이틀·인트로 페이드 (`TitleSceneFade.cs`, `AutoScrollIntro.cs`)
+
+- **타이틀 → 인트로:** 흰 `FadeOverlay` 0.25초 + 인트로 비동기 로드 (`SceneLoadUI.StartButton`)
+- **인트로 진입:** `fadeInFromTitle` 시 흰 화면 0.8초 SmoothStep 페이드인 후 스크롤
+- **인트로 → 로딩:** 검은 암전 0.5초 (기존)
 
 ### 오디오 (`AudioManager.cs`, DontDestroyOnLoad)
 
@@ -189,10 +200,15 @@ GameScene
 
 **씬별 BGM:** `TitleScene` / `GameScene`만 재생. 그 외는 페이드 아웃 후 정지.
 
-### 회복 아이템 (`RecoveryItemSpawnPlan`, `RecoveryItemManager`)
+### 회복 아이템 (`RecoveryItemSpawnPlan`, `RecoveryItemManager`, `RecoveryItemInventory`)
 
-- 로딩 시 배치 확정 → `GameScene`에서 스폰
-- `C`/`V` 선택, `Space` 사용
+- 정의: `Assets/Data/recovery_items.json` (id, type, displayName, value, inv/map 프리팹 이름)
+- 맵 프리팹: `mapProtectRecovPrefab`, `mapTimeRecovPrefab` — 로딩 시 배치 확정 → `GameScene` 스폰
+- 인벤 프리팹: `invProtectRecovPrefab`, `invTimeRecovPrefab` (UI Instantiate용)
+- 조작: `C`/`V` 선택, `Space` 사용
+- **설계 합의(진행 중):** 종류(id)당 1칸 + count 스택, 기본 빈 슬롯 4칸, 5번째 종류부터 Scroll View — [회의록 2026-06-06](Assets/Docs/회의록/2026-06-06-시각미상-회복아이템-인벤-설계-합의.md)
+- 현재 코드: `RecoveryItemInventory`는 고정 4칸 bool — 스택·스크롤·`invEmptySlotPrefab` **미구현**
+- 회복 UI 선택: `dim` OFF = 선택됨 (`RecoveryItemInventoryUI`)
 
 ### 기타
 
@@ -221,6 +237,7 @@ GameScene
 ```text
 Assets/
 ├── Data/stage_data.json
+├── Data/recovery_items.json
 ├── Scenes/
 │   ├── SplashScene.unity
 │   ├── TitleScene.unity
@@ -232,7 +249,8 @@ Assets/
 │   ├── GamePlay/      Player, Pollutant, PollutantManager, Item, …
 │   └── UI/            GuideTxt, HelpGuideToggle, LoadingGuideTxt, SplashController, …
 ├── Prefabs/Game/      Player, PollutantA~D
-├── Prefabs/Item/      Scanner, Neutralizer, pads, GasValve
+├── Prefabs/Item/      Scanner, Neutralizer, pads, GasValve, map*Recov
+├── Prefabs/InvenItem/ inv*Recov, invEmptySlotPrefab (예정)
 ├── Audio/SFX/
 ├── Docs/Bug/          버그·수정 기록
 └── Animations/        Player Idle / Move / Die / Valve / Clear
@@ -290,13 +308,16 @@ Assets/
 - 접촉 판정·정답만 오염원 HP·가스 HP 초기화·밸브 애니/SFX
 - Z/X 방향, 아이템 선택 유지(맵 중), 틀린 아이템 시 VFX 미재생
 - 스플래시·BGM 씬별 페이드
+- **씬 전환** — 스플래시 선로드, 타이틀→인트로 흰 페이드, 인트로 SmoothStep 진입
 - **K/I** HUD 가이드, 로딩 안내
+- 회복 아이템 JSON·맵/인벤 프리팹·`dim` 선택 UI (스택·Scroll 인벤 **진행 중**)
 - **Player_Clear** 클리어 애니 + 2초 후 패널
 - **Player_Die** 2초 후 게임오버 패널
 - 클리어 별 좌→우, 일시정지·재시작
 
 ### 미구현·보류
 
+- 회복 인벤: `invEmptySlotPrefab`, Scroll View 4칸+스택, JSON 로더, 중화 HUD와 패널 분리
 - 멀티 스테이지 자동 진행 UI polish
 - `AGENTS.md` 일부 구버전 설명(ClampPassThrough 등) — README·Bug 문서 기준 우선
 
@@ -308,7 +329,9 @@ Assets/
 |------|------|
 | [README.md](README.md) | 프로젝트 개요 (이 파일) |
 | [AGENTS.md](AGENTS.md) | AI·협업·코딩 규칙 |
-| [클리어·가이드·VFX fixes](Assets/Docs/Bug/2026-06-05-시각미상-클리어-가이드-중화VFX-fixes.md) | **최근** — 클리어/사망 연출, K/I 가이드, VFX |
+| [씬 전환 fixes](Assets/Docs/Bug/2026-06-06-시각미상-씬전환-스플래시-인트로-fixes.md) | **최근** — 스플래시·타이틀·인트로 페이드 |
+| [회복 인벤 설계](Assets/Docs/회의록/2026-06-06-시각미상-회복아이템-인벤-설계-합의.md) | **최근** — 스택·스크롤·JSON·프리팹 |
+| [클리어·가이드·VFX fixes](Assets/Docs/Bug/2026-06-05-시각미상-클리어-가이드-중화VFX-fixes.md) | 클리어/사망 연출, K/I 가이드, VFX |
 | [스플래시·오디오 fixes](Assets/Docs/Bug/2026-06-05-시각미상-스플래시-오디오-fixes.md) | 스플래시·BGM |
 | [맵구간 fixes](Assets/Docs/Bug/2026-06-05-오후1825-맵구간-게임플레이-fixes.md) | 맵·스폰 |
 | [gameplay fixes](Assets/Docs/Bug/2026-06-04-시각미상-gameplay-fixes.md) | 접촉·이동·오디오 |
@@ -320,6 +343,7 @@ Assets/
 
 | 날짜 | 주요 내용 |
 |------|-----------|
+| 2026-06-06 | 씬 전환(스플래시 선로드, 타이틀→인트로 흰 페이드), 회복 아이템 JSON·인벤 설계 — [Bug](Assets/Docs/Bug/2026-06-06-시각미상-씬전환-스플래시-인트로-fixes.md) · [회의록](Assets/Docs/회의록/2026-06-06-시각미상-회복아이템-인벤-설계-합의.md) |
 | 2026-06-05 | 클리어/사망 2초 연출, K/I 가이드, 아이템 유지, 틀린 아이템 VFX 수정 — [Bug](Assets/Docs/Bug/2026-06-05-시각미상-클리어-가이드-중화VFX-fixes.md) |
 | 2026-06-05 | 스플래시·BGM, 맵 구간 — [오디오](Assets/Docs/Bug/2026-06-05-시각미상-스플래시-오디오-fixes.md) · [맵](Assets/Docs/Bug/2026-06-05-오후1825-맵구간-게임플레이-fixes.md) |
 | 2026-06-04 | 로딩 프리스폰, 이동/가스/ZX/별점 — [Bug](Assets/Docs/Bug/2026-06-04-시각미상-gameplay-fixes.md) |

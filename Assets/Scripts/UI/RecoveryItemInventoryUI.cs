@@ -6,7 +6,7 @@ public class RecoveryItemInventoryUI : MonoBehaviour
 {
     public Transform[] slotRoots;
     public string countChildName = "Count";
-    public string selectChildName = "Select";
+    public string dimChildName = "dim";
 
     void Awake()
     {
@@ -30,10 +30,32 @@ public class RecoveryItemInventoryUI : MonoBehaviour
             if (countText != null)
                 countText.text = filled ? "1" : "";
 
-            Transform selectMark = slotRoots[i].Find(selectChildName);
-            if (selectMark != null)
-                selectMark.gameObject.SetActive(filled && inventory.GetSelectedIndex() == i);
+            Transform dimMark = FindDimChild(slotRoots[i]);
+            if (dimMark != null)
+            {
+                bool isSelected = filled && inventory.GetSelectedIndex() == i;
+                dimMark.gameObject.SetActive(!isSelected);
+            }
         }
+    }
+
+    private Transform FindDimChild(Transform slot)
+    {
+        Transform dim = slot.Find(dimChildName);
+        if (dim != null)
+            return dim;
+
+        foreach (Transform child in slot)
+        {
+            if (child.name == dimChildName)
+                return child;
+
+            Transform found = FindDimChild(child);
+            if (found != null)
+                return found;
+        }
+
+        return null;
     }
 
     private Transform[] GetDirectChildSlots()
