@@ -18,7 +18,7 @@ public class SplashController : MonoBehaviour
     [SerializeField] private float fadeDuration = 0.45f;
     [Tooltip("페이드인 시작 후 SFX 재생까지 대기(초). 페이드인과 같이 들리게 맞춤")]
     [SerializeField] private float splashSfxDelay = 0.15f;
-    [SerializeField] private float fadeOutDuration = 2.5f;
+    [SerializeField] private float fadeOutDuration = 1.5f;
     [SerializeField] private float scaleDuration = 1.2f;
     [SerializeField] private float shineDelay = 0.9f;
     [SerializeField] private float shineDuration = 0.25f;
@@ -48,6 +48,9 @@ public class SplashController : MonoBehaviour
 
     private IEnumerator PlaySplash()
     {
+        AsyncOperation loadOp = SceneManager.LoadSceneAsync(nextSceneName);
+        loadOp.allowSceneActivation = false;
+
         StartCoroutine(ScaleLogo());
         yield return StartCoroutine(FadeInLogo());
 
@@ -61,7 +64,14 @@ public class SplashController : MonoBehaviour
 
         yield return StartCoroutine(FadeOutLogo());
         StopSplashSfx();
-        SceneManager.LoadScene(nextSceneName);
+
+        if (loadOp.progress < 0.9f)
+        {
+            while (loadOp.progress < 0.9f)
+                yield return null;
+        }
+
+        loadOp.allowSceneActivation = true;
     }
 
     private void PlaySplashSfx()
@@ -127,11 +137,19 @@ public class SplashController : MonoBehaviour
 
             // 알파: 잠깐 남아 있다가 서서히 흐려짐
             float alphaEased = 1f - Mathf.Pow(1f - t, 2.2f);
-            logoCanvasGroup.alpha = Mathf.Lerp(1f, 0f, alphaEased);
+            float alpha = Mathf.Lerp(1f, 0f, alphaEased);
+            logoCanvasGroup.alpha = alpha;
 
             // 스케일: 살짝 줄어들기만 시작 (알파보다 느리게)
             float scaleEased = t * t * 0.4f;
             logoTransform.localScale = Vector3.Lerp(fadeStartScale, fadeEndScale, scaleEased);
+
+            if (alpha <= 0.02f)
+            {
+                logoCanvasGroup.alpha = 0f;
+                yield break;
+            }
+
             yield return null;
         }
 

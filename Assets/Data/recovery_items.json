@@ -1,0 +1,20 @@
+[
+    {
+        "id": 1,
+        "type": "protection",
+        "displayName": "방호복 회복제",
+        "effect": "protection",
+        "value": 10,
+        "invPrefab": "invProtectRecovPrefab",
+        "mapPrefab": "mapProtectRecovPrefab"
+    },
+    {
+        "id": 2,
+        "type": "time",
+        "displayName": "시간 연장기",
+        "effect": "time",
+        "value": 10,
+        "invPrefab": "invTimeRecovPrefab",
+        "mapPrefab": "mapTimeRecovPrefab"
+    }
+]
