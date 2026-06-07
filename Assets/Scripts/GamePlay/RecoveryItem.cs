@@ -8,6 +8,7 @@ public class RecoveryItem : MonoBehaviour
         Time
     }
 
+    public int itemId;
     public ItemType type = ItemType.Protection;
 
     void OnTriggerEnter2D(Collider2D other)
@@ -22,13 +23,14 @@ public class RecoveryItem : MonoBehaviour
             return;
         }
 
-        if (!inventory.Add(type))
-        {
-            Debug.Log("[RecoveryItem] 인벤토리가 가득 찼습니다.");
-            return;
-        }
+        int id = itemId;
+        if (id <= 0)
+            id = type == ItemType.Time ? 2 : 1;
 
-        Debug.Log($"[RecoveryItem] 획득: {type}");
+        if (!inventory.Add(id))
+            return;
+
+        Debug.Log($"[RecoveryItem] 획득: id={id}");
         Destroy(gameObject);
     }
 }

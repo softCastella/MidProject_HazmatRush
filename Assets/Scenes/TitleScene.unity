@@ -290,8 +290,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -393.3, y: -0.0000015497}
-  m_SizeDelta: {x: 19.3921, y: 19.3923}
+  m_AnchoredPosition: {x: -393.3, y: 0}
+  m_SizeDelta: {x: 24.0785, y: 24.0788}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &80140455
 MonoBehaviour:
@@ -313,7 +313,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -2287701055983045954, guid: ad77b4179e9eb614bb0f582f0ca60945, type: 3}
+  m_Sprite: {fileID: -2981245464502976562, guid: 50df2c653bc007d46815e3ab5e03347f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1605,21 +1605,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
---- !u!114 &1143007811
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1143007806}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b8c4e2f13a5d4e7091c3b6d8e0f2a4c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TitleSceneFade
-  sceneFade: {fileID: 0}
-  fadeInDuration: 0.6
-  fadeOutDuration: 0.25
 --- !u!224 &1143007810
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1645,6 +1630,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1143007811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1143007806}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8c4e2f13a5d4e7091c3b6d8e0f2a4c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TitleSceneFade
+  fadeOverlay: {fileID: 0}
+  fadeOutDuration: 0.25
 --- !u!1 &1260022804
 GameObject:
   m_ObjectHideFlags: 0

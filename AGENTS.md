@@ -78,6 +78,11 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 - **아이템 선택**: 오염원 제거 시 `ResetToDefault()` **금지**. `OnWarningShown()` — 첫 경고만 중화제 기본, 이후 선택 유지. 스테이지 리셋만 Scanner 초기화.
 - **결과 패널**: `GameManager` — `clearAnimDelay` / `dieAnimDelay`(기본 2초) 후 ClearSet·GameOverSet. 애니와 패널 동시 표시 금지.
 - **Pollutant/Player 접촉·이동 수정 전** — [gameplay-fixes](Assets/Docs/Bug/2026-06-04-시각미상-gameplay-fixes.md), [클리어·VFX-fixes](Assets/Docs/Bug/2026-06-05-시각미상-클리어-가이드-중화VFX-fixes.md), 회의록 §4 읽고 **4.8 체크리스트** 확인. 증상 패치만 연쇄 추가 금지.
+- **회복 인벤** (`RecoveryItemInventory` / `RecoveryItemInventoryUI` 수정 전) — [회의록](Assets/Docs/회의록/2026-06-06-시각미상-회복아이템-인벤-설계-합의.md), [인벤 UI Bug](Assets/Docs/Bug/2026-06-06-시각미상-회복인벤-UI-fixes.md):
+  - 데이터: `recovery_items.json` + 런타임 `List<RecoveryInvSlot> { id, count }` (입수 순, 동일 id `count++`)
+  - 빈 칸 `invEmptySlotPrefab`의 Name/Image/Count는 **비활성 유지** — 아이템은 칸 자식 **`InvItemView`** (`invProtectRecovPrefab` / `invTimeRecovPrefab`) Instantiate
+  - Count·dim은 **슬롯 루트**에서 갱신. 선택 칸만 `dim` OFF
+  - 프리팹 자식 좌표가 캔버스 기준이므로 Instantiate 후 **코드에서 위치·비율 보정** (`ApplyInvItemViewLayout`)
 - **Git은 사용자가 명시적으로 요청할 때만** — `commit`·`push`·`pull`·`checkout`·`restore`·`reset`·`status`·`diff`·`log`·PR 등 **어떤 git 명령도** 요청 없이 실행하지 않음
 - **되돌리기에 git 사용 금지** — 실수 수정·프리팹 복구는 파일 직접 수정 또는 사용자에게 확인. `git checkout` / `git restore` 임의 실행 금지
 - **`Library/`, `Temp/`, `Logs/`** — 수정·커밋 대상 아님
@@ -95,6 +100,8 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 - `IsValveAnimActive`만으로 **무조건 접촉 true** 또는 **플레이어 이동 잠금** 금지 (가스 갇힘·HP 멈춤 원인)
 - 가스(D)·**틀린 A~C 도구** 접촉 중 **중화 VFX(CFXR)** 켜지 않기 — 정답 A~C만 VFX, D는 밸브 애니·SFX만
 - **Solid 벽 콜라이더**로 통과 방지 금지 (떨림)
+- 빈 칸 `invEmptySlotPrefab`의 Name/Image를 획득 시 켜서 표시하지 않기 — `InvItemView` 패턴 유지
+- 회복 인벤 프리팹 YAML만 고치고 런타임 보정을 빼지 않기 (Viewport 밖·비율 깨짐 재발)
 
 ### 수정 시 자주 보는 파일
 
@@ -112,6 +119,10 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 | 오염원 스폰·경고 | `Assets/Scripts/GamePlay/PollutantManager.cs` |
 | 시작 가이드·이동 잠금 | `Assets/Scripts/UI/GuideTxt.cs` |
 | 씬 전환 | `Assets/Scripts/Core/SceneLoadManager.cs` |
+| 회복 인벤 로직·JSON | `Assets/Scripts/Core/RecoveryItemInventory.cs`, `Assets/Data/recovery_items.json` |
+| 회복 인벤 UI | `Assets/Scripts/UI/RecoveryItemInventoryUI.cs` |
+| 맵 회복 픽업 | `Assets/Scripts/GamePlay/RecoveryItem.cs` |
+| 회복 인벤 설계·버그 | [회의록 2026-06-06](Assets/Docs/회의록/2026-06-06-시각미상-회복아이템-인벤-설계-합의.md), [Bug 2026-06-06](Assets/Docs/Bug/2026-06-06-시각미상-회복인벤-UI-fixes.md) |
 
 ---
 
@@ -134,7 +145,8 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 | PollutantManager | 오염원 생성·경고 |
 | PollutantSpawner | 오염원 생성 위치 |
 | (Canvas) GuideTxt | 시작 안내, 끝나면 이동 가능 |
-| ItemSelectManager | 아이템 선택 |
+| ItemSelectManager | 중화 아이템 선택 (Z/X) |
+| InventoryContainer | 회복 인벤 Scroll View (`RecoveryItemInventory` + `RecoveryItemInventoryUI`) |
 
 **Play 누르기 전:** `GameScene`이 열려 있는지 확인.
 
@@ -159,6 +171,9 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 - [ ] **틀린 아이템**일 때 방호복만 감소하고 VFX는 **없는가**?
 - [ ] 떨어지면 `접촉 해제 -> HP 초기화` 로그가 나오는가?
 - [ ] 클리어/사망 시 애니 **2초 후** 결과 패널이 뜨는가?
+- [ ] 회복 아이템 픽업 시 인벤에 아이콘·이름·Count가 보이는가?
+- [ ] 같은 회복 아이템 재획득 시 Count만 증가하는가?
+- [ ] `C`/`V` 선택·`Space` 사용이 동작하는가?
 
 **Console이 멈춘 것처럼 보이면:** `Collapse` 끄기, Clear 후 다시 Play.
 
@@ -239,6 +254,10 @@ Cursor에서 확인: **Settings → Rules** 또는 채팅 입력창 근처 Rules
 | Die/Clear 애니 → 2초 후 결과 패널 | ✅ |
 | 클리어·게임오버·일시정지·재시작 | ✅ |
 | K/I HUD 가이드 패널 | ✅ |
+| 회복 아이템 JSON·맵 픽업 | ✅ |
+| 회복 인벤 스택·`InvItemView` UI·dim 선택 | ✅ |
+| 회복 인벤 6종+ Scroll 스크롤 실검증 | 🟡 코드만, 미검증 |
+| 회복 vs 중화 HUD Hierarchy 최종 분리 | 🟡 재확인 권장 |
 
 ---
 
@@ -248,6 +267,7 @@ Cursor에서 확인: **Settings → Rules** 또는 채팅 입력창 근처 Rules
 |------|------|
 | 2026-05-28 | 접촉·중화·판정 로그 시스템, Item.ItemType 구조, README/AGENTS.md 작성 |
 | 2026-06-05 | 접촉 판정 표준(회의록 §4), 맵 구간, 스플래시·BGM, 클리어/사망 2초 연출, VFX·아이템 유지, AGENTS·Rules 갱신 |
+| 2026-06-06 | 회복 인벤 1차 구현(스택·InvItemView·UI 레이아웃) — [회의록](Assets/Docs/회의록/2026-06-06-시각미상-회복아이템-인벤-설계-합의.md) · [Bug](Assets/Docs/Bug/2026-06-06-시각미상-회복인벤-UI-fixes.md) |
 | 2026-06-06 | Git 임의 실행 금지 규칙 강화 (요청 시에만 commit·checkout·restore 등) |
 | | *(이 아래에 본인이 직접 추가)* |
 
