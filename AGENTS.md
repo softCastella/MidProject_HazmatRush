@@ -78,11 +78,13 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 - **아이템 선택**: 오염원 제거 시 `ResetToDefault()` **금지**. `OnWarningShown()` — 첫 경고만 중화제 기본, 이후 선택 유지. 스테이지 리셋만 Scanner 초기화.
 - **결과 패널**: `GameManager` — `clearAnimDelay` / `dieAnimDelay`(기본 2초) 후 ClearSet·GameOverSet. 애니와 패널 동시 표시 금지.
 - **Pollutant/Player 접촉·이동 수정 전** — [gameplay-fixes](Assets/Docs/Bug/2026-06-04-시각미상-gameplay-fixes.md), [클리어·VFX-fixes](Assets/Docs/Bug/2026-06-05-시각미상-클리어-가이드-중화VFX-fixes.md), 회의록 §4 읽고 **4.8 체크리스트** 확인. 증상 패치만 연쇄 추가 금지.
-- **커밋은 사용자가 요청할 때만** — 자동 `git commit` 하지 않음
+- **Git은 사용자가 명시적으로 요청할 때만** — `commit`·`push`·`pull`·`checkout`·`restore`·`reset`·`status`·`diff`·`log`·PR 등 **어떤 git 명령도** 요청 없이 실행하지 않음
+- **되돌리기에 git 사용 금지** — 실수 수정·프리팹 복구는 파일 직접 수정 또는 사용자에게 확인. `git checkout` / `git restore` 임의 실행 금지
 - **`Library/`, `Temp/`, `Logs/`** — 수정·커밋 대상 아님
 
 ### 하지 말 것
 
+- **요청 없이 Git 건드리기** — 커밋·푸시·되돌리기·상태 확인 포함
 - Die/Clear **결과 연출 타이밍**(`dieAnimDelay`, `clearAnimDelay`, 패널 코루틴)을 **요청 없이** 바꾸거나 패널을 애니와 동시에 띄우지 않기
 - `RefreshNeutralizationVfx`를 “스캐너가 아니면 ON”으로 단순화하지 않기 (오답 시 VFX 재발)
 - 오염원 HP 0 시 `ItemSelectManager.ResetToDefault()` **다시 넣지 않기**
@@ -246,6 +248,7 @@ Cursor에서 확인: **Settings → Rules** 또는 채팅 입력창 근처 Rules
 |------|------|
 | 2026-05-28 | 접촉·중화·판정 로그 시스템, Item.ItemType 구조, README/AGENTS.md 작성 |
 | 2026-06-05 | 접촉 판정 표준(회의록 §4), 맵 구간, 스플래시·BGM, 클리어/사망 2초 연출, VFX·아이템 유지, AGENTS·Rules 갱신 |
+| 2026-06-06 | Git 임의 실행 금지 규칙 강화 (요청 시에만 commit·checkout·restore 등) |
 | | *(이 아래에 본인이 직접 추가)* |
 
 ---
