@@ -15,9 +15,11 @@ public class RecoveryItemManager : MonoBehaviour
     public float dropProtectionChance = 70f;
 
     [Header("드랍 연출 — 위로 튀었다 좌/우 착지")]
-    public float dropJumpHeight = 1.2f;
-    public float dropLandOffsetX = 1.5f;
-    public float dropDuration = 0.45f;
+    [Tooltip("오염원 위치 기준 드랍·착지 Y 보정 (스프라이트가 땅에 묻히면 올림)")]
+    public float dropYOffset = 30f;
+    public float dropJumpHeight = 240f;
+    public float dropLandOffsetX = 160f;
+    public float dropDuration = 0.6f;
 
     [Header("테스트 (빌드 전 OFF)")]
     [Tooltip("체크 시 오염원 정화 확률 무시하고 무조건 드랍")]
@@ -59,13 +61,16 @@ public class RecoveryItemManager : MonoBehaviour
         float landX = dropLandOffsetX * landSide;
         string landDir = landSide < 0f ? "좌" : "우";
 
-        GameObject obj = Instantiate(prefab, position, Quaternion.identity);
+        Vector3 spawnPos = position;
+        spawnPos.y += dropYOffset;
+
+        GameObject obj = Instantiate(prefab, spawnPos, Quaternion.identity);
         RecoveryItem item = obj.GetComponent<RecoveryItem>();
         if (item != null)
         {
             item.type = itemType;
             item.itemId = itemType == RecoveryItem.ItemType.Time ? 2 : 1;
-            item.StartDropArc(position, dropJumpHeight, landX, dropDuration);
+            item.StartDropArc(spawnPos, dropJumpHeight, landX, dropDuration);
         }
 
         string itemName = itemType == RecoveryItem.ItemType.Time ? "시간 연장기" : "방호복 회복제";

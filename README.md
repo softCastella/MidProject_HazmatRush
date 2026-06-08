@@ -11,7 +11,7 @@
 | **스테이지 데이터** | `Assets/Data/stage_data.json` (`mapPollutants` 포함) |
 | **회복 아이템 정의** | `Assets/Data/recovery_items.json` |
 | **AI·협업 규칙** | [AGENTS.md](AGENTS.md) |
-| **버그·수정 기록** | [Bug 폴더](Assets/Docs/Bug/) — 최근: [회복 인벤 UI](Assets/Docs/Bug/2026-06-06-시각미상-회복인벤-UI-fixes.md) |
+| **버그·수정 기록** | [Bug 폴더](Assets/Docs/Bug/) — 최근: [회복 아이템 아크 드랍](Assets/Docs/Bug/2026-06-08-시각미상-회복아이템-아크드랍-fixes.md) |
 
 ---
 
@@ -106,6 +106,7 @@ GameScene
               └ 정답 A~C: 중화 VFX + 중화 SFX 루프
               └ D+가스밸브: 밸브 애니 + 밸브 SFX (중화 VFX 없음)
               └ 오답: 방호복만 감소, 중화 VFX·오염원 HP 감소 없음
+              └ 오염원 제거(확률): 회복 아이템 아크 드랍 → 픽업 시 인벤
   └ 해당 구간 예정 오염원(중화+가스) 전부 처리 전
         → 맵 전환 불가, 배경 스크롤 정지
   └ 전부 처리 후
@@ -200,16 +201,18 @@ GameScene
 
 **씬별 BGM:** `TitleScene` / `GameScene`만 재생. 그 외는 페이드 아웃 후 정지.
 
-### 회복 아이템 (`RecoveryItemSpawnPlan`, `RecoveryItemManager`, `RecoveryItemInventory`)
+### 회복 아이템 (`RecoveryItemManager`, `RecoveryItemInventory`)
 
 - 정의: `Assets/Data/recovery_items.json` (id, type, displayName, effect, value)
 - 런타임: `List<RecoveryInvSlot> { id, count }` — **입수 순**, 동일 id **count++**
-- 맵 프리팹: `mapProtectRecovPrefab`, `mapTimeRecovPrefab` — 로딩 시 배치 → `RecoveryItem` 픽업
+- **드랍:** 오염원 정화 시 `RecoveryItemManager.TryDropOnPollutantCleared` — 타입별 확률 → `mapProtectRecovPrefab` / `mapTimeRecovPrefab` Instantiate
+- **아크 연출:** `RecoveryItem.StartDropArc` — `dropYOffset`(Y 보정) + 포물선(`dropJumpHeight`) + 좌/우 착지(`dropLandOffsetX`, `dropDuration`). 아크 중 픽업 OFF, 착지 후 ON
+- `RecoveryItem` 부착: **맵 픽업 프리팹만** (`map*RecovPrefab`). 인벤 `inv*RecovPrefab`에는 없음
 - 인벤 UI: `invEmptySlotPrefab`(빈 칸 4+) + 획득 시 `InvItemView`(`invProtectRecovPrefab` / `invTimeRecovPrefab`) Instantiate
 - 조작: `C`/`V` 선택, `Space` 사용 (count--, 0이면 칸 제거)
 - 선택 표시: `dim` OFF = 선택됨 (`RecoveryItemInventoryUI`)
 - 5번째 종류~: `EnsureSlotRootCount`로 Content에 칸 추가 (Scroll View, 6종+ 실검증 보류)
-- 설계·구현 상세: [회의록 2026-06-06](Assets/Docs/회의록/2026-06-06-시각미상-회복아이템-인벤-설계-합의.md) · UI 버그: [Bug 2026-06-06](Assets/Docs/Bug/2026-06-06-시각미상-회복인벤-UI-fixes.md)
+- 설계: [인벤 2026-06-06](Assets/Docs/회의록/2026-06-06-시각미상-회복아이템-인벤-설계-합의.md) · [드랍 연출 2026-06-08](Assets/Docs/회의록/2026-06-08-시각미상-회복아이템-드랍-연출-합의.md) · Bug: [인벤 UI](Assets/Docs/Bug/2026-06-06-시각미상-회복인벤-UI-fixes.md) · [아크 드랍](Assets/Docs/Bug/2026-06-08-시각미상-회복아이템-아크드랍-fixes.md)
 
 ### 기타
 
@@ -227,9 +230,9 @@ GameScene
 
 | 스테이지 | 오염원 타입 | total | 제한 시간 |
 |----------|------------|-------|-----------|
-| 1-1 | C \| D | 2 | 60초 |
-| 1-2 | A \| B | 3 | 55초 |
-| 1-3 | A \| B \| C \| D | 4 | 50초 |
+| 1-1 | B \| D | 2 | 120초 |
+| 1-2 | A \| B | 3 | 100초 |
+| 1-3 | A \| B \| C \| D | 4 | 80초 |
 
 ---
 
@@ -263,6 +266,7 @@ Assets/
 |------|------|
 | Player | 이동·방호복·애니·중화 VFX |
 | PollutantManager | 경고·등장·맵 전환 |
+| RecoveryItemManager | 오염원 정화 후 회복 아이템 드랍·아크 |
 | HUD_Canvas | `HelpGuideToggle`, `KeyGuidePannel`, `ItemGuide` |
 | ItemSelectManager | Z/X 아이템 |
 | AudioManager | BGM·SFX (DontDestroyOnLoad) |
@@ -276,6 +280,7 @@ Assets/
 | **Player** Animator | `Clear` 트리거 → `Player_Clear` (Loop) |
 | **AudioManager** | `splashClip`, `squeakyValveClip`, 볼륨·페이드 설정 |
 | **ItemSelectManager** | `itemPrefabs` 5종 |
+| **RecoveryItemManager** | `protectionItemPrefab` / `timeItemPrefab`, `dropYOffset`·`dropJumpHeight`·`dropLandOffsetX`, `testAlwaysDrop` 빌드 전 OFF |
 
 ---
 
@@ -298,6 +303,7 @@ Assets/
 - [ ] 클리어: Clear 애니 2초 → 패널
 - [ ] 사망: Die 애니 2초 → 게임오버 패널
 - [ ] 클리어 별 **왼쪽부터** N개
+- [ ] 오염원 정화 후 회복 아이템 **아크 드랍** (위로 튀었다 좌/우 착지, 땅에 묻히지 않음)
 - [ ] 회복 아이템 픽업 → 인벤 아이콘·이름·Count 표시
 - [ ] 같은 회복 아이템 재획득 → Count만 증가
 - [ ] `C`/`V` 회복 선택, `Space` 사용
@@ -315,6 +321,7 @@ Assets/
 - **씬 전환** — 스플래시 선로드, 타이틀→인트로 흰 페이드, 인트로 SmoothStep 진입
 - **K/I** HUD 가이드, 로딩 안내
 - 회복 아이템 JSON·맵/인벤 프리팹·스택 인벤·`InvItemView` UI·`dim` 선택 ([Bug](Assets/Docs/Bug/2026-06-06-시각미상-회복인벤-UI-fixes.md))
+- 회복 아이템 **오염원 정화 드랍·아크 연출**·`dropYOffset`·아크 디버그 로그 ([Bug](Assets/Docs/Bug/2026-06-08-시각미상-회복아이템-아크드랍-fixes.md))
 - **Player_Clear** 클리어 애니 + 2초 후 패널
 - **Player_Die** 2초 후 게임오버 패널
 - 클리어 별 좌→우, 일시정지·재시작
@@ -322,6 +329,7 @@ Assets/
 ### 미구현·보류
 
 - 회복 인벤 6종+ Scroll View 스크롤 실검증, 중화 HUD와 패널 Hierarchy 최종 분리 확인
+- `RecoveryItemSpawner` Missing Script · `LoadingController` 맵 회복 배치 미연동
 - 멀티 스테이지 자동 진행 UI polish
 - `AGENTS.md` 일부 구버전 설명(ClampPassThrough 등) — README·Bug 문서 기준 우선
 
@@ -333,7 +341,9 @@ Assets/
 |------|------|
 | [README.md](README.md) | 프로젝트 개요 (이 파일) |
 | [AGENTS.md](AGENTS.md) | AI·협업·코딩 규칙 |
-| [회복 인벤 UI fixes](Assets/Docs/Bug/2026-06-06-시각미상-회복인벤-UI-fixes.md) | **최근** — 획득 표시·레이아웃·비율 |
+| [회복 아이템 아크 드랍 fixes](Assets/Docs/Bug/2026-06-08-시각미상-회복아이템-아크드랍-fixes.md) | **최근** — 아크 수치·Y 보정·디버그 로그 |
+| [회복 드랍 연출 합의](Assets/Docs/회의록/2026-06-08-시각미상-회복아이템-드랍-연출-합의.md) | 오염원 정화 드랍·아크·Inspector 파라미터 |
+| [회복 인벤 UI fixes](Assets/Docs/Bug/2026-06-06-시각미상-회복인벤-UI-fixes.md) | 획득 표시·레이아웃·비율 |
 | [회복 인벤 설계](Assets/Docs/회의록/2026-06-06-시각미상-회복아이템-인벤-설계-합의.md) | 스택·스크롤·JSON·프리팹·구현 갱신 |
 | [씬 전환 fixes](Assets/Docs/Bug/2026-06-06-시각미상-씬전환-스플래시-인트로-fixes.md) | 스플래시·타이틀·인트로 페이드 |
 | [클리어·가이드·VFX fixes](Assets/Docs/Bug/2026-06-05-시각미상-클리어-가이드-중화VFX-fixes.md) | 클리어/사망 연출, K/I 가이드, VFX |
@@ -348,6 +358,7 @@ Assets/
 
 | 날짜 | 주요 내용 |
 |------|-----------|
+| 2026-06-08 | 회복 아이템 아크 드랍 수치·`dropYOffset`·디버그 로그 — [Bug](Assets/Docs/Bug/2026-06-08-시각미상-회복아이템-아크드랍-fixes.md) · [회의록](Assets/Docs/회의록/2026-06-08-시각미상-회복아이템-드랍-연출-합의.md) |
 | 2026-06-06 | 회복 인벤 1차 구현(스택·InvItemView·UI 레이아웃), 씬 전환 페이드 — [인벤 UI Bug](Assets/Docs/Bug/2026-06-06-시각미상-회복인벤-UI-fixes.md) · [씬 Bug](Assets/Docs/Bug/2026-06-06-시각미상-씬전환-스플래시-인트로-fixes.md) · [회의록](Assets/Docs/회의록/2026-06-06-시각미상-회복아이템-인벤-설계-합의.md) |
 | 2026-06-05 | 클리어/사망 2초 연출, K/I 가이드, 아이템 유지, 틀린 아이템 VFX 수정 — [Bug](Assets/Docs/Bug/2026-06-05-시각미상-클리어-가이드-중화VFX-fixes.md) |
 | 2026-06-05 | 스플래시·BGM, 맵 구간 — [오디오](Assets/Docs/Bug/2026-06-05-시각미상-스플래시-오디오-fixes.md) · [맵](Assets/Docs/Bug/2026-06-05-오후1825-맵구간-게임플레이-fixes.md) |

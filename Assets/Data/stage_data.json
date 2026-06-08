@@ -4,7 +4,7 @@
         "label": "Stage 1-1",
         "placeName": "1F A area",
         "pollutantTypes": "B|D",
-        "totalPollutant": 5,
+        "totalPollutant": 2,
         "mapPollutants": [2],
         "timeLimit": 120,
         "bgIndex": 0,
