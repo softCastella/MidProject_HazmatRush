@@ -109,7 +109,6 @@ public class LoadingController : MonoBehaviour
             sceneFade.alpha = 1f;
 
         WarmupPrefabs();
-        RecoveryItemSpawnPlan.PrepareRandom(recoverySpawnPointCount, recoverySpawnMinCount, recoverySpawnMaxCount);
 
         int stageIndex = 0;
         if (SceneLoadManager.Instance != null && SceneLoadManager.Instance.pendingStageIndex >= 0)

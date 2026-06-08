@@ -2,20 +2,26 @@ using UnityEngine;
 
 public class RecoveryItemManager : MonoBehaviour
 {
-    public RecoveryItemSpawner spawner;
     public GameObject protectionItemPrefab;
     public GameObject timeItemPrefab;
 
-    public int spawnMinCount = 1;
-    public int spawnMaxCount = 3;
+    [Header("오염원 정화 드랍 — 1단계: 발생 확률(%)")]
+    public float dropChanceTypeA = 30f;
+    public float dropChanceTypeB = 20f;
+    public float dropChanceTypeC = 40f;
+    public float dropChanceTypeD = 20f;
 
-    private void Start()
-    {
-        if (spawner == null)
-            spawner = FindAnyObjectByType<RecoveryItemSpawner>();
+    [Header("오염원 정화 드랍 — 2단계: 방호복 회복제 확률(%, 나머지=시간 연장기)")]
+    public float dropProtectionChance = 70f;
 
-        SpawnFromPlan();
-    }
+    [Header("드랍 연출 — 위로 튀었다 좌/우 착지")]
+    public float dropJumpHeight = 1.2f;
+    public float dropLandOffsetX = 1.5f;
+    public float dropDuration = 0.45f;
+
+    [Header("테스트 (빌드 전 OFF)")]
+    [Tooltip("체크 시 오염원 정화 확률 무시하고 무조건 드랍")]
+    public bool testAlwaysDrop = false;
 
     public void ResetForStage()
     {
@@ -29,31 +35,55 @@ public class RecoveryItemManager : MonoBehaviour
         RecoveryItemInventory inventory = FindAnyObjectByType<RecoveryItemInventory>();
         if (inventory != null)
             inventory.ResetInventory();
-
-        SpawnFromPlan();
     }
 
-    private void SpawnFromPlan()
+    // 오염원 중화 성공 시 그 위치에 회복 아이템 생성 (플레이어 접촉 → 인벤 추가)
+    public void TryDropOnPollutantCleared(Pollutant.PollutantType pollutantType, Vector3 position)
     {
-        if (spawner == null)
+        float dropChance = GetDropChance(pollutantType);
+        if (!testAlwaysDrop && Random.Range(0f, 100f) >= dropChance)
             return;
 
-        if (RecoveryItemSpawnPlan.entries == null || RecoveryItemSpawnPlan.entries.Length == 0)
+        RecoveryItem.ItemType itemType = Random.Range(0f, 100f) < dropProtectionChance
+            ? RecoveryItem.ItemType.Protection
+            : RecoveryItem.ItemType.Time;
+
+        GameObject prefab = GetPrefab(itemType);
+        if (prefab == null)
         {
-            RecoveryItemSpawnPlan.PrepareRandom(spawner.PointCount, spawnMinCount, spawnMaxCount);
+            Debug.LogWarning("[RecoveryItemManager] 드랍 프리팹이 비어 있습니다.");
+            return;
         }
 
-        if (RecoveryItemSpawnPlan.entries == null)
-            return;
+        float landSide = Random.value < 0.5f ? -1f : 1f;
+        float landX = dropLandOffsetX * landSide;
+        string landDir = landSide < 0f ? "좌" : "우";
 
-        for (int i = 0; i < RecoveryItemSpawnPlan.entries.Length; i++)
+        GameObject obj = Instantiate(prefab, position, Quaternion.identity);
+        RecoveryItem item = obj.GetComponent<RecoveryItem>();
+        if (item != null)
         {
-            RecoveryItemSpawnPlan.Entry entry = RecoveryItemSpawnPlan.entries[i];
-            GameObject prefab = GetPrefab(entry.type);
-            if (prefab == null)
-                continue;
+            item.type = itemType;
+            item.itemId = itemType == RecoveryItem.ItemType.Time ? 2 : 1;
+            item.StartDropArc(position, dropJumpHeight, landX, dropDuration);
+        }
 
-            spawner.Spawn(prefab, entry.pointIndex);
+        string itemName = itemType == RecoveryItem.ItemType.Time ? "시간 연장기" : "방호복 회복제";
+        Debug.Log($"[RecoveryItemManager] 드랍: {itemName} (오염원 {pollutantType}, 확률 {dropChance:F0}%, 착지 {landDir})");
+    }
+
+    private float GetDropChance(Pollutant.PollutantType pollutantType)
+    {
+        switch (pollutantType)
+        {
+            case Pollutant.PollutantType.TypeB:
+                return dropChanceTypeB;
+            case Pollutant.PollutantType.TypeC:
+                return dropChanceTypeC;
+            case Pollutant.PollutantType.TypeD:
+                return dropChanceTypeD;
+            default:
+                return dropChanceTypeA;
         }
     }
 

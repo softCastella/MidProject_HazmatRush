@@ -748,13 +748,13 @@ MonoBehaviour:
   titleSceneName: TitleScene
   gameSceneName: GameScene
   titleBGM: {fileID: 8300000, guid: 7817a6959b6a9c3488523a5f359b1267, type: 3}
-  gameBGM: {fileID: 0}
+  gameBGM: {fileID: 8300000, guid: 066f447fe788e864d952e3d6b7012d26, type: 3}
   stageBgmClips: []
-  buttonClickClip: {fileID: 0}
-  clearClip: {fileID: 0}
-  gameOverClip: {fileID: 0}
-  neutralizationClip: {fileID: 0}
-  squeakyValveClip: {fileID: 0}
+  buttonClickClip: {fileID: 8300000, guid: a876ecf96443a7b4481789cfa3687850, type: 3}
+  clearClip: {fileID: 8300000, guid: 634b6275d8d3e534580994a6cbe4c606, type: 3}
+  gameOverClip: {fileID: 8300000, guid: b8401e3cda800cb4bbed739fc5226d87, type: 3}
+  neutralizationClip: {fileID: 8300000, guid: 874ff708e7a646a40a4d0b29284ffe6c, type: 3}
+  squeakyValveClip: {fileID: 8300000, guid: 0cc7312321f2b39468cc4ddce1cfe531, type: 3}
   splashClip: {fileID: 8300000, guid: 1b832979308bf3645aa6047e2782a05d, type: 3}
   bgmSource: {fileID: 0}
   sfxSource: {fileID: 0}

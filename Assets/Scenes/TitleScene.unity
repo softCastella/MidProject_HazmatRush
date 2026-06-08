@@ -290,7 +290,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -393.3, y: 0}
+  m_AnchoredPosition: {x: -398.8, y: 0.0000015497}
   m_SizeDelta: {x: 24.0785, y: 24.0788}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &80140455
@@ -1495,8 +1495,8 @@ MonoBehaviour:
   clearClip: {fileID: 8300000, guid: 634b6275d8d3e534580994a6cbe4c606, type: 3}
   gameOverClip: {fileID: 8300000, guid: b8401e3cda800cb4bbed739fc5226d87, type: 3}
   neutralizationClip: {fileID: 8300000, guid: 874ff708e7a646a40a4d0b29284ffe6c, type: 3}
-  squeakyValveClip: {fileID: 8300000, guid: daf87d00fcf8c8942ac7037ed8cfc410, type: 3}
-  splashClip: {fileID: 0}
+  squeakyValveClip: {fileID: 8300000, guid: 0cc7312321f2b39468cc4ddce1cfe531, type: 3}
+  splashClip: {fileID: 8300000, guid: a876ecf96443a7b4481789cfa3687850, type: 3}
   bgmSource: {fileID: 0}
   sfxSource: {fileID: 0}
   neutralizationSource: {fileID: 0}

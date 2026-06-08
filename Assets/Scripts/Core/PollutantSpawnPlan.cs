@@ -128,6 +128,13 @@ public static class PollutantSpawnPlan
         if (abcCount > 0 && abcTypes.Count == 0)
             abcCount = 0;
 
+        // A~C 타입이 없고 D만 있을 때: totalPollutant 전부 D로 배정
+        if (hasD && abcTypes.Count == 0)
+        {
+            dCount = row.totalPollutant;
+            abcCount = 0;
+        }
+
         if (abcCount > 0 && abcPointCount > 0)
         {
             bool[] used = new bool[abcPointCount];
@@ -148,6 +155,11 @@ public static class PollutantSpawnPlan
             dQueue = new Entry[dCount];
             for (int i = 0; i < dCount; i++)
             {
+                // 포인트가 모두 소진됐으면 재사용 허용
+                bool allUsed = true;
+                for (int j = 0; j < usedD.Length; j++) if (!usedD[j]) { allUsed = false; break; }
+                if (allUsed) System.Array.Clear(usedD, 0, usedD.Length);
+
                 int point = PickUnusedIndex(usedD, dPointCount);
                 dQueue[i].type = Pollutant.PollutantType.TypeD;
                 dQueue[i].spawnPointIndex = point;

@@ -45,6 +45,12 @@ public class Player : MonoBehaviour
     private bool isReturning = false;
     private bool dieAnimPlayed = false;
     private bool isDeathSequenceRunning = false;
+    private Coroutine _damageFlashRoutine;
+
+    [Header("피격 플래시")]
+    public Color damageFlashColor = new Color(1f, 0f, 0f, 0.75f); // 붉은 반투명
+    public float damageFlashDuration = 0.08f;  // 빨간색 켜짐 시간
+    public float damageFlashCooldown = 0.25f;  // 다음 플래시까지 대기 시간 (간격)
     private SpriteRenderer spriteRenderer;
     private SpriteRenderer[] childSpriteRenderers;
     private ParticleSystem[] neutralizationParticles;
@@ -306,7 +312,8 @@ public class Player : MonoBehaviour
         curProtection = Mathf.Max(0, curProtection - damage);
         UpdateProtectionText();
         UpdateProtectionBar();
-        Debug.Log($"[Player] 방호복 HP 감소: -{damage:F2} (pollutantDps={pollutantDps:F2}) / 현재 HP: {curProtection:F2}");
+
+        TriggerDamageFlash();
 
         if (curProtection <= 0)
             StartDeathSequence();
@@ -407,6 +414,26 @@ public class Player : MonoBehaviour
         }
 
         SetNeutralizationVfx(play);
+    }
+
+    // 클리어 연출 전 사망 코루틴·Die 상태 정리 (타임오버와 클리어 경합 방지)
+    public void CancelDeathForStageClear()
+    {
+        StopAllCoroutines();
+        isDeathSequenceRunning = false;
+        dieAnimPlayed = false;
+        clearAnimActive = false;
+        valveAnimActive = false;
+        SetSpriteAlpha(1f);
+        EnsureSpriteVisible();
+
+        if (currentState != PlayerState.Die || anim == null)
+            return;
+
+        anim.ResetTrigger("Die");
+        anim.ResetTrigger("Valve");
+        anim.SetInteger("State", 0);
+        currentState = PlayerState.Idle;
     }
 
     // 스테이지 클리어 시 Player_Clear (Animator 트리거 "Clear", Loop)
@@ -620,6 +647,51 @@ public class Player : MonoBehaviour
         return 1f;
     }
 
+    private void TriggerDamageFlash()
+    {
+        if (currentState == PlayerState.Die) return;
+        if (_damageFlashRoutine != null) return; // 이미 반짝이는 중이면 무시
+        _damageFlashRoutine = StartCoroutine(DamageFlashRoutine());
+    }
+
+    private IEnumerator DamageFlashRoutine()
+    {
+        SetSpriteColor(damageFlashColor);
+        yield return new WaitForSeconds(damageFlashDuration);
+        SetSpriteColor(Color.white);
+        yield return new WaitForSeconds(damageFlashCooldown);
+        _damageFlashRoutine = null;
+    }
+
+    private void SetSpriteColor(Color tint)
+    {
+        // tint.a = 0이면 원본 흰색, 1이면 완전 tint 색상으로 lerp
+        Color blended = new Color(
+            Mathf.Lerp(1f, tint.r, tint.a),
+            Mathf.Lerp(1f, tint.g, tint.a),
+            Mathf.Lerp(1f, tint.b, tint.a),
+            1f
+        );
+
+        if (spriteRenderer != null)
+        {
+            Color c = spriteRenderer.color;
+            c.r = blended.r; c.g = blended.g; c.b = blended.b;
+            spriteRenderer.color = c;
+        }
+
+        if (childSpriteRenderers == null) return;
+        for (int i = 0; i < childSpriteRenderers.Length; i++)
+        {
+            if (childSpriteRenderers[i] != null)
+            {
+                Color c = childSpriteRenderers[i].color;
+                c.r = blended.r; c.g = blended.g; c.b = blended.b;
+                childSpriteRenderers[i].color = c;
+            }
+        }
+    }
+
     private void SetSpriteAlpha(float alpha)
     {
         if (spriteRenderer != null)
@@ -664,6 +736,7 @@ public class Player : MonoBehaviour
         dieAnimPlayed = false;
         isDeathSequenceRunning = false;
         SetSpriteAlpha(1f);
+        currentState = PlayerState.Idle; // Die 가드 우회: 직접 초기화
         if (anim != null)
         {
             anim.ResetTrigger("Die");
