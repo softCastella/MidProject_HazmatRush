@@ -351,6 +351,7 @@ Assets/
 | [맵구간 fixes](Assets/Docs/Bug/2026-06-05-오후1825-맵구간-게임플레이-fixes.md) | 맵·스폰 |
 | [gameplay fixes](Assets/Docs/Bug/2026-06-04-시각미상-gameplay-fixes.md) | 접촉·이동·오디오 |
 | [회의록 §4](Assets/Docs/회의록/2026-06-05-시각미상-플레이어-오염원-로직-검토.md) | Pollutant/Player 접촉 규칙 |
+| [Git workflow (worktree)](Assets/Docs/2026-06-08-시각미상-git-workflow-worktree.md) | 브랜치·worktree·PR 절차 |
 
 ---
 

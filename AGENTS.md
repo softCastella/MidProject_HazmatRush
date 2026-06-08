@@ -5,7 +5,7 @@
 
 **AI 요약:** 문법·구조는 단순하게 / 기존 변수·로직·문법 스타일 우선 / 요청 범위만 최소 수정.
 
-**Cursor Rules (자동 적용):** `.cursor/rules/midproject-core.mdc` (항상), `.cursor/rules/unity-gameplay.mdc` (`Assets/Scripts/**/*.cs` 작업 시)
+**Cursor Rules (자동 적용):** `.cursor/rules/midproject-core.mdc` (항상), `.cursor/rules/git-worktree-workflow.mdc` (항상), `.cursor/rules/unity-gameplay.mdc` (`Assets/Scripts/**/*.cs` 작업 시)
 
 > 요약 문서: [README.md](README.md)
 
@@ -195,7 +195,7 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 | 항목 | 예시 | 왜 좋은가 |
 |------|------|----------|
 | **팀 연락처 / 역할** | "기획 OOO, 아트 OOO" | AI가 임의로 기획 바꾸지 않게 |
-| **브랜치 규칙** | `main`에 직접 push 안 함 | 실수 방지 |
+| **브랜치 규칙** | `master`에 직접 push 안 함 · 기능은 `YYMMDD_설명` · **worktree**로 작업 | [Git workflow](Assets/Docs/2026-06-08-시각미상-git-workflow-worktree.md) |
 | **인스펙터에서 꼭 연결할 참조** | Player → protectionNumText | "NullReference" 디버깅 시간 절약 |
 | **알려진 버그** | "이동이 -403 전에 멈춤 → GrowRange 확인" | 같은 실수 반복 방지 |
 | **다음 할 일 (TODO)** | "스테이지 2 UI" | AI에게 작업 지시할 때 명확 |
@@ -208,6 +208,7 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 | 파일 | 적용 |
 |------|------|
 | `.cursor/rules/midproject-core.mdc` | **항상** (단순 코드, 기존 스타일, 커밋 금지 등) |
+| `.cursor/rules/git-worktree-workflow.mdc` | **항상** (master·worktree·PR 절차) |
 | `.cursor/rules/unity-gameplay.mdc` | `Assets/Scripts/**/*.cs` 열 때 (HP, 접촉, Pollutant) |
 
 Cursor에서 확인: **Settings → Rules** 또는 채팅 입력창 근처 Rules 목록.

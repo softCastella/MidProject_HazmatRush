@@ -1,0 +1,59 @@
+---
+description: Git worktree 브랜치 전략 — master 기준, 기능별 worktree, PR 절차
+alwaysApply: true
+---
+
+# Git Worktree 워크플로
+
+상세: `Assets/Docs/2026-06-08-시각미상-git-workflow-worktree.md` · 원격 `origin/master`
+
+## 브랜치
+
+| 브랜치 | 역할 |
+|--------|------|
+| `master` | 통합 기준. **직접 push 금지** — PR만 |
+| `YYMMDD_설명` | 기능·버그·문서 단위 (예: `260609_회복스폰`) |
+
+- 새 기능은 **`origin/master` 최신**에서 분기. 오래된 브랜치에 커밋만 쌓지 않기.
+- PR base는 항상 **`master`**. merge 전 `git fetch` 후 behind/ahead 확인.
+
+## Worktree (기본 작업 방식)
+
+```text
+Workspace/
+├── MidProject_0/              ← 메인 (master 유지·fetch용)
+└── MidProject_0-{작업약칭}/   ← 기능 브랜치 전용 폴더
+```
+
+| 규칙 | |
+|------|--|
+| 기능 1개 = 브랜치 1개 = worktree 폴더 1개 | |
+| **Unity Play·에디터는 worktree 1곳만** | 동시에 두 폴더 열지 않기 |
+| worktree마다 `Library/` 별도 생성 | Git 커밋 대상 아님 |
+
+### 새 작업 시작 (사용자가 요청할 때만 실행)
+
+```powershell
+cd ...\MidProject_0
+git fetch origin
+git checkout master
+git pull origin master
+git worktree add ..\MidProject_0-{약칭} -b {브랜치명} origin/master
+```
+
+### PR 전 · 머지 후
+
+- PR 전: `git log origin/master..HEAD` — behind 있으면 rebase 권장.
+- 머지 후: `git worktree remove`, `git branch -d`, 메인에서 `master` pull.
+
+## AI 에이전트
+
+- **Git 명령은 사용자가 명시적으로 요청할 때만** (midproject-core와 동일).
+- worktree 안내·PR 절차는 **설명·명령 초안 제시**만. 임의 `checkout`·`worktree add`·`push` 금지.
+- 작업 요청 시 **worktree 경로 + 브랜치명** 확인 후 그 컨텍스트에서 수정.
+- 커밋 메시지: `fix:` / `feat:` / `docs:` + 한글 요약.
+- `Library/`, `Temp/`, `Logs/` 커밋·수정 금지.
+
+## 어긋남 시
+
+45 commits behind 등 — [Bug 2026-06-05 §6](Assets/Docs/Bug/2026-06-05-시각미상-클리어-가이드-중화VFX-fixes.md): `master` 기준 새 브랜치 + 변경분 이전, 무리한 오래된 브랜치 rebase 지양.

@@ -34,4 +34,5 @@ Unity 2D 오염 대응 게임. 상세: `README.md`, `AGENTS.md`.
 - **Git 명령은 사용자가 명시적으로 요청할 때만** (`commit`, `push`, `pull`, `checkout`, `restore`, `reset`, `revert`, `status`, `diff`, `log` 등 전부)
 - 파일 되돌리기·복구도 **git 사용 금지** — 요청 없이 `git checkout` / `git restore`로 프리팹·씬 되돌리지 않기
 - `git commit`·`push`·PR 생성도 **요청 있을 때만**
+- **브랜치·worktree 전략:** `.cursor/rules/git-worktree-workflow.mdc` · `Assets/Docs/2026-06-08-시각미상-git-workflow-worktree.md`
 - `Library/`, `Temp/`, `Logs/` 수정·커밋하지 않기
