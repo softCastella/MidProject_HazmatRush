@@ -2,7 +2,7 @@
     {
         "id": 1,
         "type": "protection",
-        "displayName": "방호복 회복제",
+        "displayName": "방호복회복",
         "effect": "protection",
         "value": 10,
         "invPrefab": "invProtectRecovPrefab",
@@ -11,7 +11,7 @@
     {
         "id": 2,
         "type": "time",
-        "displayName": "시간 연장기",
+        "displayName": "시간연장",
         "effect": "time",
         "value": 10,
         "invPrefab": "invTimeRecovPrefab",
