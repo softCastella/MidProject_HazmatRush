@@ -16,6 +16,7 @@ public class RecoveryItemInventoryUI : MonoBehaviour
     private const string InvItemViewName = "InvItemView";
     private const float InvImagePosY = 12.4f;
     private const float InvImageSize = 44f;
+    private const float InvImageSizeTime = 66f;
     private const float InvNamePosY = -31.7f;
 
     void Awake()
@@ -140,7 +141,8 @@ public class RecoveryItemInventoryUI : MonoBehaviour
                 imageRt.anchorMax = new Vector2(0.5f, 0.5f);
                 imageRt.pivot = new Vector2(0.5f, 0.5f);
                 imageRt.anchoredPosition = new Vector2(0f, InvImagePosY);
-                imageRt.sizeDelta = new Vector2(InvImageSize, InvImageSize);
+                float imageSize = def != null && def.id == 2 ? InvImageSizeTime : InvImageSize;
+                imageRt.sizeDelta = new Vector2(imageSize, imageSize);
             }
 
             Image imageComp = image.GetComponent<Image>();
