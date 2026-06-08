@@ -59,6 +59,7 @@ public class GameManager : MonoBehaviour
     public bool IsGameOverPending => gameOverPending;
     private GameOverCause pendingDeathCause = GameOverCause.ProtectionDepleted;
     private Coroutine gameOverDelayRoutine;
+    private Coroutine stageClearRoutine;
 
     private bool isPaused = false;
     public bool IsPaused => isPaused;
@@ -239,6 +240,29 @@ public class GameManager : MonoBehaviour
     }
 
     // 모든 오염원 중화 + 방호구 1 이상 + 타이머 잔여 시 클리어
+    public void ScheduleStageClear(float pollutantFadeDelay)
+    {
+        if (gameEnded)
+            return;
+
+        if (stageClearRoutine != null)
+            StopCoroutine(stageClearRoutine);
+
+        if (timer != null)
+            timer.StopCountdown();
+
+        stageClearRoutine = StartCoroutine(ScheduleStageClearRoutine(pollutantFadeDelay));
+    }
+
+    private IEnumerator ScheduleStageClearRoutine(float pollutantFadeDelay)
+    {
+        if (pollutantFadeDelay > 0f)
+            yield return new WaitForSecondsRealtime(pollutantFadeDelay);
+
+        stageClearRoutine = null;
+        TriggerClear();
+    }
+
     public void TriggerClear()
     {
         if (gameEnded)
@@ -285,9 +309,22 @@ public class GameManager : MonoBehaviour
         Debug.Log("[GameManager] 다음 스테이지");
     }
 
+    public void GoToTitleFromClear()
+    {
+        Debug.Log("[GameManager] GoToTitleFromClear 클릭");
+        if (SceneLoadManager.Instance == null)
+        {
+            Debug.LogWarning("[GameManager] SceneLoadManager 없음");
+            return;
+        }
+
+        SceneLoadManager.Instance.TitleButton();
+    }
+
     private void ResumeAfterResult()
     {
         CancelPendingGameOver();
+        CancelStageClearRoutine();
         gameEnded = false;
         isPaused = false;
         Time.timeScale = 1f;
@@ -489,6 +526,15 @@ public class GameManager : MonoBehaviour
             StopCoroutine(gameOverDelayRoutine);
             gameOverDelayRoutine = null;
         }
+    }
+
+    private void CancelStageClearRoutine()
+    {
+        if (stageClearRoutine == null)
+            return;
+
+        StopCoroutine(stageClearRoutine);
+        stageClearRoutine = null;
     }
 
     private string GetCauseText(GameOverCause cause)

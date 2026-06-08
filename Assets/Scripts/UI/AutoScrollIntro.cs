@@ -20,6 +20,10 @@ public class AutoScrollIntro : MonoBehaviour
     public float fadeOutDuration = 0.5f;
     public string fallbackLoadingSceneName = "LoadingScene";
 
+    [Header("빠른 스크롤")]
+    public RectTransform skipButtonRect;
+    public float fastScrollMultiplier = 2f;
+
     private Coroutine scrollRoutine;
     private bool sceneLoading;
 
@@ -103,7 +107,8 @@ public class AutoScrollIntro : MonoBehaviour
         float t = 0f;
         while (t < duration)
         {
-            t += Time.deltaTime;
+            float speed = (Input.GetMouseButton(0) && !IsPointerOverSkipButton()) ? fastScrollMultiplier : 1f;
+            t += Time.deltaTime * speed;
             float p = Mathf.Clamp01(t / duration);
             scrollRect.verticalNormalizedPosition = 1f - p;
             yield return null;
@@ -217,6 +222,12 @@ public class AutoScrollIntro : MonoBehaviour
         color.a = Mathf.Clamp01(alpha);
         fadeOverlay.color = color;
         fadeOverlay.raycastTarget = color.a > 0.01f;
+    }
+
+    private bool IsPointerOverSkipButton()
+    {
+        if (skipButtonRect == null) return false;
+        return RectTransformUtility.RectangleContainsScreenPoint(skipButtonRect, Input.mousePosition, null);
     }
 
     private void SetOverlayColor(float r, float g, float b, float alpha)

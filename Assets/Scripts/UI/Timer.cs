@@ -4,7 +4,7 @@ using TMPro;
 public class Timer : MonoBehaviour
 {
     [Header("Countdown 설정")]
-    public float startSeconds = 60f; // 시작 시간 (초)
+    public float startSeconds = 120f; // 시작 시간 (초)
     public bool isRunning = false; // 카운트 다운 동작 여부
 
     [Header("현재 시간")]

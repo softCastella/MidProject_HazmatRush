@@ -38,6 +38,7 @@ public class PollutantManager : MonoBehaviour
     private bool deferredMapAdvance = false;
     private bool returningToStart = false;
     private bool mapTransitioning = false;
+    private bool segmentAfterClearHandled = false;
 
     // 활성 오염원 없을 때만 이동 시간 누적 → 다음 큐 항목 등장
     private float moveTime = 0f;
@@ -53,13 +54,12 @@ public class PollutantManager : MonoBehaviour
     public void StopReturnFlow()
     {
         StopAllCoroutines();
-        if (player != null)
-            player.StopAllCoroutines();
         returningToStart = false;
         mapTransitioning = false;
         awaitingSpawn = false;
         abcClearedPending = false;
         deferredMapAdvance = false;
+        segmentAfterClearHandled = false;
         if (mapFadeOverlay != null)
         {
             mapFadeOverlay.alpha = 0f;
@@ -86,6 +86,7 @@ public class PollutantManager : MonoBehaviour
         }
 
         revealIndex = 0;
+        segmentAfterClearHandled = false;
         BuildPreloadedPollutants();
 
         if (warningTxt != null)
@@ -194,7 +195,7 @@ public class PollutantManager : MonoBehaviour
             StartCoroutine(WarningAndSpawn());
         }
 
-        // 배경: 활성 오염원·경고 코루틴 중에만 멈춤 (이동 잠금·프리로드 대기와 무관)
+        // 배경: 오염원·경고 중 멈춤
         if (scroll != null)
         {
             if (Pollutant.HasAnyActive() || awaitingSpawn)
@@ -204,7 +205,7 @@ public class PollutantManager : MonoBehaviour
         }
     }
 
-    // 활성 오염원 + 아직 등장·처리 안 한 예정(중화 A~C, 가스 D)이 있으면 이 화면에서 나갈 수 없음
+    // 활성 오염원 + 이 구간에 아직 등장할 예정이 있으면 이탈 불가 (페이드아웃 중인 인스턴스는 제외)
     private bool CanLeaveCurrentSegment()
     {
         if (Pollutant.HasAnyActive())
@@ -216,50 +217,39 @@ public class PollutantManager : MonoBehaviour
         if (HasMorePreloaded())
             return false;
 
-        if (HasAnyPreloadedRemaining())
-            return false;
-
         return true;
-    }
-
-    private bool HasAnyPreloadedRemaining()
-    {
-        return HasObjectInPreloadedArray(preloadedQueue);
-    }
-
-    private bool HasObjectInPreloadedArray(GameObject[] list)
-    {
-        if (list == null)
-            return false;
-
-        for (int i = 0; i < list.Length; i++)
-        {
-            if (list[i] != null)
-                return true;
-        }
-
-        return false;
     }
 
     private void StartSegmentAfterAbcClear()
     {
+        if (segmentAfterClearHandled)
+            return;
         if (GameManager.Instance != null && GameManager.Instance.GameEnded)
             return;
 
+        segmentAfterClearHandled = true;
+
+        int cleared = stageManager != null ? stageManager.clearedPollutants : 0;
+        int total = stageManager != null ? stageManager.totalPollutants : 0;
         bool allCleared = stageManager != null && stageManager.IsAllCleared();
+        Debug.Log($"[PollutantManager] 구간 완료 — 오염원 {cleared}/{total}, 스테이지 전부 중화={allCleared}");
+
         if (allCleared)
-            StartCoroutine(TriggerClearAfterDelay());
-        else if (PollutantSpawnPlan.HasMoreMaps())
+        {
+            if (GameManager.Instance != null)
+                GameManager.Instance.ScheduleStageClear(clearPanelDelay);
+            else
+                Debug.LogError("[PollutantManager] GameManager.Instance 없음 — 클리어 패널 연출 불가");
+            return;
+        }
+
+        if (PollutantSpawnPlan.HasMoreMaps())
+        {
             StartCoroutine(MapAdvanceRoutine());
-    }
+            return;
+        }
 
-    private IEnumerator TriggerClearAfterDelay()
-    {
-        if (clearPanelDelay > 0f)
-            yield return new WaitForSeconds(clearPanelDelay);
-
-        if (GameManager.Instance != null && !GameManager.Instance.GameEnded)
-            GameManager.Instance.TriggerClear();
+        Debug.LogWarning("[PollutantManager] 구간 완료 후 맵/클리어 분기 없음 — 오염원 카운트·mapPollutants 확인");
     }
 
     // 오염원 중화 후 x=mapEndX까지 이동 → 페이드아웃 → 시작 위치·배경 리셋 → 페이드인 (마지막 오염원 제외)
@@ -337,6 +327,7 @@ public class PollutantManager : MonoBehaviour
         nextSpawnTime = Random.Range(timeRange.x, timeRange.y);
         mapTransitioning = false;
         returningToStart = false;
+        segmentAfterClearHandled = false;
     }
 
     private void EnsureMapFadeOverlay()

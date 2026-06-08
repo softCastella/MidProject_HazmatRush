@@ -94,6 +94,17 @@ public class Pollutant : MonoBehaviour
     private bool playerInTrigger;      // 트리거 안에 플레이어가 있는지 (bounds 보조 판정용)
     private bool appearInProgress;       // 등장 페이드 중 — 접촉·데미지 금지
     private MaterialPropertyBlock particleAlphaBlock;
+    private Coroutine _contactFlashRoutine;
+
+    // 오염원 타입별 접촉 플래시 색상 (A=초록, B=검정, C=보라, D=없음)
+    private static readonly Color[] TypeFlashColors =
+    {
+        new Color(0f, 1f, 0f, 0f),      // A: 초록 (RGB 틴트)
+        new Color(1f, 1f, 1f, 0f),      // B: 흰색 → 알파 깜빡임으로 처리
+        new Color(0.6f, 0f, 0.8f, 0f),  // C: 보라 (RGB 틴트)
+        Color.clear,                      // D: 가스 — 파티클이라 생략
+    };
+    private const float ContactFlashInterval = 0.25f; // 반짝 주기(초)
 
     public static int activeCount = 0;    // 활성화된 오염원 개수 (A~D 전체)
     public static int activeAbcCount = 0; // A/B/C만 (맵 진행·동시 1개 제한용)
@@ -276,6 +287,7 @@ public class Pollutant : MonoBehaviour
         }
 
         player.AddPollutantTouch();
+        // 플래시는 정답 아이템 접촉 시(HP 감소 시)에만 — ApplyPlayerContactDamage에서 시작
 
         if (type == PollutantType.TypeD)
             Debug.Log($"[Pollutant] 가스(D) 콜라이더 접촉: {name}");
@@ -290,7 +302,14 @@ public class Pollutant : MonoBehaviour
 
         Player player = other.GetComponent<Player>();
         if (player == null || !CanProcessPlayerContact(player))
+        {
+            // 사망·GameEnded 시에만 HP바 숨김 (패널티는 일시정지일 뿐이므로 제외)
+            bool isDeadOrEnded = player == null || player.IsDead ||
+                (GameManager.Instance != null && GameManager.Instance.GameEnded);
+            if (isDeadOrEnded && !isFadingOut)
+                HideBars(player);
             return;
+        }
 
         playerInTrigger = true;
         currentPlayer = player;
@@ -326,6 +345,8 @@ public class Pollutant : MonoBehaviour
             player.RemovePollutantTouch();
         }
 
+        StopContactFlash();
+
         if (isFadingOut)
             return;
 
@@ -333,7 +354,7 @@ public class Pollutant : MonoBehaviour
         StopNeutralizationSfxLocal();
 
         pollutanCurHp = pollutanMaxHp;
-        Debug.Log($"[Pollutant] 접촉 해제 -> HP 초기화: {pollutanCurHp:F2}/{pollutanMaxHp:F2}");
+        // Debug.Log($"[Pollutant] 접촉 해제 -> HP 초기화: {pollutanCurHp:F2}/{pollutanMaxHp:F2}");
 
         StageScoreTracker scoreTracker = FindAnyObjectByType<StageScoreTracker>();
         if (scoreTracker != null)
@@ -428,12 +449,20 @@ public class Pollutant : MonoBehaviour
 
         float itemDamage = itemDps * Time.deltaTime;
         if (itemDamage > 0f)
+        {
             pollutanCurHp = Mathf.Max(0, pollutanCurHp - itemDamage);
+            StartContactFlash(); // HP 감소 중일 때만 번쩍
+        }
+        else
+        {
+            StopContactFlash(); // 틀린 아이템 or 데미지 없으면 번쩍 끔
+        }
 
         UpdatePollutantHpBar();
 
         if (pollutanCurHp <= 0f && !isFadingOut)
         {
+            StopContactFlash();
             StopNeutralizationSfxLocal();
             if (type == PollutantType.TypeD)
                 player.SetValveAnimActive(false);
@@ -569,6 +598,107 @@ public class Pollutant : MonoBehaviour
     }
 
     // 투명도 설정 함수 (A/B/C 스프라이트용)
+    private void StopContactFlash()
+    {
+        if (_contactFlashRoutine != null)
+        {
+            StopCoroutine(_contactFlashRoutine);
+            _contactFlashRoutine = null;
+        }
+        ResetSpriteColor();
+    }
+
+    private void StartContactFlash()
+    {
+        if (type == PollutantType.TypeD) return;  // 가스는 파티클 비주얼이라 생략
+        if (_contactFlashRoutine != null) return; // 이미 실행 중
+        _contactFlashRoutine = StartCoroutine(ContactFlashLoop());
+    }
+
+    private IEnumerator ContactFlashLoop()
+    {
+        Color flash = TypeFlashColors[(int)type];
+        while (true)
+        {
+            if (type == PollutantType.TypeB)
+            {
+                // B: 알파 깜빡임 (반투명 ↔ 정상)
+                SetSpriteAlphaOnly(0.25f);
+                yield return new WaitForSeconds(ContactFlashInterval * 0.5f);
+                SetSpriteAlphaOnly(1f);
+            }
+            else
+            {
+                SetSpriteRGB(flash.r, flash.g, flash.b);
+                yield return new WaitForSeconds(ContactFlashInterval * 0.5f);
+                SetSpriteRGB(1f, 1f, 1f);
+            }
+            yield return new WaitForSeconds(ContactFlashInterval * 0.5f);
+        }
+    }
+
+    private void ApplySpriteColorTint(Color tint)
+    {
+        SetSpriteRGB(tint.r, tint.g, tint.b);
+    }
+
+    private void SetSpriteAlphaOnly(float a)
+    {
+        if (spriteRenderer != null)
+        {
+            Color c = spriteRenderer.color;
+            c.a = a;
+            spriteRenderer.color = c;
+            return;
+        }
+        if (childRenderers != null)
+            for (int i = 0; i < childRenderers.Length; i++)
+                if (childRenderers[i] != null && childRenderers[i].material != null)
+                {
+                    Color c = childRenderers[i].material.color;
+                    c.a = a;
+                    childRenderers[i].material.color = c;
+                }
+    }
+
+    private void SetSpriteRGB(float r, float g, float b)
+    {
+        if (spriteRenderer != null)
+        {
+            Color c = spriteRenderer.color;
+            c.r = r; c.g = g; c.b = b;
+            spriteRenderer.color = c;
+            return;
+        }
+        if (childRenderers != null)
+            for (int i = 0; i < childRenderers.Length; i++)
+                if (childRenderers[i] != null && childRenderers[i].material != null)
+                {
+                    Color c = childRenderers[i].material.color;
+                    c.r = r; c.g = g; c.b = b;
+                    childRenderers[i].material.color = c;
+                }
+    }
+
+    private void ResetSpriteColor()
+    {
+        if (spriteRenderer != null)
+        {
+            Color c = spriteRenderer.color;
+            c.r = 1f; c.g = 1f; c.b = 1f; c.a = 1f;
+            spriteRenderer.color = c;
+            return;
+        }
+        if (childRenderers != null)
+            for (int i = 0; i < childRenderers.Length; i++)
+                if (childRenderers[i] != null && childRenderers[i].material != null)
+                {
+                    Color c = childRenderers[i].material.color;
+                    c.r = 1f; c.g = 1f; c.b = 1f; c.a = 1f;
+                    childRenderers[i].material.color = c;
+                }
+    }
+
     private void SetAlpha(float alpha)
     {
         if (spriteRenderer != null)
@@ -601,6 +731,9 @@ public class Pollutant : MonoBehaviour
         }
     }
 
+    [Header("TypeD 랜덤 크기 (가스)")]
+    public float[] typeDScaleOptions = { 1.5f, 2f, 3f };
+
     private IEnumerator AppearRoutine()
     {
         appearInProgress = true;
@@ -613,6 +746,7 @@ public class Pollutant : MonoBehaviour
 
         if (type == PollutantType.TypeD)
         {
+            ApplyTypeDRandomScale();
             yield return null;
             ShowTypeDVisual();
             if (col != null)
@@ -627,6 +761,15 @@ public class Pollutant : MonoBehaviour
             col.enabled = true;
 
         appearInProgress = false;
+    }
+
+    private void ApplyTypeDRandomScale()
+    {
+        if (typeDScaleOptions == null || typeDScaleOptions.Length == 0)
+            return;
+
+        float scale = typeDScaleOptions[Random.Range(0, typeDScaleOptions.Length)];
+        transform.localScale = new Vector3(scale, scale, scale);
     }
 
     private void ShowTypeDVisual()
@@ -710,6 +853,10 @@ public class Pollutant : MonoBehaviour
         StageManager stageManager = FindAnyObjectByType<StageManager>();
         if (stageManager != null)
             stageManager.AddClearedPollutant();
+
+        RecoveryItemManager recoveryManager = FindAnyObjectByType<RecoveryItemManager>();
+        if (recoveryManager != null)
+            recoveryManager.TryDropOnPollutantCleared(type, transform.position);
 
         Collider2D col = GetComponent<Collider2D>();
         if (col != null)
