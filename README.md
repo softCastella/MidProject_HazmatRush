@@ -382,3 +382,4 @@ Assets/
 - **Galmuri Font** — © 2019–2023 Minseo Lee
 - **시작 버튼 SFX** — [BoostSound](https://www.youtube.com/watch?v=YNSbL-Cek1c)
 - **Title / Game BGM** — SUNO 생성
+- **그 외 SFX** - freesoung.org
