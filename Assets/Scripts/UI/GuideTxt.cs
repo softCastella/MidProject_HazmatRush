@@ -130,15 +130,20 @@ public class GuideTxt : MonoBehaviour
         Debug.Log($"[GuideTxt] {message}");
     }
 
-    // 페이드 없이 즉시 문구를 노출합니다. (오대응 패널티 안내 등)
+    // 페이드 없이 즉시 문구를 노출합니다. (오대응 패널티·맵 이동 안내 등)
     public void ShowGuideImmediate(string message)
     {
         StopAllCoroutines();
+        gameObject.SetActive(true);
         SetGuideText(message);
         if (canvasGroup == null)
             canvasGroup = GetComponent<CanvasGroup>();
         if (canvasGroup != null)
+        {
             canvasGroup.alpha = 1f;
+            canvasGroup.interactable = false;
+            canvasGroup.blocksRaycasts = false;
+        }
     }
 
     public void HideGuide()

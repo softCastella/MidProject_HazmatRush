@@ -113,7 +113,7 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 | 접촉·이동 버그 이력 | `Assets/Docs/Bug/2026-06-04-시각미상-gameplay-fixes.md` |
 | 클리어·VFX·아이템 유지 | `Assets/Docs/Bug/2026-06-05-시각미상-클리어-가이드-중화VFX-fixes.md` |
 | 클리어·사망·결과 패널 | `Assets/Scripts/Core/GameManager.cs` |
-| Docs 파일명 규칙 | `Assets/Docs/문서-이름-규칙.md` |
+| Docs 파일명 규칙 | `Assets/Docs/문서-이름-규칙.md` — 오늘 작성=현재 시각, 전날 소급=시각미상 |
 | 아이템 DPS·타입 | `Assets/Scripts/GamePlay/Item.cs` |
 | Z키 아이템 선택 | `Assets/Scripts/Core/ItemSelectManager.cs` |
 | 오염원 스폰·경고 | `Assets/Scripts/GamePlay/PollutantManager.cs` |

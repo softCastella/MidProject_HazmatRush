@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.youngwoocho02.unity-cli-connector": "https://github.com/youngwoocho02/unity-cli.git?path=unity-connector",
     "com.unity.nuget.newtonsoft-json": "3.2.0",
     "com.unity.2d.animation": "14.0.4",
     "com.unity.2d.aseprite": "4.0.2",

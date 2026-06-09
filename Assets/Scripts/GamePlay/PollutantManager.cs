@@ -16,6 +16,7 @@ public class PollutantManager : MonoBehaviour
     public GameObject[] pollutants; // 등록된 오염원 프리팹 목록
     public PollutantSpawner spawner;
     public Background scroll;
+    public RecoveryItemManager recoveryItemManager;
     public PopupUI popupUI;
     public Slider pollutantSlider;
     public float rangeBuffer = 0.5f;
@@ -34,11 +35,13 @@ public class PollutantManager : MonoBehaviour
     public CanvasGroup mapFadeOverlay;
 
     private bool awaitingSpawn = false;
+    public bool IsWarningFreeze => awaitingSpawn;
     private bool abcClearedPending = false;
     private bool deferredMapAdvance = false;
     private bool returningToStart = false;
     private bool mapTransitioning = false;
     private bool segmentAfterClearHandled = false;
+    private bool pendingMapAdvance = false;
 
     // 활성 오염원 없을 때만 이동 시간 누적 → 다음 큐 항목 등장
     private float moveTime = 0f;
@@ -60,6 +63,7 @@ public class PollutantManager : MonoBehaviour
         abcClearedPending = false;
         deferredMapAdvance = false;
         segmentAfterClearHandled = false;
+        pendingMapAdvance = false;
         if (mapFadeOverlay != null)
         {
             mapFadeOverlay.alpha = 0f;
@@ -136,6 +140,9 @@ public class PollutantManager : MonoBehaviour
         if (scroll == null)
             scroll = FindAnyObjectByType<Background>();
 
+        if (recoveryItemManager == null)
+            recoveryItemManager = FindAnyObjectByType<RecoveryItemManager>();
+
         nextSpawnTime = Random.Range(timeRange.x, timeRange.y);
         EnsureMapFadeOverlay();
     }
@@ -195,14 +202,41 @@ public class PollutantManager : MonoBehaviour
             StartCoroutine(WarningAndSpawn());
         }
 
-        // 배경: 오염원·경고 중 멈춤
-        if (scroll != null)
+        if (pendingMapAdvance && !mapTransitioning && player != null)
         {
-            if (Pollutant.HasAnyActive() || awaitingSpawn)
-                scroll.PauseScroll();
-            else
-                scroll.ResumeScroll();
+            float reachX = mapEndX - Mathf.Max(0.1f, mapEndReachDistance);
+            if (player.transform.position.x >= reachX)
+            {
+                pendingMapAdvance = false;
+                StartCoroutine(MapAdvanceRoutine());
+            }
         }
+
+        UpdateBackgroundScroll();
+    }
+
+    private void UpdateBackgroundScroll()
+    {
+        if (scroll == null)
+            return;
+
+        if (ShouldPauseBackgroundScroll())
+            scroll.PauseScroll();
+        else
+            scroll.ResumeScroll();
+    }
+
+    private bool ShouldPauseBackgroundScroll()
+    {
+        if (Pollutant.HasAnyActive() || awaitingSpawn)
+            return true;
+
+        if (recoveryItemManager == null)
+            recoveryItemManager = FindAnyObjectByType<RecoveryItemManager>();
+        if (recoveryItemManager != null && recoveryItemManager.HasLandedRecoveryItemsOnMap())
+            return true;
+
+        return false;
     }
 
     // 활성 오염원 + 이 구간에 아직 등장할 예정이 있으면 이탈 불가 (페이드아웃 중인 인스턴스는 제외)
@@ -245,7 +279,14 @@ public class PollutantManager : MonoBehaviour
 
         if (PollutantSpawnPlan.HasMoreMaps())
         {
-            StartCoroutine(MapAdvanceRoutine());
+            pendingMapAdvance = true;
+            if (player != null)
+                TryUnlockSegmentMovement();
+            if (guideTxt == null)
+                guideTxt = FindAnyObjectByType<GuideTxt>();
+            if (guideTxt != null)
+                guideTxt.ShowGuideImmediate("오른쪽으로 이동하세요");
+            Debug.Log("[PollutantManager] 맵 이동 가능 — 오른쪽 끝까지 이동 시 다음 구역으로 전환");
             return;
         }
 
@@ -260,43 +301,17 @@ public class PollutantManager : MonoBehaviour
         if (returningToStart || mapTransitioning)
             yield break;
 
-        // 다음 맵이 있을 때만 호출됨 — 마지막 맵(스테이지 클리어)은 TriggerClearAfterDelay 경로
+        // 다음 맵이 있을 때만 호출됨 — 맵 끝 도달 후 페이드 전환
         returningToStart = true;
         mapTransitioning = true;
 
-        if (scroll != null)
-            scroll.ResumeScroll();
-
-        if (player != null)
-        {
-            player.mapAdvanceRightX = mapEndX;
-            player.PrepareMapAdvanceWalk();
-        }
-
-        if (guideTxt != null)
-            guideTxt.ShowGuideImmediate("오른쪽으로 이동하세요");
-
-        float reachX = mapEndX - Mathf.Max(0.1f, mapEndReachDistance);
-        while (player != null)
-        {
-            if (GameManager.Instance != null && GameManager.Instance.GameEnded)
-            {
-                if (guideTxt != null)
-                    guideTxt.HideGuide();
-                mapTransitioning = false;
-                returningToStart = false;
-                yield break;
-            }
-
-            float posX = player.transform.position.x;
-            if (posX >= reachX)
-                break;
-
-            yield return null;
-        }
-
         if (guideTxt != null)
             guideTxt.HideGuide();
+
+        if (recoveryItemManager == null)
+            recoveryItemManager = FindAnyObjectByType<RecoveryItemManager>();
+        if (recoveryItemManager != null)
+            recoveryItemManager.ClearMapRecoveryItems();
 
         yield return FadeMapOverlay(1f, mapFadeDuration);
 
@@ -308,18 +323,13 @@ public class PollutantManager : MonoBehaviour
         }
 
         if (scroll != null)
-        {
             scroll.ResetScrollOffset();
-            if (!Pollutant.HasAnyActive())
-                scroll.ResumeScroll();
-            else
-                scroll.PauseScroll();
-        }
 
         yield return FadeMapOverlay(0f, mapFadeDuration);
 
         PollutantSpawnPlan.AdvanceMap();
         segmentMovementUnlocked = false;
+        pendingMapAdvance = false;
         revealIndex = 0;
         BuildPreloadedPollutants();
 
@@ -328,6 +338,7 @@ public class PollutantManager : MonoBehaviour
         mapTransitioning = false;
         returningToStart = false;
         segmentAfterClearHandled = false;
+        UpdateBackgroundScroll();
     }
 
     private void EnsureMapFadeOverlay()
@@ -452,6 +463,9 @@ public class PollutantManager : MonoBehaviour
         if (timer != null)
             timer.StopCountdown();
 
+        if (player != null)
+            player.canMove = false;
+
         if (prefabPoll != null && itemSelectManager != null)
             itemSelectManager.OnWarningShown();
 
@@ -475,6 +489,7 @@ public class PollutantManager : MonoBehaviour
         if (Pollutant.HasAnyActive())
         {
             Debug.Log("PollutantManager: 활성 오염원이 남아 있어 새 오염원 생성을 취소합니다.");
+            TryUnlockSegmentMovement();
             if (GameManager.Instance == null || !GameManager.Instance.GameEnded)
             {
                 if (player != null)
@@ -511,17 +526,14 @@ public class PollutantManager : MonoBehaviour
                 Debug.Log($"PollutantManager: 오염원 등장 후 배경 스크롤 일시정지 ({(spawnTypeD ? "D" : "A~C")}).");
             }
 
-            if (player != null && !segmentMovementUnlocked)
-            {
-                player.UnlockMapSegmentMovement();
-                segmentMovementUnlocked = true;
-            }
-
             Debug.Log($"PollutantManager: {created.name} 등장 ({(spawnTypeD ? "D" : "A~C")})");
 
             if (hasPlan)
                 revealIndex++;
         }
+
+        if (Pollutant.HasAnyActive())
+            TryUnlockSegmentMovement();
 
         if (GameManager.Instance == null || !GameManager.Instance.GameEnded)
         {
@@ -535,6 +547,17 @@ public class PollutantManager : MonoBehaviour
         nextSpawnTime = Random.Range(timeRange.x, timeRange.y);
         awaitingSpawn = false;
         abcClearedPending = true;
+    }
+
+    private void TryUnlockSegmentMovement()
+    {
+        if (player == null || segmentMovementUnlocked)
+            return;
+
+        player.mapAdvanceRightX = mapEndX;
+        player.UnlockMapSegmentMovement();
+        segmentMovementUnlocked = true;
+        Debug.Log($"[PollutantManager] 1차 이동 해제 — rightLimit={mapEndX}");
     }
 
     // BlinkWarning 로직은 WarningTxt로 이동

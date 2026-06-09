@@ -15,6 +15,8 @@ public class RecoveryItem : MonoBehaviour
     private Collider2D pickupCollider;
     private bool dropInProgress;
 
+    public bool IsLandedOnMap => !dropInProgress;
+
     void Awake()
     {
         pickupCollider = GetComponent<Collider2D>();
@@ -39,11 +41,28 @@ public class RecoveryItem : MonoBehaviour
         if (!other.CompareTag("Player"))
             return;
 
+        TryCollectToInventory(false);
+    }
+
+    // 클리어 직전 맵에 남은 아이템 자동 획득 (아크 중이어도 인벤으로)
+    public bool ForceCollectToInventory()
+    {
+        StopAllCoroutines();
+        bool wasLanded = IsLandedOnMap;
+        dropInProgress = false;
+        if (pickupCollider != null)
+            pickupCollider.enabled = false;
+
+        return TryCollectToInventory(wasLanded, true);
+    }
+
+    private bool TryCollectToInventory(bool wasLandedOnMap, bool autoCollect = false)
+    {
         RecoveryItemInventory inventory = FindAnyObjectByType<RecoveryItemInventory>();
         if (inventory == null)
         {
             Debug.LogWarning("[RecoveryItem] RecoveryItemInventory를 찾을 수 없습니다.");
-            return;
+            return false;
         }
 
         int id = itemId;
@@ -51,10 +70,19 @@ public class RecoveryItem : MonoBehaviour
             id = type == ItemType.Time ? 2 : 1;
 
         if (!inventory.Add(id))
-            return;
+            return false;
 
-        Debug.Log($"[RecoveryItem] 획득: id={id}");
+        RecoveryItemManager manager = FindAnyObjectByType<RecoveryItemManager>();
+        if (manager != null && wasLandedOnMap)
+            manager.OnMapRecoveryItemRemoved();
+
+        if (autoCollect)
+            Debug.Log($"[RecoveryItem] 클리어 전 자동 획득: id={id}");
+        else
+            Debug.Log($"[RecoveryItem] 획득: id={id}");
+
         Destroy(gameObject);
+        return true;
     }
 
     private IEnumerator DropArcRoutine(Vector3 start, float jumpHeight, float offsetX, float duration)
@@ -98,6 +126,10 @@ public class RecoveryItem : MonoBehaviour
         dropInProgress = false;
         if (pickupCollider != null)
             pickupCollider.enabled = true;
+
+        RecoveryItemManager manager = FindAnyObjectByType<RecoveryItemManager>();
+        if (manager != null)
+            manager.OnMapRecoveryItemLanded();
 
         Debug.Log($"[RecoveryItem] 아크 착지 완료 — pos={transform.position}, 픽업 콜라이더={(pickupCollider != null && pickupCollider.enabled ? "ON" : "OFF")}");
     }
