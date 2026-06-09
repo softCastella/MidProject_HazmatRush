@@ -26,8 +26,13 @@ public class WorldSpaceUIFollower : MonoBehaviour
         Vector3 worldPos = GetFollowWorldPosition();
         Vector2 screenPos = cam.WorldToScreenPoint(worldPos);
         Camera canvasCam = rootCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : cam;
+
+        RectTransform parentRect = rectTransform.parent as RectTransform;
+        if (parentRect == null)
+            parentRect = rootCanvas.GetComponent<RectTransform>();
+
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            rootCanvas.GetComponent<RectTransform>(), screenPos, canvasCam, out Vector2 localPos);
+            parentRect, screenPos, canvasCam, out Vector2 localPos);
 
         // pivot이 가운데(0.5)면 바가 스프라이트 위에 겹침 → 아래쪽을 스프라이트 위에 맞춤
         float barBottomOffset = rectTransform.rect.height * rectTransform.pivot.y * rectTransform.lossyScale.y;

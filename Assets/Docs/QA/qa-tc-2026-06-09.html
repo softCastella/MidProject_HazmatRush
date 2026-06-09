@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QA TC — MidProject</title>
+  <style>
+    body { font-family: "Malgun Gothic", sans-serif; max-width: 900px; margin: 1.25rem auto; padding: 0 1rem; line-height: 1.6; color: #1a2332; font-size: 0.92rem; }
+    h1 { color: #1e6b5c; font-size: 1.35rem; margin-bottom: 0.25rem; }
+    h2 { font-size: 1.05rem; margin: 0; padding: 0.55rem 0.75rem; background: #1e6b5c; color: #fff; border-radius: 6px 6px 0 0; page-break-after: avoid; }
+    .meta { color: #5a6578; font-size: 0.88rem; margin-bottom: 1rem; }
+    .flow { background: #f8fafb; border: 1px solid #dde3ea; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1.25rem; }
+    .scenario { border: 1px solid #dde3ea; border-radius: 6px; margin-bottom: 2rem; overflow: hidden; page-break-inside: avoid; }
+    .scenario-body { padding: 0.5rem 0.75rem 0.75rem; }
+    .scenario-desc { margin: 0.5rem 0 0.75rem; color: #3d4a5c; font-size: 0.88rem; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #dde3ea; padding: 0.5rem 0.6rem; vertical-align: top; }
+    th { background: #e8f4f1; font-weight: 600; font-size: 0.85rem; }
+    .chk { width: 2.2em; text-align: center; }
+    .num { width: 2.8em; font-weight: 600; color: #2d4a6e; white-space: nowrap; }
+    .step { width: 9em; font-weight: 600; }
+    td.do ul, td.ok ul { margin: 0.15rem 0 0 1.1rem; padding: 0; }
+    td.do li, td.ok li { margin: 0.25rem 0; }
+    td.fail { width: 11em; font-size: 0.84rem; color: #6b3030; background: #fffaf8; }
+    .ok-text { color: #1a7f4e; }
+    input[type="checkbox"] { transform: scale(1.1); cursor: pointer; }
+    @media print {
+      body { max-width: none; font-size: 10pt; }
+      h2 { background: #333; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .scenario { page-break-after: always; margin-bottom: 0; border: none; }
+      .scenario:last-of-type { page-break-after: auto; }
+      input[type="checkbox"] { pointer-events: none; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>QA TC — MidProject</h1>
+<p class="meta">
+  <strong>QA팀 배포용</strong> Test Case ·
+  대상: 경고 · 맵·회복 · 이동·접촉 (2026-06-09 기준) ·
+  Unity <strong>6000.4.8f1</strong> · 빌드 또는 에디터 Play
+</p>
+
+<div class="flow">
+  <strong>진행 방법</strong><br/>
+  1) Unity에서 <strong>TitleScene</strong> 또는 <strong>GameScene</strong> 연 후 ▶ Play<br/>
+  2) 아래 <strong>시나리오 1 → 6</strong> 순서대로 플레이 (한 시나리오 = 한 장 분량)<br/>
+  3) 「정상 결과」가 눈에 보이면 ✓ · 아니면 Fail 칸에 간단히 적기<br/>
+  <strong>조작 키 (참고):</strong> 이동 ←→ · 중화 아이템 Z/X · 회복 C/V · 회복 사용 Space
+</div>
+
+<!-- SCENARIO 1 -->
+<div class="scenario">
+  <h2>시나리오 1 — 게임 시작 · 가이드 · 첫 이동 구간</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">목적: 튜토리얼 후 짧은 구간만 걸을 수 있고, 오염원 등장 전후로 이동 범위가 바뀌는지 확인.</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">1-1</td><td class="step">게임 진입</td>
+          <td class="do">Title에서 Start → 로딩 후 GameScene (또는 GameScene에서 바로 Play)</td>
+          <td class="ok"><span class="ok-text">플레이어·UI·타이머·배경이 보임</span></td>
+          <td class="fail">검은 화면·멈춤</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">1-2</td><td class="step">가이드 중</td>
+          <td class="do">시작 안내 문구가 나온 동안 ←→ 입력</td>
+          <td class="ok"><span class="ok-text">캐릭터가 움직이지 않음</span></td>
+          <td class="fail">가이드 중 이동됨</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">1-3</td><td class="step">가이드 후</td>
+          <td class="do">안내가 끝난 뒤 좌우 이동</td>
+          <td class="ok"><span class="ok-text">이동 가능 · 타이머 감소 · 배경이 함께 흐름</span></td>
+          <td class="fail">이동·타이머·배경 중 하나라도 안 됨</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">1-4</td><td class="step">1차 구간 한계</td>
+          <td class="do">오른쪽 끝까지 이동 (아직 오염원 없을 때)</td>
+          <td class="ok"><span class="ok-text">일정 지점에서 더 이상 오른쪽으로 못 감 (짧은 구간)</span></td>
+          <td class="fail">끝없이 오른쪽으로만 감</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">1-5</td><td class="step">멈춘 상태</td>
+          <td class="do">1-4 한계 근처에서 키를 뗀 채 2~3초 대기</td>
+          <td class="ok"><span class="ok-text">캐릭터 위치가 저절로 튀거나 끌려가지 않음</span></td>
+          <td class="fail">가만히 있는데 위치가 밀림</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SCENARIO 2 -->
+<div class="scenario">
+  <h2>시나리오 2 — 오염원 경고 · 등장 연출</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">목적: 경고 때 “게임 전체가 멈춘 것처럼” 보이지 않고, 필요한 것만 멈추는지 확인.</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">2-1</td><td class="step">경고 발생</td>
+          <td class="do">가이드 후 오른쪽으로 2~3초 계속 이동</td>
+          <td class="ok"><span class="ok-text">경고 문구·깜빡임 표시</span></td>
+          <td class="fail">경고 없음</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">2-2</td><td class="step">경고 중 멈춤</td>
+          <td class="do">경고가 뜬 뒤 ←→ · Z/X · C/V · Space · K/I 입력 시도</td>
+          <td class="ok">
+            <ul>
+              <li class="ok-text">캐릭터·배경·타이머가 <strong>멈춘 것처럼</strong> 보임</li>
+              <li class="ok-text">위 키 입력에 반응 없음</li>
+            </ul>
+          </td>
+          <td class="fail">이동·타이머·아이템 조작됨</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">2-3</td><td class="step">경고 중 유지</td>
+          <td class="do">경고 연출 중 BGM·경고 깜빡임·아이템 안내 관찰</td>
+          <td class="ok"><span class="ok-text">BGM은 계속 들림 · 경고·안내 연출은 진행</span></td>
+          <td class="fail">BGM까지 끊기거나 화면 전체 일시정지</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">2-4</td><td class="step">오염원 등장</td>
+          <td class="do">연출이 끝날 때까지 대기</td>
+          <td class="ok"><span class="ok-text">오염원이 페이드인 · 이후 이동·타이머·Z/X 다시 가능</span></td>
+          <td class="fail">오염원 없음 · 영구 잠금</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">2-5</td><td class="step">이동 확장</td>
+          <td class="do">오염원 등장 후 다시 오른쪽 끝까지 이동</td>
+          <td class="ok"><span class="ok-text">경고 전보다 <strong>더 오른쪽</strong>까지 갈 수 있음</span></td>
+          <td class="fail">여전히 짧은 구간에서 막힘</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SCENARIO 3 -->
+<div class="scenario">
+  <h2>시나리오 3 — 오염원 접촉 · 중화</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">목적: 닿은 채로 움직여도 접촉이 끊기지 않고, 맞는/틀린 도구가 화면에 맞게 동작하는지 확인.</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">3-1</td><td class="step">접촉 시작</td>
+          <td class="do">오염원에 닿기</td>
+          <td class="ok"><span class="ok-text">방호복 HP·오염원 HP바 표시</span></td>
+          <td class="fail">바 없음</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">3-2</td><td class="step">접촉 중 이동</td>
+          <td class="do">닿은 채로 좌우로 계속 이동 (5초 이상)</td>
+          <td class="ok"><span class="ok-text">방호복 HP가 <strong>계속</strong> 줄어듦 · HP바가 사라지지 않음</span></td>
+          <td class="fail">중간에 접촉 끊김·HP바 사라짐</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">3-3</td><td class="step">틀린 도구</td>
+          <td class="do">Z/X로 오염원에 맞지 않는 도구 선택 후 접촉</td>
+          <td class="ok"><span class="ok-text">방호복만 감소 · 오염원 HP 안 줄어듦 · 중화 이펙트 없음</span></td>
+          <td class="fail">오염원 HP 감소 또는 이펙트</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">3-4</td><td class="step">맞는 도구</td>
+          <td class="do">Z로 해당 오염원용 중화제 선택 후 접촉</td>
+          <td class="ok"><span class="ok-text">방호복 감소 + 오염원 HP 감소 + 중화 이펙트</span></td>
+          <td class="fail">HP 안 줄거나 이펙트 없음</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">3-5</td><td class="step">떨어짐</td>
+          <td class="do">중화 중 오염원에서 일부러 떨어지기</td>
+          <td class="ok"><span class="ok-text">오염원 HP바 사라짐 · 다시 닿으면 HP가 처음부터</span></td>
+          <td class="fail">떨어져도 HP 유지</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">3-6</td><td class="step">제거 후 아이템</td>
+          <td class="do">오염원 HP를 0까지 깎은 뒤 Z/X로 다른 도구 선택</td>
+          <td class="ok"><span class="ok-text">선택한 중화 아이템이 <strong>그대로 유지</strong> (강제로 스캐너 등으로 안 바뀜)</span></td>
+          <td class="fail">제거 직후 아이템 리셋</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SCENARIO 4 -->
+<div class="scenario">
+  <h2>시나리오 4 — 회복 아이템 (맵 드랍)</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">목적: 오염원 제거 후 회복 아이템이 떨어지고, 맵에 남아 있을 때 배경·픽업이 자연스러운지 확인.</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">4-1</td><td class="step">드랍</td>
+          <td class="do">오염원을 중화해 제거 (회복 드랍 있는 경우)</td>
+          <td class="ok"><span class="ok-text">회복 아이템이 포물선으로 떨어져 맵에 놓임</span></td>
+          <td class="fail">드랍 없음·바닥 관통</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">4-2</td><td class="step">배경 정지</td>
+          <td class="do">아이템이 맵에 남아 있는 동안 ←→ 이동</td>
+          <td class="ok"><span class="ok-text">배경 스크롤이 <strong>멈춘 상태</strong></span></td>
+          <td class="fail">아이템 있는데 배경만 계속 흐름</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">4-3</td><td class="step">픽업</td>
+          <td class="do">캐릭터를 아이템에 가까이 이동</td>
+          <td class="ok"><span class="ok-text">인벤에 아이콘·이름·개수 표시 · 맵에서 아이템 사라짐</span></td>
+          <td class="fail">인벤 안 들어감</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">4-4</td><td class="step">픽업 후 배경</td>
+          <td class="do">맵에 아이템이 없어진 뒤 이동</td>
+          <td class="ok"><span class="ok-text">배경 스크롤이 다시 정상적으로 움직임</span></td>
+          <td class="fail">줍었는데도 배경 안 움직임</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SCENARIO 5 -->
+<div class="scenario">
+  <h2>시나리오 5 — 맵 구간 클리어 · 다음 구역</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">목적: 한 구역의 오염원을 다 없앤 뒤, 안내에 따라 이동해야 다음 맵으로 넘어가는지 확인.</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">5-1</td><td class="step">구역 클리어</td>
+          <td class="do">현재 맵의 A·B·C 오염원을 모두 제거</td>
+          <td class="ok"><span class="ok-text">즉시 화면 페이드 없음 · 「오른쪽으로 이동하세요」류 안내 표시</span></td>
+          <td class="fail">클리어 직후 바로 페이드·맵 전환</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">5-2</td><td class="step">회복 남김</td>
+          <td class="do">회복 아이템을 맵에 <strong>안 줍고</strong> 오른쪽 끝까지 이동</td>
+          <td class="ok"><span class="ok-text">맵 끝까지 갈 수 있음 (줍지 않아도 진행 가능)</span></td>
+          <td class="fail">아이템 때문에 진행 불가</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">5-3</td><td class="step">맵 전환</td>
+          <td class="do">안내대로 맵 오른쪽 끝까지 이동</td>
+          <td class="ok"><span class="ok-text">페이드 후 다음 구역 · 새 배경·새 오염원 준비</span></td>
+          <td class="fail">끝까지 가도 전환 안 됨</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">5-4</td><td class="step">다음 구역 플레이</td>
+          <td class="do">전환 후 가이드·이동·경고·오염원 흐름 재확인</td>
+          <td class="ok"><span class="ok-text">다시 짧은 구간 → 경고 → 오염원 → 이동 확장 패턴 반복</span></td>
+          <td class="fail">이동·배경·타이머 꼬임</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SCENARIO 6 -->
+<div class="scenario">
+  <h2>시나리오 6 — 스테이지 클리어 · 사망</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">목적: 스테이지를 깼을 때·죽었을 때 결과 화면 연출 순서 확인.</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">6-1</td><td class="step">클리어 · 회복</td>
+          <td class="do">맵에 회복 아이템을 남긴 채 <strong>스테이지 최종 클리어</strong></td>
+          <td class="ok"><span class="ok-text">클리어 전에 인벤 개수 증가 · 맵 아이템 사라짐</span></td>
+          <td class="fail">남긴 아이템 유실</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">6-2</td><td class="step">클리어 연출</td>
+          <td class="do">클리어 순간부터 관찰</td>
+          <td class="ok"><span class="ok-text">클리어 동작 재생 → 잠시 후 동작 정지 → <strong>그 다음</strong> 클리어 결과 패널</span></td>
+          <td class="fail">동작과 패널이 동시에 뜸</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">6-3</td><td class="step">사망 연출</td>
+          <td class="do">(별도 플레이) 방호복 HP를 0까지 깎기</td>
+          <td class="ok"><span class="ok-text">사망 동작 → 잠시 후 → 게임오버 패널 (클리어와 같은 템포)</span></td>
+          <td class="fail">패널이 너무 빨리 또는 동시</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">6-4</td><td class="step">가스 오염원</td>
+          <td class="do">(가능하면) 가스(D) 오염원 접촉 · 맞는 도구로 처리</td>
+          <td class="ok"><span class="ok-text">밸브 연출·SFX · 중화 이펙트는 없음 · 접촉·데미지는 일반과 같음</span></td>
+          <td class="fail">가스만 접촉 안 됨·이펙트 이상</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SCENARIO 7 optional feel -->
+<div class="scenario">
+  <h2>시나리오 7 — 이동·배경 체감 (선택)</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">목적: 플레이어와 배경 속도가 어색하지 않은지 주관 확인. Fail 기준이 애매하면 메모만 남기면 됨.</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">7-1</td><td class="step">속도 비율</td>
+          <td class="do">가이드 후 오른쪽으로 5초 이상 이동</td>
+          <td class="ok"><span class="ok-text">배경이 플레이어와 함께 자연스럽게 지나감 (배경만 미친 듯 빠르지 않음)</span></td>
+          <td class="fail">배경만 너무 빠름/느림</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">7-2</td><td class="step">방향 전환</td>
+          <td class="do">←→ 를 빠르게 번갈아 입력</td>
+          <td class="ok"><span class="ok-text">이동 가능 (체감 메모: 가속·끊김 느낌 있으면 적기)</span></td>
+          <td class="fail">입력 불가·심한 끊김</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="scenario">
+  <h2>결과 기록</h2>
+  <div class="scenario-body">
+    <table>
+      <tbody>
+        <tr><td style="width:8em;font-weight:600;">테스트 일자</td><td>____________________</td></tr>
+        <tr><td style="font-weight:600;">테스터</td><td>____________________</td></tr>
+        <tr><td style="font-weight:600;">빌드/환경</td><td>____________________ (예: Editor Play · Stage 1-1)</td></tr>
+        <tr><td style="font-weight:600;">Pass</td><td>시나리오 ___ ~ ___ 전부 Pass / 일부 Fail (번호: _______________)</td></tr>
+        <tr><td style="font-weight:600;">Fail 요약</td><td>________________________________________________________</td></tr>
+        <tr><td style="font-weight:600;">스크린샷</td><td>□ 첨부함 · 파일명/경로 ____________________</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<p class="meta" style="margin-top:1.5rem;">
+  Assets/Docs/QA/qa-tc-2026-06-09.html · 인쇄 Ctrl+P (시나리오별 1장) ·
+  개발 내부 검증: <a href="qa-2026-06-09.html">qa-2026-06-09.html</a>
+</p>
+</body>
+</html>

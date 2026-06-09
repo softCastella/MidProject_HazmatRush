@@ -1,7 +1,6 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -22,11 +21,8 @@ public class Player : MonoBehaviour
     public float dieFadeDuration = 0.5f;
     public float maxProtection = 100f; // 방호복 최대 수치
     public float curProtection; // 현재 방호복 수치
-    public TMP_Text protectionNumText; // 방호복 수치 표시 텍스트
 
-    public Slider protectionSlider;
-
-    private TMP_Text protectionHpText;
+    public ProtectionHpBarUI protectionHpBar;
 
     public bool isMoving; // 이동 중인지
     public bool hasInput; // 입력이 들어왔는지
@@ -94,13 +90,6 @@ public class Player : MonoBehaviour
         pollutantTouchCount = 0;
         InitNeutralizationVfx();
 
-        if (protectionNumText == null)
-        {
-            GameObject protectionObj = GameObject.Find("ProtectionNum");
-            if (protectionObj != null)
-                protectionNumText = protectionObj.GetComponent<TMP_Text>();
-        }
-
         if (itemSelectManager == null)
             itemSelectManager = FindAnyObjectByType<ItemSelectManager>();
 
@@ -108,24 +97,25 @@ public class Player : MonoBehaviour
         if (guide == null || string.IsNullOrEmpty(guide.defaultMessage))
             canMove = true;
 
-        UpdateProtectionText();
-
-        if (protectionSlider != null)
+        if (protectionHpBar == null)
         {
-            protectionSlider.minValue = 0f;
-            protectionSlider.maxValue = 1f;
-            protectionSlider.value = 1f;
-            protectionSlider.gameObject.SetActive(false);
-            protectionHpText = protectionSlider.GetComponentInChildren<TMP_Text>(true);
+            GameObject hpObj = GameObject.Find("protectionHp");
+            if (hpObj != null)
+                protectionHpBar = hpObj.GetComponent<ProtectionHpBarUI>();
         }
+
+        if (protectionHpBar != null)
+            protectionHpBar.ResolveRefs();
+
+        UpdateProtectionBar();
     }
 
     public void UpdateProtectionBar()
     {
-        if (protectionSlider != null)
-            protectionSlider.value = curProtection / maxProtection;
-        if (protectionHpText != null)
-            protectionHpText.text = Mathf.FloorToInt(curProtection).ToString();
+        if (protectionHpBar == null)
+            return;
+
+        protectionHpBar.SetProtection(curProtection, maxProtection);
     }
 
     void Update()
@@ -308,12 +298,6 @@ public class Player : MonoBehaviour
             itemSelectManager = FindAnyObjectByType<ItemSelectManager>();
     }
 
-    private void UpdateProtectionText()
-    {
-        if (protectionNumText != null)
-            protectionNumText.text = $"{Mathf.FloorToInt(curProtection)}%";
-    }
-
     public void ApplyPollutantDamage(float pollutantDps)
     {
         if (currentState == PlayerState.Die)
@@ -326,7 +310,6 @@ public class Player : MonoBehaviour
             return;
 
         curProtection = Mathf.Max(0, curProtection - damage);
-        UpdateProtectionText();
         UpdateProtectionBar();
 
         TriggerDamageFlash();
@@ -602,7 +585,6 @@ public class Player : MonoBehaviour
             return;
 
         curProtection = Mathf.Min(maxProtection, curProtection + amount);
-        UpdateProtectionText();
         UpdateProtectionBar();
     }
 
@@ -750,10 +732,7 @@ public class Player : MonoBehaviour
         SetNeutralizationVfx(false);
 
         curProtection = maxProtection;
-        UpdateProtectionText();
         UpdateProtectionBar();
-        if (protectionSlider != null)
-            protectionSlider.gameObject.SetActive(false);
 
         ResetRange();
         SnapToStartPosition();

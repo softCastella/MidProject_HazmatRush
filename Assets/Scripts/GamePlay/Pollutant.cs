@@ -88,7 +88,6 @@ public class Pollutant : MonoBehaviour
     private bool lastJudgeMatched = false;      //직전 판정 결과
     private bool wrongPenaltyUsedThisContact = false; //현재 접촉 구간에서 오대응 패널티 1회 발동 여부
     private bool hasPlayedNeutralizationSfx = false;
-    private bool stayHandledThisFrame;
 
     public Slider pollutantSlider;      // PollutantManager가 주입
     private TMP_Text pollutantHpText;
@@ -124,7 +123,21 @@ public class Pollutant : MonoBehaviour
 
     public bool IsPlayerContactActive()
     {
-        return playerInTrigger && currentPlayer != null && !isFadingOut;
+        if (!playerInTrigger || currentPlayer == null || isFadingOut)
+            return false;
+        return IsPlayerInContact(currentPlayer);
+    }
+
+    private bool IsPlayerInContact(Player player)
+    {
+        if (player == null)
+            return false;
+
+        float padding = 0f;
+        if (type == PollutantType.TypeD && player.IsValveAnimActive)
+            padding = 0.15f;
+
+        return IsBoundsOverlappingPlayer(player, padding);
     }
     private SpriteRenderer spriteRenderer;    //스프라이트 렌더러
     private Renderer meshRenderer;    //메시 렌더러
@@ -294,17 +307,6 @@ public class Pollutant : MonoBehaviour
             UpdatePollutantHpBar();
         }
 
-        if (player != null && player.protectionSlider != null)
-        {
-            var follower = player.protectionSlider.GetComponent<WorldSpaceUIFollower>();
-            if (follower != null)
-            {
-                SpriteRenderer playerSprite = player.GetComponentInChildren<SpriteRenderer>(true);
-                follower.worldTarget = playerSprite != null ? playerSprite.transform : player.transform;
-            }
-            player.protectionSlider.gameObject.SetActive(true);
-            player.UpdateProtectionBar();
-        }
     }
 
     void OnTriggerStay2D(Collider2D other)
@@ -327,54 +329,28 @@ public class Pollutant : MonoBehaviour
 
         playerInTrigger = true;
         currentPlayer = player;
-        stayHandledThisFrame = true;
-        ApplyPlayerContactDamage(player);
     }
 
-    void LateUpdate()
+    void FixedUpdate()
     {
-        if (stayHandledThisFrame)
-        {
-            stayHandledThisFrame = false;
-            return;
-        }
-
         if (appearInProgress || isFadingOut)
             return;
 
+        if (!playerInTrigger || currentPlayer == null)
+            return;
+
         Player player = currentPlayer;
-        if (player == null)
+
+        if (!IsPlayerInContact(player))
         {
-            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-            if (playerObj != null)
-                player = playerObj.GetComponent<Player>();
+            EndPlayerContact(player);
+            return;
         }
-        if (player == null || !CanProcessPlayerContact(player))
+
+        if (!CanProcessPlayerContact(player))
             return;
 
-        if (!IsBoundsOverlappingPlayer(player, GetContactOverlapPadding(player)))
-            return;
-
-        if (!playerInTrigger)
-            BeginPlayerContact(player);
-
-        playerInTrigger = true;
-        currentPlayer = player;
         ApplyPlayerContactDamage(player);
-    }
-
-    private float GetContactOverlapPadding(Player player)
-    {
-        float pad = 4f;
-        if (player == null)
-            return pad;
-
-        pad = Mathf.Max(pad, player.moveSpeed * Time.fixedDeltaTime * 1.5f);
-        Collider2D playerCol = player.GetComponent<Collider2D>();
-        if (playerCol != null)
-            pad += playerCol.bounds.extents.x * 0.25f;
-
-        return pad;
     }
 
     private bool IsBoundsOverlappingPlayer(Player player, float padding = 0f)
@@ -397,6 +373,9 @@ public class Pollutant : MonoBehaviour
 
     private void EndPlayerContact(Player player)
     {
+        if (!playerInTrigger && currentPlayer == null)
+            return;
+
         playerInTrigger = false;
 
         if (player != null)
@@ -510,7 +489,7 @@ public class Pollutant : MonoBehaviour
             }
         }
 
-        float itemDamage = itemDps * Time.deltaTime;
+        float itemDamage = itemDps * Time.fixedDeltaTime;
         if (itemDamage > 0f)
         {
             pollutanCurHp = Mathf.Max(0, pollutanCurHp - itemDamage);
@@ -539,9 +518,11 @@ public class Pollutant : MonoBehaviour
     {
         if (!other.CompareTag("Player"))
             return;
+        if (!playerInTrigger)
+            return;
 
         Player player = other.GetComponent<Player>();
-        if (player != null && IsBoundsOverlappingPlayer(player, GetContactOverlapPadding(player)))
+        if (player != null && IsBoundsOverlappingPlayer(player, 0f))
             return;
 
         playerInTrigger = false;
@@ -941,9 +922,6 @@ public class Pollutant : MonoBehaviour
     {
         if (pollutantSlider != null)
             pollutantSlider.gameObject.SetActive(false);
-
-        if (player != null && player.protectionSlider != null)
-            player.protectionSlider.gameObject.SetActive(false);
     }
 
     void UpdatePollutantHpBar()

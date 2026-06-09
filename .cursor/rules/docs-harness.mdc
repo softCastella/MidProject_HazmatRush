@@ -4,7 +4,7 @@ globs: Assets/Docs/**
 alwaysApply: false
 ---
 
-# Docs 하네스 (Bug · 회의록)
+# Docs 하네스 (Bug · 회의록 · QA)
 
 상세: `Assets/Docs/문서-이름-규칙.md`
 
@@ -13,10 +13,12 @@ alwaysApply: false
 | 폴더 | 접미사 | 쓸 내용 | 쓰지 말 것 |
 |------|--------|---------|------------|
 | `Bug/` | `-fixes.md` | 증상·원인·시도·해결·파일·Play 체크리스트 | 아키텍처·PR 로드맵·정책 |
-| `회의록/` | `-합의.md` | 배경·합의 규칙·구현 상태·금지·QA·변경 이력 | 증상만·diff 나열 |
+| `회의록/` | `-합의.md` | 배경·합의 규칙·구현 상태·금지·변경 이력 | 증상만·diff 나열 |
+| `QA/` | `.html` | `qa-checklist`, `qa-YYYY-MM-DD`, `qa-tc-YYYY-MM-DD` | 합의·Bug 본문 (링크만) |
 
 - **회의록만 요청** → `회의록/`만 작성. **`Bug/` 자동 생성 금지.**
 - Bug는 **버그·수정 기록 요청**할 때만 `Bug/`.
+- **QA HTML 신규** → `Docs/QA/`만 (`qa-YYYY-MM-DD.html`, `qa-tc-YYYY-MM-DD.html`).
 - **`Bug/`에 회의록 금지** · **`회의록/`에 증상 diff 금지** · **QA에 합의 본문 금지** (링크만).
 
 ## 당일 취합
