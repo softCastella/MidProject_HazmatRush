@@ -53,6 +53,22 @@ public class RecoveryItemInventoryUI : MonoBehaviour
         }
     }
 
+    public void SetAllDim(bool dimActive)
+    {
+        if (slotRoots == null)
+            return;
+
+        for (int i = 0; i < slotRoots.Length; i++)
+        {
+            if (slotRoots[i] == null)
+                continue;
+
+            Transform dimMark = FindDimChild(slotRoots[i]);
+            if (dimMark != null)
+                dimMark.gameObject.SetActive(dimActive);
+        }
+    }
+
     public void Refresh(RecoveryItemInventory inventory)
     {
         if (inventory == null || slotRoots == null)

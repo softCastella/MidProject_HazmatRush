@@ -34,6 +34,8 @@ public class HelpGuideToggle : MonoBehaviour
             return false;
         if (GameManager.Instance.IsPaused)
             return false;
+        if (GameManager.Instance.IsPenalty)
+            return false;
 
         PollutantManager pollutantManager = GameManager.Instance.pollutantManager;
         if (pollutantManager == null)

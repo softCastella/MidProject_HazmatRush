@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
         Die = 2
     }
 
-    public float moveSpeed = 5f; // 플레이어 이동 속도
+    public float moveSpeed = 400f; // 플레이어 이동 속도
     public float returnMoveSpeed = 900f; // 시작 지점 복귀 속도 (씬에서 10000 등 과하게 올리지 않기)
     public float returnStopDistance = 0.2f; // 이 거리 안이면 복귀 완료
     public float leftLimit = -785f; // 왼쪽 이동 제한
@@ -41,6 +41,7 @@ public class Player : MonoBehaviour
     private float startLeft; // 기본 왼쪽 이동 범위 저장
     private float startRight; // 기본 오른쪽 이동 범위 저장
     private Vector3 startPosition; // 게임 시작 시 플레이어 위치
+    public float StartGroundY => startPosition.y;
     private PlayerState currentState = PlayerState.Idle;
     private bool isReturning = false;
     private bool dieAnimPlayed = false;

@@ -1,0 +1,206 @@
+{
+  "version": 1,
+  "description": "MidProject 전체 기능 정적 분석 규칙. 실행: MidProject > Static Analysis > Run All",
+  "rules": [
+    {
+      "id": "F01",
+      "feature": "씬 흐름 (Build Settings)",
+      "intent": "Splash → Title → Intro → Loading → Game 순서 유지",
+      "kind": "build_scenes",
+      "scenes": [
+        "Assets/Scenes/SplashScene.unity",
+        "Assets/Scenes/TitleScene.unity",
+        "Assets/Scenes/IntroStoryScene.unity",
+        "Assets/Scenes/LoadingScene.unity",
+        "Assets/Scenes/GameScene.unity"
+      ]
+    },
+    {
+      "id": "F02",
+      "feature": "스테이지 데이터",
+      "intent": "stage_data.json 존재·mapPollutants 필드",
+      "kind": "file_contains",
+      "path": "Assets/Data/stage_data.json",
+      "must_contain": ["mapPollutants"]
+    },
+    {
+      "id": "F03",
+      "feature": "회복 아이템 데이터",
+      "intent": "recovery_items.json 존재",
+      "kind": "file_exists",
+      "path": "Assets/Data/recovery_items.json"
+    },
+    {
+      "id": "F04",
+      "feature": "플레이어 이동",
+      "intent": "물리 동기 — FixedUpdate에서 MovePosition",
+      "kind": "file_contains",
+      "path": "Assets/Scripts/GamePlay/Player.cs",
+      "must_contain": ["void FixedUpdate", "rb.MovePosition", "moveInput"]
+    },
+    {
+      "id": "F05",
+      "feature": "1차 이동 구간",
+      "intent": "기본 left/right limit 및 mapAdvanceRightX",
+      "kind": "file_contains",
+      "path": "Assets/Scripts/GamePlay/Player.cs",
+      "must_contain": ["leftLimit = -785f", "rightLimit = -403f", "mapAdvanceRightX = 769f"]
+    },
+    {
+      "id": "F06",
+      "feature": "1차 구간 해제",
+      "intent": "첫 오염원 후 TryUnlockMapSegmentMovement",
+      "kind": "file_contains",
+      "path": "Assets/Scripts/GamePlay/PollutantManager.cs",
+      "must_contain": ["TryUnlockSegmentMovement", "UnlockMapSegmentMovement"]
+    },
+    {
+      "id": "F07",
+      "feature": "오염원 접촉 (A~C/D 동일)",
+      "intent": "OnTriggerStay에서만 ApplyPlayerContactDamage, IsEdgeContact 미사용",
+      "kind": "file_contains",
+      "path": "Assets/Scripts/GamePlay/Pollutant.cs",
+      "must_contain": ["void OnTriggerStay2D", "ApplyPlayerContactDamage"],
+      "pattern": "IsEdgeContact(",
+      "max_count": 1
+    },
+    {
+      "id": "F08",
+      "feature": "접촉 보정 (고속 이동)",
+      "intent": "LateUpdate bounds 겹침 fallback",
+      "kind": "file_contains",
+      "path": "Assets/Scripts/GamePlay/Pollutant.cs",
+      "must_contain": ["void LateUpdate", "GetContactOverlapPadding", "IsBoundsOverlappingPlayer"]
+    },
+    {
+      "id": "F09",
+      "feature": "금지 패턴 — BlockPollutant",
+      "intent": "이동 한계 조임 재도입 금지",
+      "kind": "forbidden_in_scripts",
+      "pattern": "BlockPollutant",
+      "search_root": "Assets/Scripts"
+    },
+    {
+      "id": "F10",
+      "feature": "아이템 선택 유지",
+      "intent": "오염원 HP 0 시 ResetToDefault 호출 금지 (Pollutant 경로)",
+      "kind": "file_contains",
+      "path": "Assets/Scripts/GamePlay/Pollutant.cs",
+      "must_not_contain": ["ResetToDefault"]
+    },
+    {
+      "id": "F11",
+      "feature": "클리어·사망 연출",
+      "intent": "clearAnimDelay / dieAnimDelay 기본 2초",
+      "kind": "file_contains",
+      "path": "Assets/Scripts/Core/GameManager.cs",
+      "must_contain": ["clearAnimDelay = 2f", "dieAnimDelay = 2f", "player.FreezeClearAnim()"]
+    },
+    {
+      "id": "F12",
+      "feature": "경고 구간 입력 차단",
+      "intent": "IsWarningFreeze 연동",
+      "kind": "file_contains",
+      "path": "Assets/Scripts/Core/ItemSelectManager.cs",
+      "must_contain": ["IsWarningFreeze"]
+    },
+    {
+      "id": "F13",
+      "feature": "맵 구간 전환",
+      "intent": "pendingMapAdvance · mapEndX 도달 후 전환",
+      "kind": "file_contains",
+      "path": "Assets/Scripts/GamePlay/PollutantManager.cs",
+      "must_contain": ["pendingMapAdvance", "mapEndX", "MapAdvanceRoutine"]
+    },
+    {
+      "id": "F14",
+      "feature": "회복 인벤",
+      "intent": "RecoveryItemInventory + UI 스크립트 존재",
+      "kind": "files_exist",
+      "paths": [
+        "Assets/Scripts/Core/RecoveryItemInventory.cs",
+        "Assets/Scripts/UI/RecoveryItemInventoryUI.cs",
+        "Assets/Scripts/GamePlay/RecoveryItem.cs"
+      ]
+    },
+    {
+      "id": "F15",
+      "feature": "타입 규칙",
+      "intent": "전역 ItemType enum 금지 — Item.ItemType 사용",
+      "kind": "forbidden_in_scripts",
+      "pattern": "enum ItemType",
+      "min_indent": 4,
+      "search_root": "Assets/Scripts"
+    },
+    {
+      "id": "F16",
+      "feature": "접촉 해제 HP 초기화",
+      "intent": "EndPlayerContact에서 pollutanMaxHp 복구 (가스 포함)",
+      "kind": "file_contains",
+      "path": "Assets/Scripts/GamePlay/Pollutant.cs",
+      "must_contain": ["void EndPlayerContact", "pollutanCurHp = pollutanMaxHp"]
+    },
+    {
+      "id": "F17",
+      "feature": "중화 VFX",
+      "intent": "RefreshNeutralizationVfx — 정답 A~C 판정",
+      "kind": "file_contains",
+      "path": "Assets/Scripts/GamePlay/Player.cs",
+      "must_contain": ["RefreshNeutralizationVfx", "IsSelectedItemRecommendedFor"]
+    },
+    {
+      "id": "F18",
+      "feature": "오염원 스폰 플랜",
+      "intent": "PollutantSpawnPlan · 프리로드 큐",
+      "kind": "file_contains",
+      "path": "Assets/Scripts/GamePlay/PollutantManager.cs",
+      "must_contain": ["PollutantSpawnPlan", "BuildPreloadedPollutants", "TryRevealPreloaded"]
+    },
+    {
+      "id": "F19",
+      "feature": "GameScene Inspector (씬 열림 시)",
+      "intent": "핵심 Manager 참조 null 아님",
+      "kind": "scene_refs",
+      "scene": "Assets/Scenes/GameScene.unity",
+      "checks": [
+        { "type": "GameManager", "fields": ["player", "pollutantManager", "timer", "stageManager"] },
+        { "type": "PollutantManager", "fields": ["player", "spawner", "warningTxt", "guideTxt", "stageManager"] },
+        { "type": "Player", "fields": [] }
+      ]
+    },
+    {
+      "id": "F20",
+      "feature": "GameScene Player 속도 (씬 열림 시)",
+      "intent": "moveSpeed 400 · scrollSpeed 0.2 (오프셋 스크롤 · 실플레이 확정)",
+      "kind": "scene_values",
+      "scene": "Assets/Scenes/GameScene.unity",
+      "values": [
+        { "type": "Player", "field": "moveSpeed", "expected": 400 },
+        { "type": "Background", "field": "scrollSpeed", "expected": 0.2 }
+      ]
+    },
+    {
+      "id": "F21",
+      "feature": "핵심 스크립트 존재",
+      "intent": "README 핵심 파일 맵",
+      "kind": "files_exist",
+      "paths": [
+        "Assets/Scripts/GamePlay/Pollutant.cs",
+        "Assets/Scripts/GamePlay/Player.cs",
+        "Assets/Scripts/Core/GameManager.cs",
+        "Assets/Scripts/Core/ItemSelectManager.cs",
+        "Assets/Scripts/Core/PollutantSpawnPlan.cs",
+        "Assets/Scripts/UI/Background.cs",
+        "Assets/Scripts/UI/GuideTxt.cs"
+      ]
+    },
+    {
+      "id": "F22",
+      "feature": "회복 맵 드랍·클리어 수집",
+      "intent": "맵 회복 아이템 매니저·자동 획득",
+      "kind": "file_contains",
+      "path": "Assets/Scripts/GamePlay/RecoveryItemManager.cs",
+      "must_contain": ["AutoCollectMapRecoveryItems", "landedMapItemCount"]
+    }
+  ]
+}

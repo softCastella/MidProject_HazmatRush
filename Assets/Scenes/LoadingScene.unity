@@ -1121,7 +1121,7 @@ MonoBehaviour:
   spinnerAnimator: {fileID: 1596668325}
   spinnerAnimSpeed: 1
   progressBar: {fileID: 0}
-  minShowSeconds: 10
+  minShowSeconds: 8
   warmupPrefabs:
   - {fileID: 8137116525753167442, guid: cc78e2dd8c1b20d4497c891cde40183c, type: 3}
   - {fileID: 8137116525753167442, guid: 4386518fa78688549a9a980e25f70c60, type: 3}

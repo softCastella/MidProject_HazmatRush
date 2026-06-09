@@ -34,9 +34,6 @@ public class ClearPanelUI : MonoBehaviour
         if (breakdownText != null && result.breakdownLines != null)
             breakdownText.text = string.Join("\n", result.breakdownLines);
 
-        if (!isActiveAndEnabled)
-            return;
-
         EnsureStarsReady();
         DisableDecorRaycasts();
         SetupResultButtons();
@@ -127,26 +124,16 @@ public class ClearPanelUI : MonoBehaviour
 
     private IEnumerator RevealStarsSequential(int starCount)
     {
-        bool hasFrames = starFillFrames != null && starFillFrames.Length >= 2;
         int fillCount = Mathf.Clamp(starCount, 0, starAnimators.Length);
 
-        // 모든 별 초기화 (애니메이터 OFF, 스프라이트는 있을 때만)
         for (int i = 0; i < starAnimators.Length; i++)
-        {
-            if (starAnimators[i] != null)
-                starAnimators[i].enabled = false;
-            if (hasFrames && starImages != null && i < starImages.Length && starImages[i] != null)
-                starImages[i].sprite = starFillFrames[0];
-        }
+            ResetStarToEmpty(i);
 
-        // 왼쪽 → 오른쪽 순차 재생
         for (int i = 0; i < fillCount; i++)
         {
-            if (hasFrames && starImages != null && i < starImages.Length && starImages[i] != null)
-                starImages[i].sprite = starFillFrames[starFillFrames.Length - 1];
-
             if (starAnimators[i] != null)
             {
+                starAnimators[i].gameObject.SetActive(true);
                 starAnimators[i].enabled = true;
                 starAnimators[i].Play("StarFilled", 0, 0f);
             }
@@ -154,9 +141,11 @@ public class ClearPanelUI : MonoBehaviour
             yield return new WaitForSeconds(StarRevealInterval);
         }
 
-        Debug.Log($"[ClearPanelUI] 별 표시 완료 — 채움: {fillCount}/{starAnimators.Length}");
+        for (int i = fillCount; i < starAnimators.Length; i++)
+            ResetStarToEmpty(i);
 
-        // 3스타 달성 시: 잠시 후 채워진 이미지 번쩍번쩍
+        Debug.Log($"[ClearPanelUI] 별 표시 완료 — 채움: {fillCount}/{starAnimators.Length} (starCount={starCount})");
+
         if (fillCount >= starAnimators.Length)
         {
             yield return new WaitForSeconds(0.2f);
@@ -243,7 +232,7 @@ public class ClearPanelUI : MonoBehaviour
 
     private void EnsureStarFillFrames()
     {
-        if (starFillFrames != null && starFillFrames.Length >= 2)
+        if (starFillFrames != null && starFillFrames.Length > 0)
             return;
 
         if (starImages == null || starImages.Length == 0 || starImages[0] == null)
@@ -254,6 +243,27 @@ public class ClearPanelUI : MonoBehaviour
             return;
 
         starFillFrames = new Sprite[] { empty };
+    }
+
+    private void ResetStarToEmpty(int index)
+    {
+        if (starAnimators == null || index < 0 || index >= starAnimators.Length)
+            return;
+
+        Animator anim = starAnimators[index];
+        if (anim != null)
+        {
+            anim.gameObject.SetActive(true);
+            anim.enabled = true;
+            anim.Play("StarFilled", 0, 0f);
+            anim.Update(0f);
+            anim.enabled = false;
+            return;
+        }
+
+        if (starFillFrames != null && starFillFrames.Length > 0
+            && starImages != null && index < starImages.Length && starImages[index] != null)
+            starImages[index].sprite = starFillFrames[0];
     }
 
     private void ApplyStarFlipX()

@@ -22,10 +22,21 @@ public class RecoveryItemManager : MonoBehaviour
     public float dropDuration = 0.6f;
 
     [Header("테스트 (빌드 전 OFF)")]
-    [Tooltip("체크 시 오염원 정화 확률 무시하고 무조건 드랍")]
+    [Tooltip("체크 시 오염원 정화 확률 무시·무조건 드랍, 방호복/시간 교대 (첫 드랍=시간)")]
     public bool testAlwaysDrop = false;
 
     private int landedMapItemCount = 0;
+    private bool testNextDropIsTime = true;
+
+    void Awake()
+    {
+        if (protectionItemPrefab == null)
+            Debug.LogError("[RecoveryItemManager] protectionItemPrefab 미연결");
+        if (timeItemPrefab == null)
+            Debug.LogError("[RecoveryItemManager] timeItemPrefab 미연결 — 시간 연장기 드랍 불가");
+        if (protectionItemPrefab != null && protectionItemPrefab == timeItemPrefab)
+            Debug.LogError("[RecoveryItemManager] protection/time 프리팹이 동일 참조입니다");
+    }
 
     public bool HasLandedRecoveryItemsOnMap()
     {
@@ -74,11 +85,16 @@ public class RecoveryItemManager : MonoBehaviour
         }
 
         landedMapItemCount = 0;
+        testNextDropIsTime = true;
     }
 
-    public void ResetForStage()
+    public void ResetForStage(bool clearInventory)
     {
         ClearMapRecoveryItems();
+        testNextDropIsTime = true;
+
+        if (!clearInventory)
+            return;
 
         RecoveryItemInventory inventory = FindAnyObjectByType<RecoveryItemInventory>();
         if (inventory != null)
@@ -92,14 +108,23 @@ public class RecoveryItemManager : MonoBehaviour
         if (!testAlwaysDrop && Random.Range(0f, 100f) >= dropChance)
             return;
 
-        RecoveryItem.ItemType itemType = Random.Range(0f, 100f) < dropProtectionChance
-            ? RecoveryItem.ItemType.Protection
-            : RecoveryItem.ItemType.Time;
+        RecoveryItem.ItemType itemType;
+        if (testAlwaysDrop)
+        {
+            itemType = testNextDropIsTime ? RecoveryItem.ItemType.Time : RecoveryItem.ItemType.Protection;
+            testNextDropIsTime = !testNextDropIsTime;
+        }
+        else
+        {
+            itemType = Random.value < dropProtectionChance / 100f
+                ? RecoveryItem.ItemType.Protection
+                : RecoveryItem.ItemType.Time;
+        }
 
         GameObject prefab = GetPrefab(itemType);
         if (prefab == null)
         {
-            Debug.LogWarning("[RecoveryItemManager] 드랍 프리팹이 비어 있습니다.");
+            Debug.LogWarning($"[RecoveryItemManager] 드랍 프리팹 없음 — {itemType}");
             return;
         }
 
@@ -107,20 +132,25 @@ public class RecoveryItemManager : MonoBehaviour
         float landX = dropLandOffsetX * landSide;
         string landDir = landSide < 0f ? "좌" : "우";
 
-        Vector3 spawnPos = position;
-        spawnPos.y += dropYOffset;
+        float landY = position.y + dropYOffset;
+        Player player = FindAnyObjectByType<Player>();
+        if (player != null)
+            landY = player.StartGroundY + dropYOffset;
 
-        GameObject obj = Instantiate(prefab, spawnPos, Quaternion.identity);
+        Vector3 dropStart = new Vector3(position.x, landY, position.z);
+        Vector3 landPos = new Vector3(position.x + landX, landY, position.z);
+
+        GameObject obj = Instantiate(prefab, dropStart, Quaternion.identity);
         RecoveryItem item = obj.GetComponent<RecoveryItem>();
         if (item != null)
         {
             item.type = itemType;
             item.itemId = itemType == RecoveryItem.ItemType.Time ? 2 : 1;
-            item.StartDropArc(spawnPos, dropJumpHeight, landX, dropDuration);
+            item.StartDropArc(dropStart, landPos, dropJumpHeight, dropDuration);
         }
 
         string itemName = itemType == RecoveryItem.ItemType.Time ? "시간 연장기" : "방호복 회복제";
-        Debug.Log($"[RecoveryItemManager] 드랍: {itemName} (오염원 {pollutantType}, 확률 {dropChance:F0}%, 착지 {landDir})");
+        Debug.Log($"[RecoveryItemManager] 드랍: {itemName} id={(itemType == RecoveryItem.ItemType.Time ? 2 : 1)} test={testAlwaysDrop} (오염원 {pollutantType}, 1단계 {dropChance:F0}%, 착지 {landDir})");
     }
 
     private float GetDropChance(Pollutant.PollutantType pollutantType)
