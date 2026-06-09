@@ -25,7 +25,46 @@ public class RecoveryItemManager : MonoBehaviour
     [Tooltip("체크 시 오염원 정화 확률 무시하고 무조건 드랍")]
     public bool testAlwaysDrop = false;
 
-    public void ResetForStage()
+    private int landedMapItemCount = 0;
+
+    public bool HasLandedRecoveryItemsOnMap()
+    {
+        return landedMapItemCount > 0;
+    }
+
+    public void OnMapRecoveryItemLanded()
+    {
+        landedMapItemCount++;
+    }
+
+    public void OnMapRecoveryItemRemoved()
+    {
+        landedMapItemCount = Mathf.Max(0, landedMapItemCount - 1);
+    }
+
+    // 클리어 직전 맵 회복 아이템을 인벤에 자동 추가 (인벤 가득 차면 남은 것은 제외)
+    public int AutoCollectMapRecoveryItems()
+    {
+        RecoveryItem[] items = FindObjectsByType<RecoveryItem>(FindObjectsSortMode.None);
+        int collected = 0;
+
+        for (int i = 0; i < items.Length; i++)
+        {
+            if (items[i] == null)
+                continue;
+
+            if (items[i].ForceCollectToInventory())
+                collected++;
+        }
+
+        landedMapItemCount = 0;
+        if (collected > 0)
+            Debug.Log($"[RecoveryItemManager] 클리어 전 자동 획득 {collected}개");
+
+        return collected;
+    }
+
+    public void ClearMapRecoveryItems()
     {
         RecoveryItem[] items = FindObjectsByType<RecoveryItem>(FindObjectsSortMode.None);
         for (int i = 0; i < items.Length; i++)
@@ -33,6 +72,13 @@ public class RecoveryItemManager : MonoBehaviour
             if (items[i] != null)
                 Destroy(items[i].gameObject);
         }
+
+        landedMapItemCount = 0;
+    }
+
+    public void ResetForStage()
+    {
+        ClearMapRecoveryItems();
 
         RecoveryItemInventory inventory = FindAnyObjectByType<RecoveryItemInventory>();
         if (inventory != null)

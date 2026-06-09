@@ -376,6 +376,14 @@ public class GameManager : MonoBehaviour
     {
         gameEnded = true;
         FreezePlayOnResult();
+
+        RecoveryItemManager recoveryManager = FindAnyObjectByType<RecoveryItemManager>();
+        if (recoveryManager != null)
+        {
+            recoveryManager.AutoCollectMapRecoveryItems();
+            recoveryManager.ClearMapRecoveryItems();
+        }
+
         if (player != null)
             player.PlayClearAnim();
         StartCoroutine(ShowClearPanelAfterDelay(perfectStars));
@@ -385,6 +393,9 @@ public class GameManager : MonoBehaviour
     {
         if (clearAnimDelay > 0f)
             yield return new WaitForSeconds(clearAnimDelay);
+
+        if (player != null)
+            player.FreezeClearAnim();
 
         if (clearSet != null)
             clearSet.SetActive(true);

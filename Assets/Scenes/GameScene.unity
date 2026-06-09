@@ -13027,6 +13027,7 @@ MonoBehaviour:
   - {fileID: 8137116525753167442, guid: dc465f26a792101469d95ba8f5cc2ff2, type: 3}
   spawner: {fileID: 1050076633}
   scroll: {fileID: 2046708319}
+  recoveryItemManager: {fileID: 0}
   popupUI: {fileID: 642128215}
   pollutantSlider: {fileID: 2124237249}
   rangeBuffer: 0.5
@@ -14884,7 +14885,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 248315110763612334, guid: 0a13ca1217d1bdf47a07ddc23c2f7a0e, type: 3}
       propertyPath: moveSpeed
-      value: 400
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 248315110763612334, guid: 0a13ca1217d1bdf47a07ddc23c2f7a0e, type: 3}
       propertyPath: returnMoveSpeed
@@ -14991,6 +14992,10 @@ PrefabInstance:
     - target: {fileID: 106890841283409260, guid: 1dd9a8e548494d648b5d5b1f5defb0f9, type: 3}
       propertyPath: m_Name
       value: Background
+      objectReference: {fileID: 0}
+    - target: {fileID: 4379523216314017800, guid: 1dd9a8e548494d648b5d5b1f5defb0f9, type: 3}
+      propertyPath: scrollSpeed
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 4379523216314017800, guid: 1dd9a8e548494d648b5d5b1f5defb0f9, type: 3}
       propertyPath: backgroundTextures.Array.size

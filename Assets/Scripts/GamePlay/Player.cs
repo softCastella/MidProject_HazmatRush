@@ -12,7 +12,7 @@ public class Player : MonoBehaviour
         Die = 2
     }
 
-    public float moveSpeed = 400f; // 플레이어 이동 속도
+    public float moveSpeed = 5f; // 플레이어 이동 속도
     public float returnMoveSpeed = 900f; // 시작 지점 복귀 속도 (씬에서 10000 등 과하게 올리지 않기)
     public float returnStopDistance = 0.2f; // 이 거리 안이면 복귀 완료
     public float leftLimit = -785f; // 왼쪽 이동 제한
@@ -57,6 +57,7 @@ public class Player : MonoBehaviour
     private int pollutantTouchCount;
     private bool valveAnimActive = false;
     private bool clearAnimActive = false;
+    private float moveInput;
 
     public bool IsDead => currentState == PlayerState.Die;
     public bool IsValveAnimActive => valveAnimActive;
@@ -130,6 +131,7 @@ public class Player : MonoBehaviour
     {
         if (!canMove || (GameManager.Instance != null && (GameManager.Instance.IsPaused || GameManager.Instance.GameEnded || GameManager.Instance.IsPenalty)))
         {
+            moveInput = 0f;
             if (!isReturning)
             {
                 isMoving = false;
@@ -150,13 +152,7 @@ public class Player : MonoBehaviour
                 h = 1f;
         }
 
-        float newX = transform.position.x + h * moveSpeed * Time.deltaTime;
-        newX = Mathf.Clamp(newX, Mathf.Min(leftLimit, rightLimit), Mathf.Max(leftLimit, rightLimit));
-
-        if (rb != null)
-            rb.MovePosition(new Vector2(newX, transform.position.y));
-        else
-            transform.position = new Vector3(newX, transform.position.y, transform.position.z);
+        moveInput = h;
 
         if (h > 0f)
             transform.localScale = new Vector3(1f, 1f, 1f);
@@ -166,6 +162,25 @@ public class Player : MonoBehaviour
         isMoving = h != 0f;
         hasInput = isMoving;
         SetState(isMoving ? PlayerState.Move : PlayerState.Idle);
+    }
+
+    void FixedUpdate()
+    {
+        if (!canMove || isReturning)
+            return;
+        if (GameManager.Instance != null && (GameManager.Instance.IsPaused || GameManager.Instance.GameEnded || GameManager.Instance.IsPenalty))
+            return;
+        if (moveInput == 0f)
+            return;
+
+        float step = moveInput * moveSpeed * Time.fixedDeltaTime;
+        float newX = transform.position.x + step;
+        newX = Mathf.Clamp(newX, Mathf.Min(leftLimit, rightLimit), Mathf.Max(leftLimit, rightLimit));
+
+        if (rb != null)
+            rb.MovePosition(new Vector2(newX, transform.position.y));
+        else
+            transform.position = new Vector3(newX, transform.position.y, transform.position.z);
     }
 
     public void GrowRange(float targetX, float buffer = 0.5f)
@@ -456,8 +471,18 @@ public class Player : MonoBehaviour
         anim.ResetTrigger("Valve");
         anim.ResetTrigger("Die");
         EnsureSpriteVisible();
+        anim.speed = 1f;
         anim.SetTrigger("Clear");
         anim.Play("Player_Clear", 0, 0f);
+    }
+
+    // clearAnimDelay(기본 2초) 경과 후 현재 프레임에서 클리어 애니 정지
+    public void FreezeClearAnim()
+    {
+        if (!clearAnimActive || anim == null)
+            return;
+
+        anim.speed = 0f;
     }
 
     // 가스(D) + 가스밸브 접촉 시 Player_Valve (Animator 트리거 "Valve")
@@ -739,6 +764,7 @@ public class Player : MonoBehaviour
         currentState = PlayerState.Idle; // Die 가드 우회: 직접 초기화
         if (anim != null)
         {
+            anim.speed = 1f;
             anim.ResetTrigger("Die");
             anim.ResetTrigger("Valve");
             anim.ResetTrigger("Clear");

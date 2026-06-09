@@ -52,6 +52,12 @@ public class RecoveryItemInventory : MonoBehaviour
         if (GameManager.Instance != null && (GameManager.Instance.IsPaused || GameManager.Instance.GameEnded || GameManager.Instance.IsPenalty))
             return;
 
+        PollutantManager pollutantManager = GameManager.Instance != null ? GameManager.Instance.pollutantManager : null;
+        if (pollutantManager == null)
+            pollutantManager = FindAnyObjectByType<PollutantManager>();
+        if (pollutantManager != null && pollutantManager.IsWarningFreeze)
+            return;
+
         if (Input.GetKeyDown(KeyCode.C))
             SelectPrev();
         else if (Input.GetKeyDown(KeyCode.V))

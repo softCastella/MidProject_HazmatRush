@@ -87,6 +87,7 @@ public class Pollutant : MonoBehaviour
     private bool hasLoggedContactJudge = false; //현재 접촉 구간에서 판정 로그 출력 여부
     private bool lastJudgeMatched = false;      //직전 판정 결과
     private bool hasPlayedNeutralizationSfx = false;
+    private bool stayHandledThisFrame;
 
     public Slider pollutantSlider;      // PollutantManager가 주입
     private TMP_Text pollutantHpText;
@@ -260,9 +261,25 @@ public class Pollutant : MonoBehaviour
         if (!CanProcessPlayerContact(player))
             return;
 
+        BeginPlayerContact(player);
+
+        if (type == PollutantType.TypeD)
+            Debug.Log($"[Pollutant] 가스(D) 콜라이더 접촉: {name}");
+    }
+
+    private void BeginPlayerContact(Player player)
+    {
+        if (player == null)
+            return;
+
         playerInTrigger = true;
         currentPlayer = player;
+        ShowContactBars(player);
+        player.AddPollutantTouch();
+    }
 
+    private void ShowContactBars(Player player)
+    {
         if (pollutantSlider != null)
         {
             var follower = pollutantSlider.GetComponent<WorldSpaceUIFollower>();
@@ -274,7 +291,7 @@ public class Pollutant : MonoBehaviour
             UpdatePollutantHpBar();
         }
 
-        if (player.protectionSlider != null)
+        if (player != null && player.protectionSlider != null)
         {
             var follower = player.protectionSlider.GetComponent<WorldSpaceUIFollower>();
             if (follower != null)
@@ -285,12 +302,6 @@ public class Pollutant : MonoBehaviour
             player.protectionSlider.gameObject.SetActive(true);
             player.UpdateProtectionBar();
         }
-
-        player.AddPollutantTouch();
-        // 플래시는 정답 아이템 접촉 시(HP 감소 시)에만 — ApplyPlayerContactDamage에서 시작
-
-        if (type == PollutantType.TypeD)
-            Debug.Log($"[Pollutant] 가스(D) 콜라이더 접촉: {name}");
     }
 
     void OnTriggerStay2D(Collider2D other)
@@ -313,7 +324,54 @@ public class Pollutant : MonoBehaviour
 
         playerInTrigger = true;
         currentPlayer = player;
+        stayHandledThisFrame = true;
         ApplyPlayerContactDamage(player);
+    }
+
+    void LateUpdate()
+    {
+        if (stayHandledThisFrame)
+        {
+            stayHandledThisFrame = false;
+            return;
+        }
+
+        if (appearInProgress || isFadingOut)
+            return;
+
+        Player player = currentPlayer;
+        if (player == null)
+        {
+            GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+            if (playerObj != null)
+                player = playerObj.GetComponent<Player>();
+        }
+        if (player == null || !CanProcessPlayerContact(player))
+            return;
+
+        if (!IsBoundsOverlappingPlayer(player, GetContactOverlapPadding(player)))
+            return;
+
+        if (!playerInTrigger)
+            BeginPlayerContact(player);
+
+        playerInTrigger = true;
+        currentPlayer = player;
+        ApplyPlayerContactDamage(player);
+    }
+
+    private float GetContactOverlapPadding(Player player)
+    {
+        float pad = 4f;
+        if (player == null)
+            return pad;
+
+        pad = Mathf.Max(pad, player.moveSpeed * Time.fixedDeltaTime * 1.5f);
+        Collider2D playerCol = player.GetComponent<Collider2D>();
+        if (playerCol != null)
+            pad += playerCol.bounds.extents.x * 0.25f;
+
+        return pad;
     }
 
     private bool IsBoundsOverlappingPlayer(Player player, float padding = 0f)
@@ -478,7 +536,7 @@ public class Pollutant : MonoBehaviour
             return;
 
         Player player = other.GetComponent<Player>();
-        if (player != null && IsBoundsOverlappingPlayer(player))
+        if (player != null && IsBoundsOverlappingPlayer(player, GetContactOverlapPadding(player)))
             return;
 
         playerInTrigger = false;
