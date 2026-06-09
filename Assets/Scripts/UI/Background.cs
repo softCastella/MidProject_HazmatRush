@@ -5,7 +5,7 @@ public class Background : MonoBehaviour
 {
     [Header("Scroll Settings")]
     [Range(0f, 5f)]
-    public float scrollSpeed = 0.2f; // 배경 스크롤 속도, 값이 크면 더 빠르게 움직입니다.
+    public float scrollSpeed = 0.2f; // UV 오프셋 스크롤 속도(0~1/초). 패럴랙스 아님 — SetTextureOffset로 단일 배경 이동.
     public bool scrollRight = true; // true면 오른쪽으로, false면 왼쪽으로 스크롤합니다.
 
     // 플레이어 입력이 있을 때만 배경이 돌아가도록 설정합니다.

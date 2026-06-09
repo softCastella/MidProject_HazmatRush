@@ -71,7 +71,7 @@ public class PollutantManager : MonoBehaviour
         }
     }
 
-    public void ResetForStage()
+    public void ResetForStage(bool clearRecoveryInventory)
     {
         StopReturnFlow();
         moveTime = 0f;
@@ -99,12 +99,11 @@ public class PollutantManager : MonoBehaviour
             guideTxt.HideGuide();
         if (scroll != null)
             scroll.ResumeScroll();
-        if (itemSelectManager != null)
-            itemSelectManager.ResetToDefault();
+        ResetItemSelectToScanner();
 
         RecoveryItemManager recoveryManager = FindAnyObjectByType<RecoveryItemManager>();
         if (recoveryManager != null)
-            recoveryManager.ResetForStage();
+            recoveryManager.ResetForStage(clearRecoveryInventory);
     }
 
     void Awake()
@@ -161,10 +160,8 @@ public class PollutantManager : MonoBehaviour
         if (player == null)
             return;
 
-        // 시작 지점으로 복귀 중이면 다른 로직을 멈춥니다.
-        if (returningToStart)
-            return;
-
+        if (!returningToStart)
+        {
         if (player.isMoving)
             moveTime += Time.deltaTime;
         else if (!queueSpawnReady)
@@ -202,14 +199,12 @@ public class PollutantManager : MonoBehaviour
             StartCoroutine(WarningAndSpawn());
         }
 
-        if (pendingMapAdvance && !mapTransitioning && player != null)
+        if (pendingMapAdvance && !mapTransitioning && IsPlayerAtMapEndReach())
         {
-            float reachX = mapEndX - Mathf.Max(0.1f, mapEndReachDistance);
-            if (player.transform.position.x >= reachX)
-            {
-                pendingMapAdvance = false;
-                StartCoroutine(MapAdvanceRoutine());
-            }
+            pendingMapAdvance = false;
+            StartCoroutine(MapAdvanceRoutine());
+        }
+
         }
 
         UpdateBackgroundScroll();
@@ -228,6 +223,12 @@ public class PollutantManager : MonoBehaviour
 
     private bool ShouldPauseBackgroundScroll()
     {
+        if (mapTransitioning || returningToStart)
+            return true;
+
+        if (pendingMapAdvance && IsPlayerAtMapEndReach())
+            return true;
+
         if (Pollutant.HasAnyActive() || awaitingSpawn)
             return true;
 
@@ -237,6 +238,15 @@ public class PollutantManager : MonoBehaviour
             return true;
 
         return false;
+    }
+
+    private bool IsPlayerAtMapEndReach()
+    {
+        if (player == null)
+            return false;
+
+        float reachX = mapEndX - Mathf.Max(0.1f, mapEndReachDistance);
+        return player.transform.position.x >= reachX;
     }
 
     // 활성 오염원 + 이 구간에 아직 등장할 예정이 있으면 이탈 불가 (페이드아웃 중인 인스턴스는 제외)
@@ -262,6 +272,7 @@ public class PollutantManager : MonoBehaviour
             return;
 
         segmentAfterClearHandled = true;
+        ResetItemSelectToScanner();
 
         int cleared = stageManager != null ? stageManager.clearedPollutants : 0;
         int total = stageManager != null ? stageManager.totalPollutants : 0;
@@ -305,6 +316,9 @@ public class PollutantManager : MonoBehaviour
         returningToStart = true;
         mapTransitioning = true;
 
+        if (scroll != null)
+            scroll.PauseScroll();
+
         if (guideTxt != null)
             guideTxt.HideGuide();
 
@@ -338,7 +352,16 @@ public class PollutantManager : MonoBehaviour
         mapTransitioning = false;
         returningToStart = false;
         segmentAfterClearHandled = false;
+        ResetItemSelectToScanner();
         UpdateBackgroundScroll();
+    }
+
+    private void ResetItemSelectToScanner()
+    {
+        if (itemSelectManager == null)
+            itemSelectManager = FindAnyObjectByType<ItemSelectManager>();
+        if (itemSelectManager != null)
+            itemSelectManager.ResetToDefault();
     }
 
     private void EnsureMapFadeOverlay()

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>프로젝트 정적 분석 — MidProject</title>
+  <style>
+    body { font-family: "Malgun Gothic", sans-serif; max-width: 1050px; margin: 1.25rem auto; padding: 0 1rem; line-height: 1.55; color: #1a2332; font-size: 0.88rem; }
+    h1 { color: #1e6b5c; font-size: 1.4rem; margin-bottom: 0.25rem; }
+    h2 { font-size: 1.05rem; margin: 1.75rem 0 0.5rem; padding: 0.4rem 0.65rem; background: #e8f4f1; border-radius: 4px; color: #1a4a42; }
+    .meta { color: #5a6578; font-size: 0.9rem; margin-bottom: 1rem; }
+    .flow { background: #f8fafb; border: 1px solid #dde3ea; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 1.25rem; }
+    th, td { border: 1px solid #dde3ea; padding: 0.45rem 0.55rem; vertical-align: top; }
+    th { background: #e8f4f1; font-weight: 600; }
+    .num { width: 3.5em; font-weight: 600; color: #2d4a6e; white-space: nowrap; }
+    .kind { width: 6em; font-size: 0.82rem; }
+    code { background: #f0f3f6; padding: 0.08em 0.35em; border-radius: 3px; }
+    pre { background: #f0f3f6; padding: 0.65rem 1rem; border-radius: 6px; overflow-x: auto; font-size: 0.82rem; }
+    a { color: #1e6b5c; }
+    .qa-block { margin-bottom: 1.35rem; padding: 0.65rem 0.85rem 0.75rem 1rem; border-left: 3px solid #1e6b5c; background: #fafcfd; border-radius: 0 6px 6px 0; }
+    .qa-q { font-weight: 600; color: #1a4a42; margin: 0 0 0.3rem 0; }
+    .qa-intent { color: #5a6578; font-size: 0.86rem; margin: 0 0 0.45rem 0; }
+    .qa-a { margin: 0; }
+    .qa-id { color: #2d4a6e; font-weight: 700; }
+    .status-pass { color: #1a7f4e; font-weight: 700; }
+    .status-fail { color: #b33; font-weight: 700; }
+    .status-skip { color: #886500; font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<h1>프로젝트 정적 분석 — MidProject</h1>
+<p class="meta">
+  작성: 2026-06-09 · Q&amp;A 갱신 ·
+  범위: <strong>프로젝트 전체 기능</strong> (Play 없이 구조·규칙·참조 검증) ·
+  <a href="qa-checklist.html">qa-checklist.html</a> = 런타임 QA · 본 문서 = 의도·기능 계약
+</p>
+
+<div class="flow">
+  <strong>목적:</strong> AI·개발자가 구현한 내용이 README/AGENTS/회의 합의와 <strong>코드·씬·데이터 구조상</strong> 맞는지 확인.<br/>
+  <strong>실행:</strong> Unity 메뉴 <code>MidProject &gt; Static Analysis &gt; Run All</code><br/>
+  <strong>규칙 파일:</strong> <code>Assets/Data/static_rules.json</code><br/>
+  <strong>결과 리포트:</strong> <code>Assets/Docs/static-analysis-report.html</code> (실행 시 자동 생성)<br/>
+  <strong>unity-cli:</strong> 에디터 연결 후 동일 메뉴 실행 가능 (부록 B 참고)
+</div>
+
+<h2>1. 먼저 읽기 — Pass / Fail / Skip과 Run All</h2>
+<p class="meta">정적 분석 도구 자체를 처음 볼 때 · 아래 Q&amp;A를 위에서부터 읽으면 됨</p>
+
+<div class="qa-block">
+  <p class="qa-q">애초에 이걸 왜 만들었나?</p>
+  <p class="qa-intent">의도: Play로 87개 QA를 매번 돌리기 전에, “AI·코드 수정이 내 합의(의도)대로 반영됐는지”를 빠르게 확인하고 싶다.</p>
+  <p class="qa-a">예: 1차 구간 -403 해제됐는지, 고속 접촉이 FixedUpdate로 고쳐졌는지, 오염원 제거 후 아이템 선택이 유지되는지 — README·AGENTS·회의록에 적힌 <strong>계약</strong>이 코드·씬·JSON에 그대로 있는지 Play 없이 검사한다. 체감·연출·BGM은 여전히 Play로 본다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q">Run All은 뭐야? 터미널 명령? Play?</p>
+  <p class="qa-intent">의도: Unity 안에서 클릭 한 번으로 전 규칙을 돌리고, 결과를 HTML로 받고 싶다.</p>
+  <p class="qa-a"><strong>Unity 에디터 상단 메뉴</strong> <code>MidProject &gt; Static Analysis &gt; Run All</code> 이다. 터미널 명령도, 게임 Play도 아니다. <code>static_rules.json</code> 22규칙(F01~F22)을 한 번에 검사하고 <code>static-analysis-report.html</code>을 만든다. Console에 <code>Pass N, Fail N, Skip N</code> 요약이 뜬다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q">Pass / Fail / Skip은 각각 뭐야?</p>
+  <p class="qa-intent">의도: 리포트 한 줄만 봐도 “의도대로인지 / 깨졌는지 / 이번엔 검사 안 함”을 구분하고 싶다.</p>
+  <p class="qa-a">
+    <span class="status-pass">Pass</span> — 의도·규칙대로 코드·파일·값이 맞음. 예: <code>Pollutant.cs</code>에 <code>OnTriggerStay2D</code> + <code>ApplyPlayerContactDamage</code> 있음.<br/>
+    <span class="status-fail">Fail</span> — 규칙 위반. 예: <code>Pollutant.cs</code>에 <code>ResetToDefault</code> 재등장, GameScene <code>moveSpeed</code>가 400이 아님.<br/>
+    <span class="status-skip">Skip</span> — 이번 실행에서 조건 미충족으로 <strong>검사 생략</strong>(실패 아님). 주로 <strong>F19·F20</strong>: GameScene을 에디터에 <strong>안 연 상태</strong>면 Skip. “Skip 많다” ≈ GameScene 안 연 채로 Run All 돌린 것.
+  </p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q">GameScene을 꼭 열고 Run All 해야 해?</p>
+  <p class="qa-intent">의도: 코드 기본값 말고, 실제 씬에 박힌 숫자·Inspector 연결까지 의도 검증에 넣고 싶다.</p>
+  <p class="qa-a"><strong>권장:</strong> Unity에서 <code>GameScene.unity</code> 연 뒤 Run All. F19(Manager 참조 null), F20(moveSpeed 400 / scrollSpeed 0.2)이 그때 Pass/Fail로 나온다. 안 열면 F19·F20만 Skip이고 나머지 F01~F18, F21~F22는 그대로 검사된다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q">project-static-analysis.html 이랑 static-analysis-report.html 차이는?</p>
+  <p class="qa-intent">의도: “규칙 설명서”와 “오늘 돌린 결과”를 파일로 나누고 싶다.</p>
+  <p class="qa-a">
+    <strong>project-static-analysis.html</strong> (이 문서) — 스펙·의도·Q&amp;A 설명서. Run All 전에 읽는 용도.<br/>
+    <strong>static-analysis-report.html</strong> — Run All 실행할 때마다 <strong>자동 생성</strong>되는 결과표. Pass/Fail/Skip + 메시지.<br/>
+    메뉴: <code>Open Spec (HTML)</code> → 이 문서 · <code>Open Latest Report</code> → 마지막 결과.
+  </p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q">실제로 뭘 하면 돼? (한 줄 흐름)</p>
+  <p class="qa-intent">의도: 매번 수정 후 “의도 깨졌나?”만 1분 안에 확인하고, 체감은 Play로 짧게 본다.</p>
+  <p class="qa-a">
+    1) Unity 열기 → <strong>GameScene</strong> 열기<br/>
+    2) <code>MidProject &gt; Static Analysis &gt; Run All</code><br/>
+    3) 리포트에서 <span class="status-fail">Fail 0</span>인지 확인 (Fail 있으면 메시지 보고 수정)<br/>
+    4) 필요하면 Play로 접촉·속도 체감만 짧게 확인<br/>
+    <strong>의도 반영 = Run All</strong> · <strong>느낌·연출 = Play</strong>
+  </p>
+</div>
+
+<h2>2. 정적 vs 동적</h2>
+<table>
+  <thead><tr><th>구분</th><th>본 도구</th><th>qa-checklist / Play</th></tr></thead>
+  <tbody>
+    <tr><td>씬 Build 순서</td><td>✔</td><td>—</td></tr>
+    <tr><td>스크립트 금지 패턴</td><td>✔</td><td>—</td></tr>
+    <tr><td>Inspector null (GameScene)</td><td>✔ (씬 열림 시)</td><td>부록 C</td></tr>
+    <tr><td>접촉·체감·BGM</td><td>—</td><td>✔</td></tr>
+    <tr><td>Continue 저장 흐름</td><td>—</td><td>✔</td></tr>
+  </tbody>
+</table>
+
+<h2>3. 기능별 규칙 (F01~F22)</h2>
+<table>
+  <thead>
+    <tr>
+      <th class="num">ID</th>
+      <th>기능</th>
+      <th>의도 (합의)</th>
+      <th class="kind">검사</th>
+      <th>Pass 기준</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td class="num">F01</td><td>씬 흐름</td><td>Splash→Title→Intro→Loading→Game</td><td>build</td><td>Build Settings 5씬 순서</td></tr>
+    <tr><td class="num">F02</td><td>스테이지 데이터</td><td>mapPollutants 포함</td><td>file</td><td>stage_data.json</td></tr>
+    <tr><td class="num">F03</td><td>회복 JSON</td><td>recovery_items.json</td><td>file</td><td>파일 존재</td></tr>
+    <tr><td class="num">F04</td><td>플레이어 이동</td><td>FixedUpdate + MovePosition</td><td>file</td><td>Player.cs 패턴</td></tr>
+    <tr><td class="num">F05</td><td>1차 구간</td><td>-785 ~ -403, mapEnd 769</td><td>file</td><td>기본 limit 값</td></tr>
+    <tr><td class="num">F06</td><td>1차 해제</td><td>첫 오염원 후 Unlock</td><td>file</td><td>TryUnlockSegmentMovement</td></tr>
+    <tr><td class="num">F07</td><td>접촉 A~C/D</td><td>Stay만 데미지, IsEdgeContact 미호출</td><td>file</td><td>OnTriggerStay + Apply…</td></tr>
+    <tr><td class="num">F08</td><td>접촉 보정</td><td>고속 이동 LateUpdate fallback</td><td>file</td><td>LateUpdate + bounds</td></tr>
+    <tr><td class="num">F09</td><td>금지</td><td>BlockPollutant 없음</td><td>scan</td><td>Scripts 전체</td></tr>
+    <tr><td class="num">F10</td><td>아이템 유지</td><td>Pollutant에 ResetToDefault 없음</td><td>file</td><td>Pollutant.cs</td></tr>
+    <tr><td class="num">F11</td><td>Clear/Die</td><td>2초 후 패널</td><td>file</td><td>GameManager delay 2f</td></tr>
+    <tr><td class="num">F12</td><td>경고 프리즈</td><td>IsWarningFreeze 입력 차단</td><td>file</td><td>ItemSelectManager</td></tr>
+    <tr><td class="num">F13</td><td>맵 전환</td><td>pendingMapAdvance, mapEndX</td><td>file</td><td>PollutantManager</td></tr>
+    <tr><td class="num">F14</td><td>회복 인벤</td><td>Inventory + UI + 픽업</td><td>files</td><td>3 스크립트</td></tr>
+    <tr><td class="num">F15</td><td>Item.ItemType</td><td>전역 enum ItemType 금지</td><td>scan</td><td>Scripts</td></tr>
+    <tr><td class="num">F16</td><td>접촉 해제</td><td>HP pollutanMaxHp 복구</td><td>file</td><td>EndPlayerContact</td></tr>
+    <tr><td class="num">F17</td><td>중화 VFX</td><td>정답만 RefreshNeutralizationVfx</td><td>file</td><td>Player.cs</td></tr>
+    <tr><td class="num">F18</td><td>스폰 플랜</td><td>프리로드·TryReveal</td><td>file</td><td>PollutantManager</td></tr>
+    <tr><td class="num">F19</td><td>Inspector</td><td>GameManager·PollutantManager 참조</td><td>scene</td><td>GameScene <strong>열림</strong></td></tr>
+    <tr><td class="num">F20</td><td>속도 기대값</td><td>move 400 / scroll 0.2</td><td>scene</td><td>GameScene <strong>열림</strong></td></tr>
+    <tr><td class="num">F21</td><td>핵심 파일</td><td>README 파일 맵</td><td>files</td><td>7 스크립트</td></tr>
+    <tr><td class="num">F22</td><td>회복 드랍</td><td>맵 착지·클리어 수집</td><td>file</td><td>RecoveryItemManager</td></tr>
+  </tbody>
+</table>
+
+<h2>4. 기능별 Q&amp;A — 의도와 설명</h2>
+<p class="meta">각 <strong>Q</strong> = 그 기능에 대한 합의·의도 · <strong>A</strong> = 왜 그렇게 구현·검사하는지 · Run All의 Pass/Fail과 연결</p>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F01.</span> 씬 흐름</p>
+  <p class="qa-intent">의도: 게임은 항상 Splash → Title → Intro → Loading → Game 순으로만 들어가야 한다. Build Settings 순서가 바뀌면 안 된다.</p>
+  <p class="qa-a">5단계 파이프라인(스플래시 → 타이틀 → 스토리 → 로딩 → 본편)이 Build Settings에 정해진 순서로 등록돼 있는지 검사한다. 코드가 맞아도 Build 순서가 틀리면 빌드·첫 실행부터 꼬이므로, 게임의 “문”이 어디서 어디로 열리는지를 가장 먼저 고정하는 규칙이다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F02.</span> 스테이지 데이터</p>
+  <p class="qa-intent">의도: 맵마다 어떤 오염원이 나올지는 코드에 박지 말고 JSON으로 두고, mapPollutants로 구간별 스폰을 관리한다.</p>
+  <p class="qa-a"><code>stage_data.json</code>에 <code>mapPollutants</code>가 있어야 <code>PollutantManager</code>가 맵 구간별 오염원 계획을 읽을 수 있다. 기획·밸런스를 스크립트 수정 없이 JSON에서 바꾸는 구조이며, 런타임에는 <code>PollutantSpawnPlan</code>이 이를 소비한다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F03.</span> 회복 아이템 데이터</p>
+  <p class="qa-intent">의도: 회복 아이템 종류·이름·효과도 코드 하드코딩이 아니라 recovery_items.json 한곳에서 관리한다.</p>
+  <p class="qa-a">회복 인벤은 JSON → <code>RecoveryItemInventory</code> 로드 → UI·픽업이 쓰는 흐름이다. 중화 아이템(<code>Item</code>)과 분리된 데이터 소스로 회복 종류를 관리한다. 항목 밸런스는 Play·기획 영역이고, 데이터 파일 자체가 사라지지 않았는지가 1차 방어선이다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F04.</span> 플레이어 이동 (물리 동기)</p>
+  <p class="qa-intent">의도: 이동은 Update에서 Transform만 밀지 말고, FixedUpdate에서 Rigidbody2D.MovePosition으로 물리와 맞춰야 접촉이 안 끊긴다.</p>
+  <p class="qa-a">고속 이동 시 Update + MovePosition이 트리거를 건너뛰는 것이 접촉 끊김의 핵심 원인이었다. <code>moveInput</code>은 Update에서 받고, 실제 위치 변경은 FixedUpdate의 <code>rb.MovePosition</code>으로 나눴다. 누가 다시 “Update에서만 이동”으로 되돌리면 Fail — 속도를 올려도 접촉이 유지된다는 의도의 기반이다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F05.</span> 1차 이동 구간 기본값</p>
+  <p class="qa-intent">의도: 시작 구간은 왼쪽 -785, 오른쪽 -403까지. 맵 전환 끝 지점은 769. 이 숫자가 Player 기본값으로 유지돼야 한다.</p>
+  <p class="qa-a">가이드 끝 후 처음 걷는 1차 구간이 <code>-785 ~ -403</code>이고, 오염원 클리어 후 넓어지는 끝이 <code>mapAdvanceRightX = 769</code>이다. GameScene에서 숫자를 덮어쓸 수 있지만, 코드 기본 계약이 바뀌면 맵 설계 전체가 어긋날 수 있어 스크립트 쪽도 고정한다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F06.</span> 1차 구간 해제</p>
+  <p class="qa-intent">의도: 첫 오염원이 활성화되면 -403 한계가 풀려서 mapEnd(769)까지 갈 수 있어야 한다. 그 로직이 PollutantManager에 있어야 한다.</p>
+  <p class="qa-a"><code>-403에 갇힘</code> 버그 대응으로 <code>TryUnlockSegmentMovement()</code> → <code>UnlockMapSegmentMovement()</code> 흐름을 넣었다. 경고·스폰 직후, 이미 오염원이 있는 경우, A~C 클리어 후 다음 구간 등 “이제 이 맵 플레이 시작” 타이밍에 호출된다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F07.</span> 오염원 접촉 (A~C / D 동일 경로)</p>
+  <p class="qa-intent">의도: A, B, C, D 모두 OnTriggerStay에서만 데미지. IsEdgeContact로 접촉을 다시 조이면 안 된다.</p>
+  <p class="qa-a">회의록 §4 합의: 접촉·데미지 경로는 A~C와 D가 같고, D만 밸브 연출이 추가된다. <code>OnTriggerStay2D</code> → <code>ApplyPlayerContactDamage</code>가 표준이다. <code>IsEdgeContact</code>는 예전 “가장자리만 닿을 때” 조건으로 접촉 중 데미지 끊김 원인이 됐고, 지금은 정의만 남고 호출은 금지한다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F08.</span> 접촉 보정 (고속 이동)</p>
+  <p class="qa-intent">의도: FixedUpdate만으로도 트리거를 놓칠 수 있으니, Pollutant가 LateUpdate에서 bounds 겹침으로 접촉을 보완해야 한다.</p>
+  <p class="qa-a"><code>LateUpdate</code>에서 <code>IsBoundsOverlappingPlayer</code>, <code>GetContactOverlapPadding</code>으로 겹침 fallback을 둔다. 속도 400에서도 HP바·데미지·판정이 끊기지 않게 하는 이중 안전망이다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F09.</span> BlockPollutant 금지</p>
+  <p class="qa-intent">의도: 예전처럼 BlockPollutant로 플레이어 이동을 인위적으로 막는 방식은 다시 쓰지 않는다.</p>
+  <p class="qa-a">지금은 <code>leftLimit</code>/<code>rightLimit</code>·구간 해제·가이드 <code>canMove</code>로 이동을 제어한다. <code>Assets/Scripts</code> 전체에서 <code>BlockPollutant</code> 문자열이 한 줄이라도 있으면 Fail — 회귀 방지용 빨간 줄이다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F10.</span> 중화 아이템 선택 유지</p>
+  <p class="qa-intent">의도: 오염원 HP가 0이 돼도 Pollutant 경로에서 ResetToDefault()를 호출하지 않는다. Z/X로 고른 아이템은 맵 진행 내내 유지.</p>
+  <p class="qa-a">합의: 첫 경고만 기본 중화, 이후 선택 유지, 스테이지 리셋 때만 Scanner 초기화. <code>Pollutant.cs</code>에 <code>ResetToDefault</code>가 없어야 Pass — HP 0 처리에서 리셋이 재도입됐는지 잡는다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F11.</span> 클리어·사망 연출 타이밍</p>
+  <p class="qa-intent">의도: 클리어/다이 애니가 먼저, 결과 패널은 기본 2초 뒤. 애니와 패널이 동시에 뜨면 안 된다.</p>
+  <p class="qa-a"><code>clearAnimDelay = 2f</code>, <code>dieAnimDelay = 2f</code> 후 Clear/GameOver 패널. 클리어 시 <code>player.FreezeClearAnim()</code>으로 애니 상태 고정. 연출 → 잠깐 여운 → 결과 UI 순서를 지킨다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F12.</span> 경고 구간 입력 차단</p>
+  <p class="qa-intent">의도: 오염원 경고·스폰 연출 중에는 IsWarningFreeze로 Z/X 아이템 선택 같은 입력을 막아야 한다.</p>
+  <p class="qa-a">경고 텍스트·페이드·스폰 동안 아이템을 바꾸면 판정·UI가 꼬일 수 있다. <code>ItemSelectManager</code>가 <code>IsWarningFreeze</code>를 보고 입력을 막는 구조다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F13.</span> 맵 구간 전환</p>
+  <p class="qa-intent">의도: A~C 오염원을 없앤 뒤 pendingMapAdvance로 mapEndX(769)까지 가면 다음 맵·다음 오염원으로 넘어간다.</p>
+  <p class="qa-a">한 맵에서 ABC 클리어 → 플레이어가 <code>mapEndX</code>까지 이동 → <code>MapAdvanceRoutine</code>으로 배경·구간·다음 스폰. <code>pendingMapAdvance</code>는 “지금 맵 끝까지 가야 한다”는 플래그다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F14.</span> 회복 인벤 (스크립트 3종)</p>
+  <p class="qa-intent">의도: 회복은 데이터(JSON) + 인벤 로직 + UI + 맵 픽업 스크립트가 세트로 있어야 한다.</p>
+  <p class="qa-a"><code>RecoveryItemInventory.cs</code>(스택·선택·사용), <code>RecoveryItemInventoryUI.cs</code>(InvItemView, dim, Count), <code>RecoveryItem.cs</code>(맵 픽업). 중화 HUD와 분리된 회복 인벤 파이프라인이다. UI 레이아웃·스크롤 품질은 Play로 확인한다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F15.</span> Item.ItemType 타입 규칙</p>
+  <p class="qa-intent">의도: 전역 enum ItemType을 새로 만들지 말고, Item.ItemType만 쓴다.</p>
+  <p class="qa-a">다시 <code>enum ItemType</code>을 Scripts에 넣으면 타입 충돌·판정 버그가 난다. 네이밍·타입 계약을 고정하는 규칙이다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F16.</span> 접촉 해제 시 오염원 HP 초기화</p>
+  <p class="qa-intent">의도: 플레이어가 오염원에서 떨어지면 pollutanCurHp는 pollutanMaxHp로 돌아간다. 가스(D)도 예외 없음.</p>
+  <p class="qa-a"><code>EndPlayerContact</code>에서 <code>pollutanCurHp = pollutanMaxHp</code>. 잠깐 닿았다 떨어지면 오염원 HP 진행이 리셋되는 것이 의도된 난이도·리듬이다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F17.</span> 중화 VFX</p>
+  <p class="qa-intent">의도: RefreshNeutralizationVfx는 맞는 A~C 아이템(IsSelectedItemRecommendedFor)일 때만 켠다. 틀린 도구·스캐너·가스(D)는 VFX 없음.</p>
+  <p class="qa-a">“스캐너가 아니면 VFX ON”처럼 단순화하면 틀린 도구에도 이펙트가 다시 나온다. D(가스)는 밸브 애니·SFX만 — 정답 A~C만 VFX라는 의도의 코드 앵커다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F18.</span> 오염원 스폰 플랜·프리로드</p>
+  <p class="qa-intent">의도: 오염원은 맵 계획(PollutantSpawnPlan)대로 미리 BuildPreloadedPollutants 하고, 때가 되면 TryRevealPreloaded로 공개한다.</p>
+  <p class="qa-a">경고 전 프리로드 → 경고·페이드 후 reveal. 스폰 타이밍·맵 진행과 데이터 계획이 분리되게 한다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F19.</span> GameScene Inspector 참조 (씬 열림 시)</p>
+  <p class="qa-intent">의도: GameScene에서 GameManager·PollutantManager의 player, spawner, timer 등 핵심 참조가 null이면 안 된다. Player에는 Rigidbody2D가 있어야 한다.</p>
+  <p class="qa-a">코드 패턴만 맞아도 Inspector 미연결 시 Play에서 NullReference. GameScene이 에디터에 열려 있을 때만 검사하며, 씬 안 열면 Skip(Fail 아님).</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F20.</span> GameScene 속도 기대값 (씬 열림 시)</p>
+  <p class="qa-intent">의도: 실제 플레이에 적용되는 moveSpeed는 400, Background scrollSpeed는 0.2(실플레이 체감 확정)여야 한다.</p>
+  <p class="qa-a">배경은 <strong>오프셋 스크롤</strong>(<code>SetTextureOffset</code>) — 패럴랙스 아님. 런타임에 쓰이는 건 씬에 박힌 값. 1:1 참고: <code>scrollSpeed ≈ moveSpeed / 1920</code> (400 → ≈0.208). 실플레이 확정 <strong>0.2</strong>. F20은 400/0.2 쌍이 씬에 있는지 본다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F21.</span> 핵심 스크립트 존재</p>
+  <p class="qa-intent">의도: README·AGENTS에 적힌 핵심 파일 7개가 프로젝트에 있어야 한다.</p>
+  <p class="qa-a">Pollutant, Player, GameManager, ItemSelectManager, PollutantSpawnPlan, Background, GuideTxt — 게임플레이 최소 뼈대가 파일 단위로 intact한지 보는 규칙이다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q"><span class="qa-id">F22.</span> 회복 맵 드랍·클리어 자동 수집</p>
+  <p class="qa-intent">의도: 맵에 떨어진 회복 아이템은 landedMapItemCount로 추적하고, 스테이지 클리어 시 AutoCollectMapRecoveryItems로 남은 것을 자동 획득한다.</p>
+  <p class="qa-a"><code>RecoveryItemManager</code>가 맵에 남은 개수를 세고, 클리어 시 <code>GameManager</code> 경로로 일괄 수집한다. 드랍·클리어 수집 기능이 통째로 빠지지 않았는지 확인한다.</p>
+</div>
+
+<div class="qa-block">
+  <p class="qa-q">Run All과 이 Q&amp;A의 관계</p>
+  <p class="qa-intent">의도: 기능마다 의도가 문서·코드에 맞는지, Play 전에 한 번에 확인하고 싶다.</p>
+  <p class="qa-a">Unity에서 GameScene 연 상태로 <code>MidProject &gt; Static Analysis &gt; Run All</code> → <code>static-analysis-report.html</code>에서 F01~F22 Pass/Fail/Skip 확인. Q에 적은 의도가 Fail이면 깨진 것, F19·F20 Skip은 GameScene 미로드일 때다.</p>
+</div>
+
+<h2>5. 실행 방법</h2>
+<pre>Unity Editor
+  MidProject → Static Analysis → Run All
+  MidProject → Static Analysis → Open Spec (HTML)      ← 이 문서
+  MidProject → Static Analysis → Open Latest Report  ← 마지막 결과
+
+F19·F20 (씬 검사) 권장: GameScene.unity 를 연 뒤 Run All
+  → 미로드 시 Skip (Fail 아님)</pre>
+
+<h2>6. 규칙 추가 방법</h2>
+<ol>
+  <li><code>Assets/Data/static_rules.json</code>에 <code>rules</code> 항목 추가</li>
+  <li><code>kind</code>: <code>build_scenes</code> | <code>file_exists</code> | <code>files_exist</code> | <code>file_contains</code> | <code>forbidden_in_scripts</code> | <code>scene_refs</code> | <code>scene_values</code></li>
+  <li>본 HTML 표에 F23… 행 추가 (선택)</li>
+  <li>Run All → 리포트에서 Pass/Fail 확인</li>
+</ol>
+
+<h2>7. 한계 (동적 검증 필요)</h2>
+<ul>
+  <li>접촉이 <strong>실제로</strong> 끊기지 않는지 — <a href="qa-checklist.html">qa-checklist</a> R-02, 1-11</li>
+  <li>배경·이동 <strong>체감</strong> 비율 — Play + 수동</li>
+  <li>저장/Continue 스테이지 연속성 — Play</li>
+  <li>오디오·애니 타이밍 — Play</li>
+</ul>
+
+<h2>부록 A — kind 참조</h2>
+<table>
+  <thead><tr><th>kind</th><th>설명</th></tr></thead>
+  <tbody>
+    <tr><td><code>build_scenes</code></td><td>EditorBuildSettings 씬 경로·순서</td></tr>
+    <tr><td><code>file_exists</code></td><td>단일 파일 존재</td></tr>
+    <tr><td><code>files_exist</code></td><td>여러 파일 존재</td></tr>
+    <tr><td><code>file_contains</code></td><td>must_contain / must_not_contain / pattern max_count</td></tr>
+    <tr><td><code>forbidden_in_scripts</code></td><td>Assets/Scripts 아래 금지 문자열</td></tr>
+    <tr><td><code>scene_refs</code></td><td>로드된 씬의 Serialized 참조 null 검사</td></tr>
+    <tr><td><code>scene_values</code></td><td>로드된 씬의 float 필드 기대값</td></tr>
+  </tbody>
+</table>
+
+<h2>부록 B — unity-cli (선택)</h2>
+<pre>unity-cli status
+# GameScene 연 상태에서 에디터 메뉴와 동일 — ExecuteMenuItem 연동 시:
+# MidProject/Static Analysis/Run All
+
+unity-cli console --type error,warning --lines 30</pre>
+
+<h2>부록 C — 관련 문서</h2>
+<ul>
+  <li><a href="../README.md">README.md</a> — 기능 개요</li>
+  <li><a href="../../AGENTS.md">AGENTS.md</a> — AI 금지·필수 규칙</li>
+  <li><a href="Bug/2026-06-09-오후1316-이동속도-접촉-1차구간-fixes.md">Bug 2026-06-09 이동·접촉</a></li>
+  <li><a href="회의록/2026-06-05-시각미상-플레이어-오염원-로직-검토.md">회의록 §4 접촉 판정</a></li>
+</ul>
+
+<p class="meta">Assets/Docs/project-static-analysis.html · 규칙 22항목 (F01~F22)</p>
+</body>
+</html>

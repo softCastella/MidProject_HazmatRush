@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     public GuideTxt guideTxt;                       // 패널티 안내 문구 표시
     public ItemManager itemManager;                 // 아이템 창 전체 dim
     public ItemSelectManager itemSelectManager;     // 패널티 종료 후 아이템 UI 복구
+    public RecoveryItemInventoryUI recoveryInventoryUI;
     [TextArea]
     public string wrongItemPenaltyMessage = "잘못된 아이템 선택으로 2초 후에 아이템선택이 가능합니다.";
     public float wrongItemPenaltySeconds = 2f;
@@ -86,6 +87,8 @@ public class GameManager : MonoBehaviour
             itemManager = FindAnyObjectByType<ItemManager>();
         if (itemSelectManager == null)
             itemSelectManager = FindAnyObjectByType<ItemSelectManager>();
+        if (recoveryInventoryUI == null)
+            recoveryInventoryUI = FindAnyObjectByType<RecoveryItemInventoryUI>();
         if (stageScoreTracker == null)
             stageScoreTracker = FindAnyObjectByType<StageScoreTracker>();
         if (clearPanelUI == null && clearSet != null)
@@ -154,7 +157,7 @@ public class GameManager : MonoBehaviour
             if (gameEnded)
                 ResumeAfterResult();
             else
-                ResetStagePlay();
+                ResetStagePlay(false);
 
             Debug.Log($"[GameManager] (디버그) 저장 로드 → 스테이지 index={data.continueStageIndex} ({data.lastStageLabel})");
         }
@@ -163,6 +166,9 @@ public class GameManager : MonoBehaviour
     // ESC 또는 UI 버튼으로 일시정지/재개 토글
     public void TogglePause()
     {
+        if (isPenalty)
+            return;
+
         if (isPaused)
             ResumeGame();
         else
@@ -202,29 +208,32 @@ public class GameManager : MonoBehaviour
     }
 
     // 중화모드에서 틀린 아이템으로 접촉했을 때 호출. (스테이지 1-1 튜토리얼 전용)
-    public void TriggerWrongItemPenalty()
+    public bool TriggerWrongItemPenalty()
     {
         if (isPenalty || gameEnded || isPaused)
-            return;
+            return false;
 
         // 첫 스테이지(1-1)에서만 패널티 안내가 동작합니다.
         if (stageManager == null || stageManager.currentStageIndex != 0)
-            return;
+            return false;
 
         StartCoroutine(WrongItemPenaltyRoutine());
+        return true;
     }
 
-    // 2초간 화면 전체 정지 + 안내 문구 + 아이템 창 dim 후 모두 해제
+    // 2초간 키 입력·타이머 정지 + HUD dim. 접촉 중 방호복 감소는 계속됩니다.
     private IEnumerator WrongItemPenaltyRoutine()
     {
         isPenalty = true;
 
         if (itemManager != null)
             itemManager.SetAllDim(true);
+        if (recoveryInventoryUI != null)
+            recoveryInventoryUI.SetAllDim(true);
         if (guideTxt != null)
             guideTxt.ShowGuideImmediate(wrongItemPenaltyMessage);
 
-        Debug.Log("[GameManager] 오대응 패널티 시작 - 전체 정지");
+        Debug.Log("[GameManager] 오대응 패널티 시작 - 키·타이머 정지, 방호복 감소 유지");
 
         yield return new WaitForSeconds(wrongItemPenaltySeconds);
 
@@ -235,8 +244,16 @@ public class GameManager : MonoBehaviour
         else if (itemManager != null)
             itemManager.SetAllDim(false);
 
+        if (recoveryInventoryUI != null)
+        {
+            recoveryInventoryUI.SetAllDim(false);
+            RecoveryItemInventory inventory = FindAnyObjectByType<RecoveryItemInventory>();
+            if (inventory != null)
+                recoveryInventoryUI.Refresh(inventory);
+        }
+
         isPenalty = false;
-        Debug.Log("[GameManager] 오대응 패널티 종료 - 제한 해제");
+        Debug.Log("[GameManager] 오대응 패널티 종료 - 키·타이머 재개");
     }
 
     // 모든 오염원 중화 + 방호구 1 이상 + 타이머 잔여 시 클리어
@@ -291,7 +308,7 @@ public class GameManager : MonoBehaviour
 
         if (stageManager != null)
             stageManager.RestartCurrentStage();
-        ResetStagePlay();
+        ResetStagePlay(true);
         ResumeAfterResult();
         Debug.Log("[GameManager] 현재 스테이지 재시작");
     }
@@ -304,7 +321,7 @@ public class GameManager : MonoBehaviour
             return;
 
         stageManager.GoToNextStage();
-        ResetStagePlay();
+        ResetStagePlay(false);
         ResumeAfterResult();
         Debug.Log("[GameManager] 다음 스테이지");
     }
@@ -346,7 +363,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void ResetStagePlay()
+    private void ResetStagePlay(bool clearRecoveryInventory)
     {
         if (stageScoreTracker != null)
             stageScoreTracker.Reset();
@@ -354,7 +371,7 @@ public class GameManager : MonoBehaviour
         if (player != null)
             player.ResetForStage();
         if (pollutantManager != null)
-            pollutantManager.ResetForStage();
+            pollutantManager.ResetForStage(clearRecoveryInventory);
         if (timer != null && stageManager != null)
         {
             timer.SetStartTime(stageManager.GetCurrentTimeLimit());

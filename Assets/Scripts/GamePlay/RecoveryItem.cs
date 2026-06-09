@@ -14,6 +14,7 @@ public class RecoveryItem : MonoBehaviour
 
     private Collider2D pickupCollider;
     private bool dropInProgress;
+    private Vector3 landPosition;
 
     public bool IsLandedOnMap => !dropInProgress;
 
@@ -22,16 +23,16 @@ public class RecoveryItem : MonoBehaviour
         pickupCollider = GetComponent<Collider2D>();
     }
 
-    // spawnPos에서 위로 튀었다 좌/우(offsetX 부호)로 착지
-    public void StartDropArc(Vector3 spawnPos, float jumpHeight, float landOffsetX, float duration)
+    // startPos에서 위로 튀었다 landPos로 착지 (Y는 landPos.y 고정)
+    public void StartDropArc(Vector3 startPos, Vector3 landPos, float jumpHeight, float duration)
     {
         if (pickupCollider != null)
             pickupCollider.enabled = false;
 
         dropInProgress = true;
-        Vector3 endPos = spawnPos + new Vector3(landOffsetX, 0f, 0f);
-        Debug.Log($"[RecoveryItem] 아크 시작 — {name} id={itemId}, 시작={spawnPos}, 착지={endPos}, jumpHeight={jumpHeight:F2}, duration={duration:F2}s");
-        StartCoroutine(DropArcRoutine(spawnPos, jumpHeight, landOffsetX, duration));
+        landPosition = landPos;
+        Debug.Log($"[RecoveryItem] 아크 시작 — {name} id={itemId}, 시작={startPos}, 착지={landPos}, jumpHeight={jumpHeight:F2}, duration={duration:F2}s");
+        StartCoroutine(DropArcRoutine(startPos, jumpHeight, duration));
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -85,44 +86,47 @@ public class RecoveryItem : MonoBehaviour
         return true;
     }
 
-    private IEnumerator DropArcRoutine(Vector3 start, float jumpHeight, float offsetX, float duration)
+    private IEnumerator DropArcRoutine(Vector3 start, float jumpHeight, float duration)
     {
-        Vector3 end = start + new Vector3(offsetX, 0f, 0f);
+        float landY = landPosition.y;
         transform.position = start;
 
         if (duration <= 0f)
         {
-            transform.position = end;
-            Debug.Log($"[RecoveryItem] 아크 생략(duration<=0) — 즉시 착지 {end}");
+            transform.position = landPosition;
+            Debug.Log($"[RecoveryItem] 아크 생략(duration<=0) — 즉시 착지 {landPosition}");
             FinishDrop();
             yield break;
         }
 
         float time = 0f;
         bool loggedPeak = false;
-        while (time < duration)
+        while (true)
         {
-            time += Time.deltaTime;
+            time += Time.unscaledDeltaTime;
             float t = Mathf.Clamp01(time / duration);
-            float x = Mathf.Lerp(start.x, end.x, t);
+            float x = Mathf.Lerp(start.x, landPosition.x, t);
             float arc = 4f * jumpHeight * t * (1f - t);
-            transform.position = new Vector3(x, start.y + arc, start.z);
+            transform.position = new Vector3(x, landY + arc, landPosition.z);
 
             if (!loggedPeak && t >= 0.5f)
             {
                 loggedPeak = true;
-                Debug.Log($"[RecoveryItem] 아크 정점 — pos={transform.position}, peakY={start.y + jumpHeight:F2}");
+                Debug.Log($"[RecoveryItem] 아크 정점 — pos={transform.position}, peakY={landY + jumpHeight:F2}");
             }
+
+            if (t >= 1f)
+                break;
 
             yield return null;
         }
 
-        transform.position = end;
         FinishDrop();
     }
 
     private void FinishDrop()
     {
+        transform.position = landPosition;
         dropInProgress = false;
         if (pickupCollider != null)
             pickupCollider.enabled = true;

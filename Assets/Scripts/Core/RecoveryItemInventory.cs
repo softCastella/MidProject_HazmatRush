@@ -87,7 +87,6 @@ public class RecoveryItemInventory : MonoBehaviour
                 continue;
 
             slots[i].count++;
-            selectedIndex = i;
             RefreshUI();
             Debug.Log($"[RecoveryItemInventory] 획득(스택) id={itemId}, count={slots[i].count}");
             return true;
@@ -106,9 +105,10 @@ public class RecoveryItemInventory : MonoBehaviour
         entry.id = itemId;
         entry.count = 1;
         slots.Add(entry);
-        selectedIndex = slots.Count - 1;
+        if (slots.Count == 1)
+            selectedIndex = 0;
         RefreshUI();
-        Debug.Log($"[RecoveryItemInventory] 획득(신규) id={itemId}, 칸={selectedIndex}");
+        Debug.Log($"[RecoveryItemInventory] 획득(신규) id={itemId}, 칸={slots.Count - 1}, 선택={selectedIndex}");
         return true;
     }
 

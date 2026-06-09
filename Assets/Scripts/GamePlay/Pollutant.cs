@@ -86,6 +86,7 @@ public class Pollutant : MonoBehaviour
     private bool clearedActiveCount = false; // FadeOut 시작 시 activeCount 선차감 여부
     private bool hasLoggedContactJudge = false; //현재 접촉 구간에서 판정 로그 출력 여부
     private bool lastJudgeMatched = false;      //직전 판정 결과
+    private bool wrongPenaltyUsedThisContact = false; //현재 접촉 구간에서 오대응 패널티 1회 발동 여부
     private bool hasPlayedNeutralizationSfx = false;
     private bool stayHandledThisFrame;
 
@@ -246,7 +247,7 @@ public class Pollutant : MonoBehaviour
     {
         if (player == null || player.IsDead)
             return false;
-        if (GameManager.Instance != null && (GameManager.Instance.GameEnded || GameManager.Instance.IsPenalty))
+        if (GameManager.Instance != null && GameManager.Instance.GameEnded)
             return false;
         return true;
     }
@@ -274,6 +275,8 @@ public class Pollutant : MonoBehaviour
 
         playerInTrigger = true;
         currentPlayer = player;
+        hasLoggedContactJudge = false;
+        wrongPenaltyUsedThisContact = false;
         ShowContactBars(player);
         player.AddPollutantTouch();
     }
@@ -409,6 +412,7 @@ public class Pollutant : MonoBehaviour
             return;
 
         hasLoggedContactJudge = false;
+        wrongPenaltyUsedThisContact = false;
         StopNeutralizationSfxLocal();
 
         pollutanCurHp = pollutanMaxHp;
@@ -457,16 +461,17 @@ public class Pollutant : MonoBehaviour
                     Debug.Log($"{(isMatched ? "올바른 아이템입니다." : "틀린 아이템입니다.")} 추천 = {RecommendedItemType}, 선택 = {selectedType}");
                 hasLoggedContactJudge = true;
                 lastJudgeMatched = isMatched;
+            }
 
-                // 틀린 아이템으로 접촉하면 오대응 패널티(스테이지 1-1 전용)를 발동합니다.
-                if (!isMatched)
+            // 접촉 구간마다 1회 — 해제 후 재접촉 시 다시 발동 (패널티 중이면 성공할 때까지 대기)
+            if (!isMatched && !wrongPenaltyUsedThisContact)
+            {
+                if (GameManager.Instance != null && GameManager.Instance.TriggerWrongItemPenalty())
                 {
+                    wrongPenaltyUsedThisContact = true;
                     StageScoreTracker scoreTracker = FindAnyObjectByType<StageScoreTracker>();
                     if (scoreTracker != null)
                         scoreTracker.RegisterWrongItem();
-
-                    if (GameManager.Instance != null)
-                        GameManager.Instance.TriggerWrongItemPenalty();
                 }
             }
         }
