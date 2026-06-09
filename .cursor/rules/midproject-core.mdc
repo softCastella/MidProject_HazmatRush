@@ -10,7 +10,7 @@ Unity 2D 오염 대응 게임. 상세: `README.md`, `AGENTS.md`.
 ## 접촉·이동 작업 시 (Player / Pollutant)
 
 - **구현 전 필수 읽기:** `Assets/Docs/회의록/2026-06-05-시각미상-플레이어-오염원-로직-검토.md` §4, `Assets/Docs/Bug/2026-06-04-시각미상-gameplay-fixes.md`, `Assets/Docs/Bug/2026-06-05-시각미상-클리어-가이드-중화VFX-fixes.md`
-- **새 Docs 문서:** `Assets/Docs/문서-이름-규칙.md` — 오늘 작업·오늘 작성 → **현재 시각** `YYYY-MM-DD-오전|오후HHmm-제목.md` / 전날 작업·오늘 작성 → `YYYY-MM-DD-시각미상-제목.md`
+- **새 Docs (Bug/회의록):** `Assets/Docs/문서-이름-규칙.md` · `.cursor/rules/docs-harness.mdc` — 당일 같은 종류는 **마지막 파일에 취합** · 파일명 `날짜-최초시각-이름-수정시각-N차-fixes|합의.md`
 - A~C/D **접촉 경로 동일** (`OnTriggerStay2D` → `ApplyPlayerContactDamage` + `EndPlayerContact`). D만 연출(밸브) 분기.
 - 중화 VFX: **정답 A~C만**. 오답·가스(D) VFX 금지. 오염원 제거 시 아이템 `ResetToDefault` 금지.
 - 결과 패널: `clearAnimDelay` / `dieAnimDelay` 후 표시 (애니와 동시 금지).

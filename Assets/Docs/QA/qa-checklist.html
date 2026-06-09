@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QA 체크리스트 — MidProject</title>
+  <style>
+    body { font-family: "Malgun Gothic", sans-serif; max-width: 1050px; margin: 1.25rem auto; padding: 0 1rem; line-height: 1.55; color: #1a2332; font-size: 0.88rem; }
+    h1 { color: #1e6b5c; font-size: 1.4rem; margin-bottom: 0.25rem; }
+    h2 { font-size: 1.05rem; margin: 1.75rem 0 0.5rem; padding: 0.4rem 0.65rem; background: #e8f4f1; border-radius: 4px; color: #1a4a42; }
+    .meta { color: #5a6578; font-size: 0.9rem; margin-bottom: 1rem; }
+    .flow { background: #f8fafb; border: 1px solid #dde3ea; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 1.25rem; }
+    th, td { border: 1px solid #dde3ea; padding: 0.45rem 0.55rem; vertical-align: top; }
+    th { background: #e8f4f1; font-weight: 600; }
+    .chk { width: 2.4em; text-align: center; }
+    .num { width: 4.5em; white-space: nowrap; font-weight: 600; color: #2d4a6e; }
+    .name { width: 11em; font-weight: 600; }
+    td.detail ul { margin: 0.2rem 0 0.35rem 1.1rem; padding: 0; }
+    td.detail li { margin: 0.2rem 0; }
+    td.note { width: 14em; font-size: 0.82rem; background: #faf8f5; color: #4a3d30; }
+    td.risk { background: #fff8f8; color: #6b3030; font-size: 0.82rem; }
+    tr.group td { background: #f0f6f4; font-weight: 600; color: #1e6b5c; }
+    code { background: #f0f3f6; padding: 0.08em 0.35em; border-radius: 3px; }
+    .ok { color: #1a7f4e; }
+    .ng { color: #b33; }
+    input[type="checkbox"] { transform: scale(1.08); cursor: pointer; }
+    a { color: #1e6b5c; }
+  </style>
+</head>
+<body>
+
+<h1>QA 체크리스트 — MidProject</h1>
+<p class="meta">
+  Unity 6000.4.8f1 · TitleScene → LoadingScene → GameScene ·
+  <a href="sanity-test.html">sanity-test.html</a> = 같은 표, 핵심만 축약
+</p>
+
+<div class="flow">
+  <strong>진행 순서:</strong>
+  <strong>0 준비</strong> → <strong>1~4 시나리오</strong>(플레이 흐름) → <strong>5~9 상세</strong>(기능별 전수) →
+  <strong>10 스테이지</strong> → <strong>11~12</strong> 오디오·디버그 → <strong>13 회귀</strong> ·
+  체크 항목 약 <strong>75개</strong> (1~4만 해도 핵심 통과, 발표 전에는 5~13 권장)
+</div>
+
+<!-- 0 PREP -->
+<h2>0. 준비 (Play 전)</h2>
+<table>
+  <thead>
+    <tr>
+      <th class="chk">✓</th>
+      <th class="num">번호</th>
+      <th class="name">이름</th>
+      <th>구체 사항 (할 일 → 정상)</th>
+      <th class="note">예외·주의</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="chk"><input type="checkbox" aria-label="0-01"/></td>
+      <td class="num">0-01</td>
+      <td class="name">Unity 버전</td>
+      <td class="detail">Hub에서 프로젝트 열기 → 버전 <strong>6000.4.8f1</strong> 확인</td>
+      <td class="note">버전 다르면 컴파일·패키지 오류</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox" aria-label="0-02"/></td>
+      <td class="num">0-02</td>
+      <td class="name">Console 설정</td>
+      <td class="detail">Window → Console → <strong>Collapse 끄기</strong> (접촉 로그가 한 줄로 묶이지 않게)</td>
+      <td class="note">—</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox" aria-label="0-03"/></td>
+      <td class="num">0-03</td>
+      <td class="name">신규 게임 준비</td>
+      <td class="detail">처음부터 테스트 시: <code>Documents\HazmatRush_Save\gamesave.json</code> 삭제 → TitleScene Play 시 <strong>Start만</strong> 보여야 함</td>
+      <td class="note">Continue만 보이면 예전 저장 잔존</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox" aria-label="0-04"/></td>
+      <td class="num">0-04</td>
+      <td class="name">시작 씬</td>
+      <td class="detail"><code>Assets/Scenes/TitleScene.unity</code> 연 뒤 Play 준비</td>
+      <td class="note">GameScene만 Play하면 타이틀·저장 QA 생략</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- S1 -->
+<h2>시나리오 1 — 처음부터 한 판 (신규 · Stage 1-1)</h2>
+<table>
+  <thead>
+    <tr>
+      <th class="chk">✓</th>
+      <th class="num">번호</th>
+      <th class="name">이름</th>
+      <th>구체 사항 (할 일 → 정상)</th>
+      <th class="note">예외 · 버그 가능성</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="group"><td colspan="5">① 타이틀 → 게임 진입</td></tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">1-01</td>
+      <td class="name">타이틀 UI</td>
+      <td class="detail">
+        <ul>
+          <li>TitleScene <strong>Play(▶)</strong></li>
+          <li class="ok">✔ 저장 없으면 <strong>Start만</strong> (Continue 그룹 숨김)</li>
+        </ul>
+      </td>
+      <td class="risk">Continue만 보임 → 0-03 저장 삭제 후 재Play</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">1-02</td>
+      <td class="name">Start → 로딩</td>
+      <td class="detail">
+        <ul>
+          <li><strong>Start</strong> 클릭</li>
+          <li class="ok">✔ 로딩 화면(페이드·UI) → <strong>GameScene</strong> 진입</li>
+        </ul>
+      </td>
+      <td class="risk">검은 화면 멈춤 → SceneLoadManager·LoadingScene</td>
+    </tr>
+
+    <tr class="group"><td colspan="5">② 인트로 · 이동 · 타이머</td></tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">1-03</td>
+      <td class="name">가이드 중 이동 잠금</td>
+      <td class="detail">
+        <ul>
+          <li>안내 문구 페이드 중 <strong>←→ / A D</strong> 입력</li>
+          <li class="ok">✔ 캐릭터 <strong>안 움직임</strong></li>
+        </ul>
+      </td>
+      <td class="note">—</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">1-04</td>
+      <td class="name">가이드 후 활성화</td>
+      <td class="detail">
+        <ul>
+          <li>안내 종료 후 이동</li>
+          <li class="ok">✔ 이동 가능 · <strong>타이머 감소</strong> · 배경 스크롤</li>
+        </ul>
+      </td>
+      <td class="risk">가이드 스킵 시 타이머·이동 꼬임</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">1-05</td>
+      <td class="name">1차 이동 범위</td>
+      <td class="detail">
+        <ul>
+          <li>좌·우 끝까지 이동</li>
+          <li class="ok">✔ 약 x <strong>-785 ~ -403</strong> 에서 멈춤</li>
+        </ul>
+      </td>
+      <td class="risk">-403보다 일찍 멈춤 → GrowRange/limit</td>
+    </tr>
+
+    <tr class="group"><td colspan="5">③ 경고 · 오염원 · Z키</td></tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">1-06</td>
+      <td class="name">경고 → 스폰</td>
+      <td class="detail">
+        <ul>
+          <li>가이드 후 <strong>오른쪽으로 2~3초 이동</strong> (키 누른 상태)</li>
+          <li class="ok">✔ 경고 깜빡임 → Z 안내 문구 → 오염원 <strong>페이드 인</strong></li>
+        </ul>
+      </td>
+      <td class="note">가만히 서 있으면 경고 없음 (이동 중만 누적)</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">1-07</td>
+      <td class="name">Z키 (경고 전·후)</td>
+      <td class="detail">
+        <ul>
+          <li>경고 <strong>전</strong> Z 연타 → <span class="ok">✔ 아이템 안 바뀜</span> (Scanner)</li>
+          <li>경고 <strong>후</strong> Z → <span class="ok">✔ 대응 아이템 슬롯 변경</span>, Scanner 딤</li>
+        </ul>
+      </td>
+      <td class="risk">경고 후에도 Z 안 됨 → ItemSelectManager</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">1-08</td>
+      <td class="name">스폰 후 이동 확장</td>
+      <td class="detail">
+        <ul>
+          <li>오염원 나온 뒤 오른쪽 끝까지 이동</li>
+          <li class="ok">✔ -403보다 <strong>더 오른쪽</strong> 가능 (GrowRange)</li>
+        </ul>
+      </td>
+      <td class="note">1-06 직후에도 확인 가능</td>
+    </tr>
+
+    <tr class="group"><td colspan="5">④ 접촉 · HP (Stage 1-1 정답: 중화제)</td></tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">1-09</td>
+      <td class="name">Scanner 접촉</td>
+      <td class="detail">
+        <ul>
+          <li>Scanner로 오염원에 1~2초 닿기</li>
+          <li class="ok">✔ 방호복↓ · 오염원 HP <strong>안 ↓</strong></li>
+        </ul>
+      </td>
+      <td class="note">—</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">1-10</td>
+      <td class="name">오답 아이템</td>
+      <td class="detail">
+        <ul>
+          <li>Z로 중화제 <strong>아닌</strong> 패드 선택 후 접촉</li>
+          <li class="ok">✔ 방호복↓ · 오염원 HP 유지 · Console <strong>틀린</strong> 판정</li>
+          <li class="ok">✔ (1-1만) 2초 정지 + 안내 + 아이템 dim → 해제</li>
+        </ul>
+      </td>
+      <td class="note">1-2 이상에서는 패널티 없을 수 있음</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">1-11</td>
+      <td class="name">정답 · 로그 순서</td>
+      <td class="detail">
+        <ul>
+          <li><strong>중화제</strong>로 계속 접촉</li>
+          <li class="ok">✔ 판정 → 방호복 로그 → 오염원 HP↓ (순서)</li>
+          <li class="ok">✔ 중화 SFX 루프 (연결 시)</li>
+        </ul>
+      </td>
+      <td class="risk">접촉 중 로그 끊김 → IsEdgeContact 재활성 여부</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">1-12</td>
+      <td class="name">접촉 해제</td>
+      <td class="detail">
+        <ul>
+          <li>접촉하다가 떨어지기</li>
+          <li class="ok">✔ 오염원 HP <strong>최대로 초기화</strong></li>
+        </ul>
+      </td>
+      <td class="note">—</td>
+    </tr>
+
+    <tr class="group"><td colspan="5">⑤ 중화 · 맵 · 일시정지</td></tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">1-13</td>
+      <td class="name">오염원 1개 중화</td>
+      <td class="detail">
+        <ul>
+          <li>중화제로 HP 0까지</li>
+          <li class="ok">✔ 페이드 아웃 · <strong>Scanner 복귀</strong> · Z 잠금</li>
+          <li class="ok">✔ 잔여 1개 이상이면: 우측 자동 이동 → 페이드 → 위치·배경 리셋 → 다음 스폰</li>
+        </ul>
+      </td>
+      <td class="risk">2번째 오염원 안 나옴 → activeCount 리셋</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">1-14</td>
+      <td class="name">ESC 일시정지</td>
+      <td class="detail">
+        <ul>
+          <li>플레이 중 <strong>ESC</strong> → 다시 ESC</li>
+          <li class="ok">✔ 패널 on/off · 정지 중 ←→·Z 무시</li>
+        </ul>
+      </td>
+      <td class="note">맵 전환 중 ESC는 4-01 참고</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- S2 -->
+<h2>시나리오 2 — 저장 · 이어하기</h2>
+<table>
+  <thead>
+    <tr>
+      <th class="chk">✓</th>
+      <th class="num">번호</th>
+      <th class="name">이름</th>
+      <th>구체 사항</th>
+      <th class="note">예외 · 버그 가능성</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">2-01</td>
+      <td class="name">클리어 시 저장</td>
+      <td class="detail">
+        <ul>
+          <li>1-1 오염원 <strong>2마리 전부</strong> 중화 → Clear 패널</li>
+          <li class="ok">✔ <code>HazmatRush_Save\gamesave.json</code> 생성 · Console 저장 로그</li>
+        </ul>
+      </td>
+      <td class="note">게임오버만으로는 저장 안 됨 (의도)</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">2-02</td>
+      <td class="name">타이틀 Continue UI</td>
+      <td class="detail">
+        <ul>
+          <li>타이틀 복귀 → TitleScene Play</li>
+          <li class="ok">✔ <strong>Continue</strong> 있는 UI 표시</li>
+        </ul>
+      </td>
+      <td class="note">—</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">2-03</td>
+      <td class="name">Continue 진입</td>
+      <td class="detail">
+        <ul>
+          <li><strong>Continue</strong> 클릭</li>
+          <li class="ok">✔ <strong>Stage 1-2</strong> HUD (55초·3마리 등)</li>
+        </ul>
+      </td>
+      <td class="risk">스테이지 번호 틀림 → gamesave continueStageIndex</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">2-04</td>
+      <td class="name">저장 없을 때 Continue</td>
+      <td class="detail">
+        <ul>
+          <li>파일 삭제 후 Continue (버튼 보이면)</li>
+          <li class="ok">✔ 스테이지 0 폴백 · 크래시 없음</li>
+        </ul>
+      </td>
+      <td class="note">선택 항목</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- S3 -->
+<h2>시나리오 3 — 클리어 · 게임오버 · 재시작</h2>
+<table>
+  <thead>
+    <tr>
+      <th class="chk">✓</th>
+      <th class="num">번호</th>
+      <th class="name">이름</th>
+      <th>구체 사항</th>
+      <th class="note">예외 · 버그 가능성</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">3-01</td>
+      <td class="name">방호복 0</td>
+      <td class="detail">
+        <ul>
+          <li>오답 접촉 등으로 방호복 0</li>
+          <li class="ok">✔ Die 1회 → 약 2초 후 GameOver · 이동·타이머 정지</li>
+        </ul>
+      </td>
+      <td class="risk">GO 후에도 데미지·중화음</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">3-02</td>
+      <td class="name">타임오버</td>
+      <td class="detail">
+        <ul>
+          <li>타이머 0 또는 <strong>F2</strong> (디버그)</li>
+          <li class="ok">✔ GameOver 패널 (Die 대기 없이 빠를 수 있음)</li>
+        </ul>
+      </td>
+      <td class="note">—</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">3-03</td>
+      <td class="name">재시작</td>
+      <td class="detail">
+        <ul>
+          <li>Clear/GameOver에서 <strong>재시작</strong></li>
+          <li class="ok">✔ 동일 스테이지 초기 · Scanner · 오염원 잔존 없음</li>
+        </ul>
+      </td>
+      <td class="risk">가이드·activeCount 미리셋</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">3-04</td>
+      <td class="name">스테이지 클리어</td>
+      <td class="detail">
+        <ul>
+          <li>스테이지 오염원 전부 중화</li>
+          <li class="ok">✔ Clear 패널 · 다음 스테이지 버튼 (마지막 제외)</li>
+        </ul>
+      </td>
+      <td class="note">—</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">3-05</td>
+      <td class="name">1-3 클리어 저장</td>
+      <td class="detail">
+        <ul>
+          <li>Stage 1-3 클리어 후 json 확인</li>
+          <li class="ok">✔ continueStageIndex <strong>마지막 유지</strong></li>
+        </ul>
+      </td>
+      <td class="note">선택</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- S4 -->
+<h2>시나리오 4 — 예외 · 버그 의심 (이상할 때만)</h2>
+<table>
+  <thead>
+    <tr>
+      <th class="chk">✓</th>
+      <th class="num">번호</th>
+      <th class="name">이름</th>
+      <th>구체 사항</th>
+      <th class="note">버그 가능성</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">4-01</td>
+      <td class="name">맵 전환 중 ESC</td>
+      <td class="detail">오염원 1개 지운 뒤 자동 우측 이동·페이드 중 ESC → <span class="ok">✔ pause <strong>안 열림</strong>이 정상</span></td>
+      <td class="risk">전환 중 pause → softlock</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">4-02</td>
+      <td class="name">맵 이동 중 GO</td>
+      <td class="detail">자동 우측 이동 중 방호복 0 → <span class="ok">✔ GO 정상 · 유령 이동 없음</span></td>
+      <td class="risk">코루틴·위치 꼬임</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">4-03</td>
+      <td class="name">결과 후 타이머</td>
+      <td class="detail">Clear/GO 패널 뜬 뒤 → <span class="ok">✔ 시간·이동 추가 감소 없음</span></td>
+      <td class="risk">Timer GameEnded 미반영</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">4-04</td>
+      <td class="name">Console Error</td>
+      <td class="detail">Play 내내 Console → <span class="ok">✔ 빨간 Error <strong>0건</strong></span></td>
+      <td class="risk">NullReference 연쇄</td>
+    </tr>
+    <tr>
+      <td class="chk"><input type="checkbox"/></td>
+      <td class="num">4-05</td>
+      <td class="name">타이틀 버튼 SFX</td>
+      <td class="detail">Start/Continue 클릭 → <span class="ok">✔ 버튼음 (AudioManager 연결 시)</span></td>
+      <td class="note">—</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- DETAIL 5-9 -->
+<h2>5. 상세 — 로딩 · 타이틀 · HUD</h2>
+<table>
+  <thead><tr><th class="chk">✓</th><th class="num">번호</th><th class="name">이름</th><th>구체 사항</th><th class="note">예외 · 버그 가능성</th></tr></thead>
+  <tbody>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">L-01</td><td class="name">로딩 페이드</td><td class="detail"><ul><li>Start 후 LoadingScene</li><li class="ok">✔ 검은 배경·페이드 인</li></ul></td><td class="note">—</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">L-02</td><td class="name">진행 바</td><td class="detail"><ul><li>Slider 연결 시</li><li class="ok">✔ 0→1 채워짐</li></ul></td><td class="note">미연결 시 스킵 OK</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">L-03</td><td class="name">최소 표시 시간</td><td class="detail"><ul><li>minShowSeconds 동안 로딩 유지 후 GameScene</li></ul></td><td class="risk">즉시 전환 깜빡임</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">L-04</td><td class="name">웜업 프리팹</td><td class="detail"><ul><li>첫 오염원 스폰 시 끊김 적은지 관찰</li></ul></td><td class="note">선택</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">T-05</td><td class="name">타이틀 복귀</td><td class="detail"><ul><li>게임 중 타이틀 버튼</li><li class="ok">✔ TitleScene · timeScale=1</li></ul></td><td class="risk">pause 0 유지</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">T-06</td><td class="name">GO 후 저장</td><td class="detail"><ul><li>클리어 없이 GO → json mtime 동일</li></ul></td><td class="note">의도( N-01 )</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">T-07</td><td class="name">SceneLoad 경고</td><td class="detail"><ul><li>Manager 없을 때 Start → Console Warning (인위 테스트)</li></ul></td><td class="note">선택</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">G-01</td><td class="name">Stage HUD</td><td class="detail"><ul><li>stageLabel·placeName·잔여 오염원 수</li><li class="ok">✔ stage_data.json 과 일치</li></ul></td><td class="risk">stageText null</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">G-02</td><td class="name">방호복 UI</td><td class="detail"><ul><li>데미지 중 % 표시</li><li class="ok">✔ float 계산 · 화면 정수</li></ul></td><td class="note">—</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">G-03</td><td class="name">타이머 정지</td><td class="detail"><ul><li>Clear/GO 후</li><li class="ok">✔ 숫자 더 안 줄어듦</li></ul></td><td class="risk">4-03 동일</td></tr>
+  </tbody>
+</table>
+
+<h2>6. 상세 — 플레이어 · 오염원 스폰</h2>
+<table>
+  <thead><tr><th class="chk">✓</th><th class="num">번호</th><th class="name">이름</th><th>구체 사항</th><th class="note">예외 · 버그 가능성</th></tr></thead>
+  <tbody>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">PL-01</td><td class="name">이동 애니</td><td class="detail"><ul><li>이동 시 Move / 정지 Idle</li></ul></td><td class="note">Animator State 파라미터</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">PL-02</td><td class="name">pause 중 입력</td><td class="detail"><ul><li>ESC 후 ←→</li><li class="ok">✔ 무시</li></ul></td><td class="note">1-14와 중복 가능</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">PL-03</td><td class="name">결과 시 정지</td><td class="detail"><ul><li>Clear/GO 시 즉시 멈춤</li></ul></td><td class="risk">관성 미끄러짐</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">P-01</td><td class="name">이동만 누적</td><td class="detail"><ul><li>서 있으면 경고 없음 · 이동 시만</li></ul></td><td class="note">1-06 보완</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">P-02</td><td class="name">Z 안내 문구</td><td class="detail"><ul><li>경고 후 GuideTxt 2초 전후</li><li class="ok">✔ 표시만 (Z 잠금 아님)</li></ul></td><td class="note">—</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">P-03</td><td class="name">처리 팝업</td><td class="detail"><ul><li>스폰 페이드 80%쯤 PopupUI</li></ul></td><td class="note">미연결 시 생략</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">P-04</td><td class="name">2번째 스폰</td><td class="detail"><ul><li>1-1에서 1마리 지운 뒤 루프</li><li class="ok">✔ 두 번째 오염원 정상 스폰</li></ul></td><td class="risk">activeCount 미리셋</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">P-05</td><td class="name">스폰 중 배경</td><td class="detail"><ul><li>스폰~페이드 동안 배경 스크롤 정지</li></ul></td><td class="note">—</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">P-06</td><td class="name">GO 중 스폰</td><td class="detail"><ul><li>게임오버 후 추가 오염원 없음</li></ul></td><td class="note">—</td></tr>
+  </tbody>
+</table>
+
+<h2>7. 상세 — 아이템 · 접촉 · HP</h2>
+<table>
+  <thead><tr><th class="chk">✓</th><th class="num">번호</th><th class="name">이름</th><th>구체 사항</th><th class="note">예외 · 버그 가능성</th></tr></thead>
+  <tbody>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">I-01</td><td class="name">첫 Z → 중화제</td><td class="detail"><ul><li>경고 후 첫 Z</li><li class="ok">✔ index 1 (중화제)부터</li></ul></td><td class="note">—</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">I-02</td><td class="name">Z 순환</td><td class="detail"><ul><li>1→2→3→1 (Scanner 제외)</li></ul></td><td class="note">—</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">I-03</td><td class="name">재시작 후 Z</td><td class="detail"><ul><li>재시작 후 경고 전 Z 불가</li></ul></td><td class="risk">Z 잠금 유지 버그</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">C-01</td><td class="name">HP 바 표시</td><td class="detail"><ul><li>접촉 시 머리·오염원 위 슬라이더</li><li>떼면 숨김</li></ul></td><td class="risk">WorldSpaceUIFollower</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">C-02</td><td class="name">오답→정답 SFX</td><td class="detail"><ul><li>오답 접촉 후 중화제로 변경</li><li class="ok">✔ 중화음 끊겼다가 정답 시만 재생</li></ul></td><td class="note">—</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">C-03</td><td class="name">pause 중 접촉</td><td class="detail"><ul><li>접촉 중 ESC → 데미지/로그 설계대로</li></ul></td><td class="note">Realtime 대기</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">C-04</td><td class="name">패널티 중 접촉</td><td class="detail"><ul><li>1-1 오대응 2초 중 접촉·Z 막힘</li></ul></td><td class="note">1-10 보완</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">C-05</td><td class="name">GO 중 접촉</td><td class="detail"><ul><li>패널 뜬 뒤 겹쳐도 데미지·중화음 없음</li></ul></td><td class="risk">3-01 보완</td></tr>
+  </tbody>
+</table>
+
+<h2>8. 상세 — 맵 · GameManager · 클리어 조건</h2>
+<table>
+  <thead><tr><th class="chk">✓</th><th class="num">번호</th><th class="name">이름</th><th>구체 사항</th><th class="note">예외 · 버그 가능성</th></tr></thead>
+  <tbody>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">M-01</td><td class="name">맵 페이드</td><td class="detail"><ul><li>중화 후 페이드 아웃→인·배경 offset 리셋</li></ul></td><td class="note">1-13 보완</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">M-02</td><td class="name">clearPanelDelay</td><td class="detail"><ul><li>마지막 오염원 페이드 후 ~1초 뒤 Clear</li></ul></td><td class="risk">패널 조기/지연</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">M-03</td><td class="name">다음 스테이지</td><td class="detail"><ul><li>Clear → 다음 스테이지 버튼</li><li class="ok">✔ HUD·시간·오염원 수 갱신 · BGM</li></ul></td><td class="risk">activeCount·가이드</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">M-04</td><td class="name">클리어 조건</td><td class="detail"><ul><li>방호복 0 또는 시간 0이면 Clear 안 됨</li></ul></td><td class="risk">0 HP 클리어</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">GM-01</td><td class="name">중복 GameManager</td><td class="detail"><ul><li>씬에 2개 넣으면 하나 Destroy Warning</li></ul></td><td class="note">선택</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">GM-02</td><td class="name">FreezePlayOnResult</td><td class="detail"><ul><li>결과 시 PollutantManager 복귀 정지</li></ul></td><td class="note">—</td></tr>
+  </tbody>
+</table>
+
+<h2>9. 상세 — 일시정지 · 패널티 · 디버그 키</h2>
+<table>
+  <thead><tr><th class="chk">✓</th><th class="num">번호</th><th class="name">이름</th><th>구체 사항</th><th class="note">예외 · 버그 가능성</th></tr></thead>
+  <tbody>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">U-01</td><td class="name">pause 토글</td><td class="detail"><ul><li>ESC 두 번 · pauseSet on/off</li></ul></td><td class="note">—</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">U-02</td><td class="name">GO 후 ESC</td><td class="detail"><ul><li>게임오버 후 ESC 무시</li></ul></td><td class="note">—</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">U-03</td><td class="name">1-2 패널티 없음</td><td class="detail"><ul><li>Stage 1-2에서 오답 접촉</li><li class="ok">✔ 2초 전체정지 <strong>없음</strong></li></ul></td><td class="note">1-1만 패널티</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">D-01</td><td class="name">F1 강제 클리어</td><td class="detail"><ul><li>enableDebugKeys · F1</li><li class="ok">✔ Clear 패널</li></ul></td><td class="note">—</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">D-02</td><td class="name">F2 강제 GO</td><td class="detail"><ul><li>F2 → 즉시 GameOver</li></ul></td><td class="note">3-02 보완</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">D-03</td><td class="name">F3 저장 로그</td><td class="detail"><ul><li>F3 → SaveFilePath 로그</li></ul></td><td class="note">enableDebugSaveKeys</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">D-04</td><td class="name">F4 저장 로드</td><td class="detail"><ul><li>F4 → 저장 스테이지 적용</li></ul></td><td class="note">—</td></tr>
+  </tbody>
+</table>
+
+<h2>10. 스테이지별 전수 플레이</h2>
+<table>
+  <thead><tr><th class="chk">✓</th><th class="num">번호</th><th class="name">이름</th><th>구체 사항</th><th class="note">예외 · 버그 가능성</th></tr></thead>
+  <tbody>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">ST-01</td><td class="name">Stage 1-1 통과</td><td class="detail"><ul><li>2마리·60초·TypeA·중화제만으로 클리어</li></ul></td><td class="note">시나리오 1+2</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">ST-02</td><td class="name">Stage 1-2 통과</td><td class="detail"><ul><li>3마리·55초·B 나오면 <strong>오일패드</strong></li><li class="ok">✔ 패널티 없음</li></ul></td><td class="risk">B 스폰·정답 매칭</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">ST-03</td><td class="name">Stage 1-3 통과</td><td class="detail"><ul><li>4마리·50초·C → <strong>범용패드</strong></li></ul></td><td class="note">—</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">ST-04</td><td class="name">마지막 스테이지</td><td class="detail"><ul><li>1-3 클리어 후 다음 버튼·저장 상한</li></ul></td><td class="note">3-05</td></tr>
+  </tbody>
+</table>
+
+<h2>11. 오디오 · UI</h2>
+<table>
+  <thead><tr><th class="chk">✓</th><th class="num">번호</th><th class="name">이름</th><th>구체 사항</th><th class="note">예외 · 버그 가능성</th></tr></thead>
+  <tbody>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">AU-01</td><td class="name">타이틀 BGM</td><td class="detail"><ul><li>TitleScene · BGM 재생(연결 시)</li></ul></td><td class="note">AudioManager DDOL</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">AU-02</td><td class="name">게임 BGM</td><td class="detail"><ul><li>GameScene 플레이 중 BGM</li></ul></td><td class="note">—</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">AU-03</td><td class="name">Clear SFX</td><td class="detail"><ul><li>클리어 시 BGM stop + clearSFX</li></ul></td><td class="note">—</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">AU-04</td><td class="name">GameOver SFX</td><td class="detail"><ul><li>GO 시 game-overSFX</li></ul></td><td class="note">Die 지연 후</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">UI-01</td><td class="name">ItemManager 딤</td><td class="detail"><ul><li>선택 슬롯 밝음 · 비선택·Scanner 딤</li></ul></td><td class="risk">슬롯 인덱스</td></tr>
+  </tbody>
+</table>
+
+<h2>12. 회귀 체크 (증상별)</h2>
+<table>
+  <thead><tr><th class="chk">✓</th><th class="num">번호</th><th class="name">증상</th><th>구체 사항 (확인할 것)</th><th>관련 번호</th></tr></thead>
+  <tbody>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">R-01</td><td class="name">-403 전 조기 정지</td><td class="detail">Player limit · GrowRange</td><td>1-05, PL-*</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">R-02</td><td class="name">접촉 데미지 끊김</td><td class="detail">IsEdgeContact 미사용 확인</td><td>1-11, N-05</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">R-03</td><td class="name">정답인데 HP 안 깎임</td><td class="detail">경고 후 Z · ItemType</td><td>1-11, I-*</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">R-04</td><td class="name">오염원 안 나옴</td><td class="detail">이동 누적 · Spawner · Manager</td><td>1-06, P-*</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">R-05</td><td class="name">Continue 스테이지 틀림</td><td class="detail">gamesave · pendingStageIndex</td><td>2-03</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">R-06</td><td class="name">맵 전환 pause</td><td class="detail">BlocksPause</td><td>4-01</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">R-07</td><td class="name">NullReference</td><td class="detail">부록 C Inspector</td><td>4-04</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">R-08</td><td class="name">중화음·버튼음 간섭</td><td class="detail">neutralizationSource 분리</td><td>C-02, AU-*</td></tr>
+  </tbody>
+</table>
+
+<!-- NA -->
+<h2>N/A — 의도적 미구현 (Fail 아님)</h2>
+<table>
+  <thead>
+    <tr><th class="chk">✓</th><th class="num">번호</th><th class="name">이름</th><th>구체 사항</th></tr>
+  </thead>
+  <tbody>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">N-01</td><td class="name">GO 시 저장</td><td>게임오버해도 json <strong>안 바뀜</strong> → OK</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">N-02</td><td class="name">사망 페이드</td><td>Die 후 <strong>페이드 없음</strong>, 2초 후 패널만 → OK</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">N-03</td><td class="name">bgIndex 배경</td><td>스테이지마다 배경 안 바뀌어도 OK</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">N-04</td><td class="name">점수·별</td><td>없음 → OK</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">N-05</td><td class="name">IsEdgeContact</td><td>접촉 데미지에 가장자리 조건 없음 → OK</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td class="num">N-06</td><td class="name">스테이지별 풀 JSON</td><td>Inspector 풀 사용 → OK</td></tr>
+  </tbody>
+</table>
+
+<!-- Appendix -->
+<h2>부록 A — 스테이지 · 정답 아이템</h2>
+<table>
+  <thead><tr><th>스테이지</th><th>오염원 수</th><th>시간</th><th>타입</th><th>맞는 아이템</th></tr></thead>
+  <tbody>
+    <tr><td>1-1</td><td>2</td><td>60초</td><td>A</td><td>중화제 (Neutralizer)</td></tr>
+    <tr><td>1-2</td><td>3</td><td>55초</td><td>A, B</td><td>A→중화제 · B→오일패드</td></tr>
+    <tr><td>1-3</td><td>4</td><td>50초</td><td>A,B,C</td><td>C→범용패드</td></tr>
+  </tbody>
+</table>
+
+<h2>부록 B — 증상 → 확인 위치</h2>
+<table>
+  <thead><tr><th>증상</th><th>먼저 볼 것</th><th>관련 번호</th></tr></thead>
+  <tbody>
+    <tr><td>Continue만 보임</td><td>저장 삭제 · 0-03</td><td>1-01</td></tr>
+    <tr><td>Start 무반응</td><td>SceneLoadManager · OnClick</td><td>1-02</td></tr>
+    <tr><td>오염원 안 나옴</td><td>이동하며 2~3초 · 가이드 끝</td><td>1-06</td></tr>
+    <tr><td>맞는데 HP 안 깎임</td><td>경고 후 Z · 중화제</td><td>1-11</td></tr>
+    <tr><td>데미지 끊김</td><td>IsEdgeContact 코드</td><td>1-11, R-02, N-05</td></tr>
+    <tr><td>두 번째 오염원 없음</td><td>activeCount · ResetForStage</td><td>P-04, R-04</td></tr>
+  </tbody>
+</table>
+
+<h2>부록 C — Inspector (Null 방지)</h2>
+<table>
+  <thead><tr><th class="chk">✓</th><th>오브젝트</th><th>비어 있으면 안 되는 참조</th></tr></thead>
+  <tbody>
+    <tr><td class="chk"><input type="checkbox"/></td><td>GameManager</td><td>player, pollutantManager, timer, stageManager, clearSet, gameOverSet, pauseSet</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td>Player</td><td>protectionNumText, anim, Rigidbody2D</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td>PollutantManager</td><td>player, spawner, warningTxt, guideTxt, stageManager</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td>SceneLoadUI</td><td>startOnlyGroup, continueGroup → SceneLoadManager</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td>StageManager</td><td>stageDataJson, stageText, pollutantCountText</td></tr>
+    <tr><td class="chk"><input type="checkbox"/></td><td>LoadingScene</td><td>LoadingController → SceneLoadManager.nextSceneName</td></tr>
+  </tbody>
+</table>
+
+<h2>부록 D — unity-cli (선택)</h2>
+<pre>unity-cli status
+unity-cli editor play --wait
+unity-cli console --type error,warning --lines 50
+unity-cli editor stop</pre>
+
+<h2>테스트 기록</h2>
+<table>
+  <thead><tr><th>날짜</th><th>테스터</th><th>0~4 흐름</th><th>5~12 상세</th><th>ST·회귀</th><th>Fail 번호</th></tr></thead>
+  <tbody>
+    <tr><td></td><td></td><td>/32</td><td>/38</td><td>/17</td><td></td></tr>
+  </tbody>
+</table>
+<p class="meta">체크박스 합계 약 <strong>87개</strong> (표 형식 유지 · 이전 단어-only 표 70항목 이상 복원)</p>
+
+<p class="meta">Assets/Docs/QA/qa-checklist.html</p>
+</body>
+</html>

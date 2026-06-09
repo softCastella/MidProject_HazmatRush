@@ -691,8 +691,8 @@ MonoBehaviour:
   shineImage: {fileID: 2140458380}
   nextSceneName: TitleScene
   totalDuration: 2
-  fadeDuration: 0.45
-  splashSfxDelay: 0.15
+  fadeDuration: 0.65
+  splashSfxDelay: 0.22
   fadeOutDuration: 1.5
   scaleDuration: 1.2
   shineDelay: 0.9

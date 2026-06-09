@@ -15,9 +15,9 @@ public class SplashController : MonoBehaviour
 
     [Header("Timing")]
     [SerializeField] private float totalDuration = 2f;
-    [SerializeField] private float fadeDuration = 0.45f;
+    [SerializeField] private float fadeDuration = 0.65f;
     [Tooltip("페이드인 시작 후 SFX 재생까지 대기(초). 페이드인과 같이 들리게 맞춤")]
-    [SerializeField] private float splashSfxDelay = 0.15f;
+    [SerializeField] private float splashSfxDelay = 0.22f;
     [SerializeField] private float fadeOutDuration = 1.5f;
     [SerializeField] private float scaleDuration = 1.2f;
     [SerializeField] private float shineDelay = 0.9f;

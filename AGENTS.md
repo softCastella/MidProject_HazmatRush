@@ -5,7 +5,7 @@
 
 **AI 요약:** 문법·구조는 단순하게 / 기존 변수·로직·문법 스타일 우선 / 요청 범위만 최소 수정.
 
-**Cursor Rules (자동 적용):** `.cursor/rules/midproject-core.mdc` (항상), `.cursor/rules/git-worktree-workflow.mdc` (항상), `.cursor/rules/unity-gameplay.mdc` (`Assets/Scripts/**/*.cs` 작업 시)
+**Cursor Rules (자동 적용):** `.cursor/rules/midproject-core.mdc` (항상), `.cursor/rules/git-worktree-workflow.mdc` (항상), `.cursor/rules/docs-harness.mdc` (`Assets/Docs/**` 작업 시), `.cursor/rules/unity-gameplay.mdc` (`Assets/Scripts/**/*.cs` 작업 시)
 
 > 요약 문서: [README.md](README.md)
 
@@ -16,8 +16,9 @@
 **2D 횡스크롤 오염 대응 게임.** 플레이어가 이동하며 오염원에 접촉하고, **맞는 아이템**으로만 오염원 HP를 깎습니다. 접촉 중에는 방호복 HP가 계속 감소합니다.
 
 - Unity `6000.4.8f1`
-- 씬: `SplashScene` → `TitleScene` → `IntroStoryScene` → `LoadingScene` → `GameScene`
+- 씬: `AppScene` → `SplashScene` → `TitleScene` → `IntroStoryScene` → `LoadingScene` → `GameScene` (이어하기는 Intro 생략)
 - 스크립트 루트: `Assets/Scripts/`
+- **Play:** 빌드·전체 플로우는 `AppScene` · gameplay만 보면 `GameScene` 직접 Play 가능
 
 ---
 
@@ -113,12 +114,16 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 | 접촉·이동 버그 이력 | `Assets/Docs/Bug/2026-06-04-시각미상-gameplay-fixes.md` |
 | 클리어·VFX·아이템 유지 | `Assets/Docs/Bug/2026-06-05-시각미상-클리어-가이드-중화VFX-fixes.md` |
 | 클리어·사망·결과 패널 | `Assets/Scripts/Core/GameManager.cs` |
-| Docs 파일명 규칙 | `Assets/Docs/문서-이름-규칙.md` — 오늘 작성=현재 시각, 전날 소급=시각미상 |
+| Docs 하네스 | `Assets/Docs/문서-이름-규칙.md` · `.cursor/rules/docs-harness.mdc` — Bug/회의록 역할, 당일 취합, `날짜-최초시각-이름-수정시각-N차` |
 | 아이템 DPS·타입 | `Assets/Scripts/GamePlay/Item.cs` |
 | Z키 아이템 선택 | `Assets/Scripts/Core/ItemSelectManager.cs` |
 | 오염원 스폰·경고 | `Assets/Scripts/GamePlay/PollutantManager.cs` |
 | 시작 가이드·이동 잠금 | `Assets/Scripts/UI/GuideTxt.cs` |
+| App 진입·백그라운드 | `Assets/Scripts/Core/AppBootstrap.cs`, `Assets/Scenes/AppScene.unity` |
 | 씬 전환 | `Assets/Scripts/Core/SceneLoadManager.cs` |
+| BGM·SFX | `Assets/Scripts/Core/AudioManager.cs` |
+| 스플래시 연출 | `Assets/Scripts/UI/SplashController.cs` |
+| 2026-06-09 일일 | [회의록](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1400-1차-합의.md) |
 | 회복 인벤 로직·JSON | `Assets/Scripts/Core/RecoveryItemInventory.cs`, `Assets/Data/recovery_items.json` |
 | 회복 인벤 UI | `Assets/Scripts/UI/RecoveryItemInventoryUI.cs` |
 | 맵 회복 픽업 | `Assets/Scripts/GamePlay/RecoveryItem.cs` |
@@ -141,6 +146,8 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 
 | Hierarchy에서 찾을 이름 | 역할 |
 |------------------------|------|
+| **AppScene:** `App` | `AppBootstrap` — `runInBackground`, Splash 로드 |
+| **AppScene:** SceneLoadManager / AudioManager | 매니저 본체 (`DontDestroyOnLoad`) |
 | Player | 플레이어, 방호복, 이동 |
 | PollutantManager | 오염원 생성·경고 |
 | PollutantSpawner | 오염원 생성 위치 |
@@ -148,7 +155,9 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 | ItemSelectManager | 중화 아이템 선택 (Z/X) |
 | InventoryContainer | 회복 인벤 Scroll View (`RecoveryItemInventory` + `RecoveryItemInventoryUI`) |
 
-**Play 누르기 전:** `GameScene`이 열려 있는지 확인.
+**Play 누르기 전:**
+- **전체 플로우:** `AppScene` 열고 Play (Build index 0)
+- **gameplay만 빠르게:** `GameScene` 직접 Play 가능 (`runInBackground`·App 설정은 미적용)
 
 ### 3.3 자주 쓰는 용어 (초보용)
 
@@ -163,7 +172,16 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 
 ### 3.4 플레이 테스트 체크리스트
 
+**App · 전체**
+
+- [ ] `AppScene` Play → 스플래시(페이드인 0.65s)·타이틀까지 이어지는가?
+- [ ] 이어하기 시 Intro 생략 → 로딩 → 게임인가?
+
+**Gameplay**
+
 - [ ] 가이드 끝난 뒤 좌우 이동 되는가?
+- [ ] 첫 오염원 후 -403 해제·맵 안 이동 되는가?
+- [ ] 고속 이동 중 접촉 HP·방호복이 끊기지 않는가?
 - [ ] 2~3초 이동 후 `[경고]` 로그·오염원 생성되는가?
 - [ ] 접촉 시 `틀린/올바른 아이템` 로그가 먼저 나오는가?
 - [ ] 접촉 중 `[Player] 방호복 HP 감소`가 반복되는가?
@@ -245,7 +263,10 @@ Cursor에서 확인: **Settings → Rules** 또는 채팅 입력창 근처 Rules
 
 | 기능 | 상태 |
 |------|------|
-| 씬 흐름 (Splash→Title→Intro→Loading→Game) | ✅ |
+| 씬 흐름 (App→Splash→Title→Intro→Loading→Game) | ✅ |
+| App 씬 PR1 (`AppBootstrap`, `runInBackground`) | ✅ · 서버·Additive는 미적용 |
+| 1차 이동 해제·`moveSpeed 400`/`scrollSpeed 0.2`·FixedUpdate·접촉 보정 | ✅ |
+| 스플래시 페이드인 0.65s | ✅ |
 | 이동·맵 구간 (`mapPollutants`) | ✅ |
 | 오염원 경고·스폰·페이드 | ✅ |
 | 아이템 선택 (Z/X), 맵 중 선택 유지 | ✅ |
@@ -259,6 +280,8 @@ Cursor에서 확인: **Settings → Rules** 또는 채팅 입력창 근처 Rules
 | 회복 인벤 스택·`InvItemView` UI·dim 선택 | ✅ |
 | 회복 인벤 6종+ Scroll 스크롤 실검증 | 🟡 코드만, 미검증 |
 | 회복 vs 중화 HUD Hierarchy 최종 분리 | 🟡 재확인 권장 |
+| App PR2 중복 매니저 제거 · PR3 Additive · 서버 연동 | 🟡 보류·계획만 |
+| 좌우 연타 가속 체감 (`Background.SmoothDamp`) | 🟡 분석만 |
 
 ---
 
@@ -270,6 +293,7 @@ Cursor에서 확인: **Settings → Rules** 또는 채팅 입력창 근처 Rules
 | 2026-06-05 | 접촉 판정 표준(회의록 §4), 맵 구간, 스플래시·BGM, 클리어/사망 2초 연출, VFX·아이템 유지, AGENTS·Rules 갱신 |
 | 2026-06-06 | 회복 인벤 1차 구현(스택·InvItemView·UI 레이아웃) — [회의록](Assets/Docs/회의록/2026-06-06-시각미상-회복아이템-인벤-설계-합의.md) · [Bug](Assets/Docs/Bug/2026-06-06-시각미상-회복인벤-UI-fixes.md) |
 | 2026-06-06 | Git 임의 실행 금지 규칙 강화 (요청 시에만 commit·checkout·restore 등) |
+| 2026-06-09 | 회의록 일일 취합 · Docs 하네스 |
 | | *(이 아래에 본인이 직접 추가)* |
 
 ---

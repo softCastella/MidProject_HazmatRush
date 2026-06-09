@@ -140,8 +140,7 @@ MonoBehaviour:
   dieFadeDuration: 0.5
   maxProtection: 100
   curProtection: 100
-  protectionNumText: {fileID: 0}
-  protectionSlider: {fileID: 0}
+  protectionHpBar: {fileID: 0}
   isMoving: 0
   hasInput: 0
   canMove: 0

@@ -7,11 +7,12 @@
 |------|------|
 | **엔진** | Unity `6000.4.8f1` |
 | **언어** | C# |
-| **씬** | `SplashScene` → `TitleScene` → `IntroStoryScene` → `LoadingScene` → `GameScene` |
+| **씬** | `AppScene` → `SplashScene` → `TitleScene` → `IntroStoryScene` → `LoadingScene` → `GameScene` (이어하기는 Intro 생략) |
 | **스테이지 데이터** | `Assets/Data/stage_data.json` (`mapPollutants` 포함) |
 | **회복 아이템 정의** | `Assets/Data/recovery_items.json` |
 | **AI·협업 규칙** | [AGENTS.md](AGENTS.md) |
-| **버그·수정 기록** | [Bug 폴더](Assets/Docs/Bug/) — 최근: [회복 아이템 아크 드랍](Assets/Docs/Bug/2026-06-08-시각미상-회복아이템-아크드랍-fixes.md) |
+| **버그·수정 기록** | [Bug 폴더](Assets/Docs/Bug/) |
+| **회의·합의** | [회의록 폴더](Assets/Docs/회의록/) — 최근: [0609 일일](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1400-1차-합의.md) |
 
 ---
 
@@ -72,8 +73,10 @@
 ## 씬 흐름
 
 ```text
+AppScene
+  └ runInBackground · SceneLoadManager/AudioManager 생성 → SplashScene
 SplashScene
-  └ 로고 페이드인·확대 → splashSFX → 로고 페이드아웃(1.5s) → TitleScene (타이틀 선로드, 별도 검은 암전 없음)
+  └ 로고 페이드인(0.65s)·확대 → splashSFX → 로고 페이드아웃(1.5s) → TitleScene (타이틀 선로드, 별도 검은 암전 없음)
 TitleScene
   └ 시작 → 흰 화면 암전(0.25s) + 인트로 선로드 → IntroStoryScene
   └ 이어하기 → LoadingScene (인트로 생략)
@@ -91,6 +94,13 @@ GameScene
 > **BGM:** 타이틀·게임 씬만 BGM 재생(페이드 인/아웃). 스플래시·인트로·로딩에서는 BGM 없음(`StopBGM`).
 
 > **씬 페이드:** `TitleSceneFade`(타이틀→인트로 흰 암전), `AutoScrollIntro`(인트로 진입 페이드인·종료 검은 암전). 상세: [Bug 2026-06-06](Assets/Docs/Bug/2026-06-06-시각미상-씬전환-스플래시-인트로-fixes.md).
+
+### App 진입 (`AppScene` · PR1)
+
+- Build index **0**. `AppBootstrap` — `Application.runInBackground = true`, `SceneLoadManager`로 `SplashScene` 싱글 로드.
+- `SceneLoadManager`·`AudioManager`는 App에서 생성 후 `DontDestroyOnLoad` (Splash 로드 시 App 씬 오브젝트는 unload, 매니저만 유지).
+- **서버·Additive 로딩은 미적용** (프론트 계획만). 상세: [회의록 0609 일일](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1400-1차-합의.md) §App.
+- **Play 루트 2가지:** (1) `AppScene` — 빌드·전체 플로우·백그라운드 실행 (2) `GameScene` 등 직접 Play — 개발용 · 해당 씬 매니저 사용. 중복 매니저는 **의도적 유지**(PR2 보류).
 
 ---
 
@@ -123,8 +133,10 @@ GameScene
 ### 플레이어 (`Player.cs`)
 
 - 방호복 `curProtection` / `maxProtection` (float), UI는 정수 %
-- 이동: `Rigidbody2D.MovePosition`, 1차 범위 `leftLimit`~`rightLimit`
-- 첫 오염원 등장 후 `UnlockMapSegmentMovement()` — 1차 우측 한계(`-403`) 해제, 맵 끝(`769`)까지 이동
+- 이동: 입력·애니 `Update`, **`Rigidbody2D.MovePosition`은 `FixedUpdate`** (물리·트리거 동기)
+- 1차 범위 `leftLimit`~`rightLimit` — **이동 입력 있을 때만** `Clamp` (범위 밖에서 -403으로 끌림 방지)
+- `moveSpeed` **400** (`GameScene`) — 배경 `scrollSpeed` **0.2**와 쌍으로 조정 (`scrollSpeed ≈ moveSpeed / 1920` 참고)
+- 첫 오염원 등장 후 `UnlockMapSegmentMovement()` — 1차 우측 한계(`-403`) 해제, 맵 끝(`769`)까지 이동 (`PollutantManager.TryUnlockSegmentMovement`)
 - **중화 VFX:** 접촉 중이고 **추천 아이템과 일치**할 때만 (틀린 도구면 OFF)
 - 가스 밸브 연출: `SetValveAnimActive` — `Player_Valve` + 밸브 SFX
 - **클리어:** `PlayClearAnim()` — `Clear` 트리거 → `Player_Clear`(Loop)
@@ -134,6 +146,7 @@ GameScene
 ### 오염원 (`Pollutant.cs`)
 
 **A~C / D 공통:** `OnTriggerStay2D` → `ApplyPlayerContactDamage` — 판정 로그 → 방호복 DPS → 정답일 때만 오염원 HP.  
+**고속 이동 보정:** `LateUpdate` bounds 겹침 시 Stay 누락 프레임 데미지 보정 · `OnTriggerExit` 패딩(`GetContactOverlapPadding`).  
 **D 연출만 분기:** 가스밸브 정답 시 밸브 애니·SFX (중화 VFX 없음).
 
 접촉 해제(전 타입): 오염원 HP `pollutanMaxHp`로 리셋.  
@@ -180,9 +193,9 @@ GameScene
 
 ### 스플래시 (`SplashController.cs`)
 
-- `SplashScene` 첫 실행 — 로고 페이드인·확대 → 샤인 → 로고 페이드아웃 → `TitleScene`
+- App 또는 Splash 진입 — 로고 **페이드인(0.65s)** · 확대 → 샤인 → 페이드아웃(1.5s) → `TitleScene`
 - 타이틀 `LoadSceneAsync` **선로드** — 로고 사라진 뒤 흰 화면 대기 최소화
-- SFX: `AudioManager.PlaySplashSfx()` — 페이드인 `splashSfxDelay` 후 재생
+- SFX: `AudioManager.PlaySplashSfx()` — 페이드인 시작 후 `splashSfxDelay`(0.22s) 재생
 
 ### 타이틀·인트로 페이드 (`TitleSceneFade.cs`, `AutoScrollIntro.cs`)
 
@@ -198,8 +211,11 @@ GameScene
 | `neutralizationSfxVolume` | A~C 중화 루프 |
 | `valveSfxVolume` | 가스 밸브 루프 |
 | `sfxVolume` | 버튼·클리어·게임오버·스플래시 |
+| `stageBgmClips` | 스테이지별 탐사 BGM (`StageManager` / `bgmIndex`) |
+| `splashClip` | 스플래시 로고 SFX |
 
-**씬별 BGM:** `TitleScene` / `GameScene`만 재생. 그 외는 페이드 아웃 후 정지.
+**씬별 BGM:** `TitleScene` / `GameScene`만 재생. 그 외는 페이드 아웃 후 정지.  
+**App 진입 시:** `AppScene` Inspector가 매니저 본체(클립·`stageBgmClips`·볼륨). 씬 직접 Play 시 해당 씬 인스턴스가 생성될 수 있음.
 
 ### 회복 아이템 (`RecoveryItemManager`, `RecoveryItemInventory`)
 
@@ -218,6 +234,7 @@ GameScene
 
 | 모듈 | 역할 |
 |------|------|
+| `AppBootstrap` | App 진입 · `runInBackground` · 첫 씬(`SplashScene`) 로드 |
 | `GameManager` | 클리어·게임오버·일시정지·디버그 키 |
 | `SceneLoadManager` | 씬 전환, `pendingStageIndex` |
 | `LoadingController` / `LoadingGuideTxt` | 페이드·플랜 준비·조작 안내 |
@@ -243,13 +260,14 @@ Assets/
 ├── Data/stage_data.json
 ├── Data/recovery_items.json
 ├── Scenes/
+│   ├── AppScene.unity          ← Build 0 · 매니저 본체
 │   ├── SplashScene.unity
 │   ├── TitleScene.unity
 │   ├── IntroStoryScene.unity
 │   ├── LoadingScene.unity
 │   └── GameScene.unity
 ├── Scripts/
-│   ├── Core/          GameManager, StageManager, ItemSelectManager, AudioManager, …
+│   ├── Core/          AppBootstrap, GameManager, SceneLoadManager, AudioManager, …
 │   ├── GamePlay/      Player, Pollutant, PollutantManager, Item, …
 │   └── UI/            GuideTxt, HelpGuideToggle, LoadingGuideTxt, SplashController, …
 ├── Prefabs/Game/      Player, PollutantA~D
@@ -260,7 +278,11 @@ Assets/
 └── Animations/        Player Idle / Move / Die / Valve / Clear
 ```
 
-### Hierarchy (GameScene)
+### Hierarchy
+
+**AppScene:** `App` (`AppBootstrap`) · `SceneLoadManager` · `AudioManager`
+
+**GameScene (요약):**
 
 | 이름 | 역할 |
 |------|------|
@@ -269,7 +291,8 @@ Assets/
 | RecoveryItemManager | 오염원 정화 후 회복 아이템 드랍·아크 |
 | HUD_Canvas | `HelpGuideToggle`, `KeyGuidePannel`, `ItemGuide` |
 | ItemSelectManager | Z/X 아이템 |
-| AudioManager | BGM·SFX (DontDestroyOnLoad) |
+
+> Title/Game/Splash 등에도 `SceneLoadManager`·`AudioManager` 중복 배치(개발용). App Play 시 App 인스턴스가 우선.
 
 ### Inspector 체크
 
@@ -287,14 +310,24 @@ Assets/
 ## 실행 방법
 
 1. Unity `6000.4.8f1`로 프로젝트 열기
-2. **권장:** `SplashScene` 실행 후 Play
-3. 정상 플로우: 스플래시 → 타이틀 → 인트로 → 로딩 → 게임
+2. **권장(빌드·전체 플로우):** `AppScene` 실행 후 Play
+3. **개발용:** `GameScene` 등 씬 직접 Play 가능 (해당 씬 매니저 사용 · `runInBackground` 미적용)
+4. 정상 플로우: App → 스플래시 → 타이틀 → (시작) 인트로 → 로딩 → 게임
 
 ### 플레이 테스트 체크리스트
 
+**App · 전체 플로우**
+
+- [ ] `AppScene` Play → 스플래시 페이드인(0.65s)·SFX → 타이틀 BGM
+- [ ] 이어하기 시 Intro 생략 → 로딩 → 게임
+- [ ] Alt+Tab 후에도 앱 동작 (`runInBackground`)
+
+**게임플레이** (`App` 또는 `GameScene` 직접 Play)
+
 - [ ] 스플래시 SFX·타이틀 BGM 페이드 인
 - [ ] 로딩 씬 K/I 안내 문구 표시
-- [ ] 가이드 후 좌우 이동, 경고 → 오염원 등장
+- [ ] 가이드 후 좌우 이동, 경고 → 오염원 등장 → 첫 오염원 후 -403 해제·맵 안 이동
+- [ ] 고속 이동 중 접촉 HP·방호복 **끊김 없음**
 - [ ] **Z 왼쪽 / X 오른쪽** 아이템 전환
 - [ ] **K / I** 가이드 패널 토글 (기본 숨김)
 - [ ] 정답: 오염원 HP + 중화 VFX / 오답: 방호복만 + VFX 없음
@@ -314,6 +347,7 @@ Assets/
 
 ### 완료
 
+- **2026-06-09 일일** (경고·맵·이동·접촉·App·스플래시) — [회의록](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1400-1차-합의.md)
 - 씬 흐름·`stage_data.json`·로딩 프리스폰·맵 구간 (`mapPollutants`)
 - 접촉 판정·정답만 오염원 HP·가스 HP 초기화·밸브 애니/SFX
 - Z/X 방향, 아이템 선택 유지(맵 중), 틀린 아이템 시 VFX 미재생
@@ -328,6 +362,8 @@ Assets/
 
 ### 미구현·보류
 
+- App **PR2** 중복 매니저 제거 · **PR3** Additive 로딩 · **서버** 연동 (계획만)
+- 좌우 연타 가속 체감 (`Background.SmoothDamp`) — 분석만, 수정 보류
 - 회복 인벤 6종+ Scroll View 스크롤 실검증, 중화 HUD와 패널 Hierarchy 최종 분리 확인
 - `RecoveryItemSpawner` Missing Script · `LoadingController` 맵 회복 배치 미연동
 - 멀티 스테이지 자동 진행 UI polish
@@ -341,7 +377,9 @@ Assets/
 |------|------|
 | [README.md](README.md) | 프로젝트 개요 (이 파일) |
 | [AGENTS.md](AGENTS.md) | AI·협업·코딩 규칙 |
-| [회복 아이템 아크 드랍 fixes](Assets/Docs/Bug/2026-06-08-시각미상-회복아이템-아크드랍-fixes.md) | **최근** — 아크 수치·Y 보정·디버그 로그 |
+| [문서 하네스](Assets/Docs/문서-이름-규칙.md) | Bug/회의록 작성·당일 취합·5필드 파일명 |
+| [0609 일일 회의록](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1400-1차-합의.md) | **최근** — 당일 합의 취합 (1차) |
+| [회복 아이템 아크 드랍 fixes](Assets/Docs/Bug/2026-06-08-시각미상-회복아이템-아크드랍-fixes.md) | 아크 수치·Y 보정·디버그 로그 |
 | [회복 드랍 연출 합의](Assets/Docs/회의록/2026-06-08-시각미상-회복아이템-드랍-연출-합의.md) | 오염원 정화 드랍·아크·Inspector 파라미터 |
 | [회복 인벤 UI fixes](Assets/Docs/Bug/2026-06-06-시각미상-회복인벤-UI-fixes.md) | 획득 표시·레이아웃·비율 |
 | [회복 인벤 설계](Assets/Docs/회의록/2026-06-06-시각미상-회복아이템-인벤-설계-합의.md) | 스택·스크롤·JSON·프리팹·구현 갱신 |
@@ -359,6 +397,7 @@ Assets/
 
 | 날짜 | 주요 내용 |
 |------|-----------|
+| 2026-06-09 | 경고·맵·이동·접촉·App·스플래시 — [회의록](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1400-1차-합의.md) |
 | 2026-06-08 | 회복 아이템 아크 드랍 수치·`dropYOffset`·디버그 로그 — [Bug](Assets/Docs/Bug/2026-06-08-시각미상-회복아이템-아크드랍-fixes.md) · [회의록](Assets/Docs/회의록/2026-06-08-시각미상-회복아이템-드랍-연출-합의.md) |
 | 2026-06-06 | 회복 인벤 1차 구현(스택·InvItemView·UI 레이아웃), 씬 전환 페이드 — [인벤 UI Bug](Assets/Docs/Bug/2026-06-06-시각미상-회복인벤-UI-fixes.md) · [씬 Bug](Assets/Docs/Bug/2026-06-06-시각미상-씬전환-스플래시-인트로-fixes.md) · [회의록](Assets/Docs/회의록/2026-06-06-시각미상-회복아이템-인벤-설계-합의.md) |
 | 2026-06-05 | 클리어/사망 2초 연출, K/I 가이드, 아이템 유지, 틀린 아이템 VFX 수정 — [Bug](Assets/Docs/Bug/2026-06-05-시각미상-클리어-가이드-중화VFX-fixes.md) |
@@ -371,7 +410,8 @@ Assets/
 
 - HP는 **float** 계산, UI는 **int** (`FloorToInt`)
 - 타입: `Item.ItemType`, `Pollutant.PollutantType`만 사용
-- `AudioManager`·`SceneLoadManager` — `DontDestroyOnLoad`
+- `AudioManager`·`SceneLoadManager` — `DontDestroyOnLoad` (`AppScene` 또는 각 씬에서 최초 생성)
+- **Play 권장:** 빌드·QA는 `AppScene` · gameplay만 보면 `GameScene` 직접 Play 가능
 - 가이드 패널: 부모만 비활성, 자식은 활성 유지
 - `Library/`, `Temp/`, `Logs/` — Git·수정 대상 아님
 
