@@ -44,10 +44,12 @@ public class GameManager : MonoBehaviour
     public float clearAnimDelay = 2f;
 
     [Header("Game Over")]
-    [Tooltip("사망 애니 재생 후 게임오버 패널까지 대기(초).")]
+    [Tooltip("사망 Die 연출 유지(초). 이후 Player 페이드 → 페이드 후 대기 → 게임오버 패널.")]
     public float dieAnimDelay = 2f;
+    [Tooltip("사망 페이드 종료 후 게임오버 패널까지 추가 대기(초).")]
+    public float diePanelDelayAfterFade = 1f;
     [Tooltip("사망 패널 코루틴 실패 시 비상 대기(초).")]
-    public float dieGameOverFallbackDelay = 4f;
+    public float dieGameOverFallbackDelay = 5f;
 
     [Header("Debug")]
     public bool enableDebugKeys = true; // F1: 강제 클리어, F2: 강제 게임오버
@@ -471,7 +473,7 @@ public class GameManager : MonoBehaviour
         FinishGameOver(cause);
     }
 
-    // Die 애니 연출 시작 (패널은 dieAnimDelay 후 ShowGameOverPanelAfterDeathAnim에서)
+    // Die 애니 연출 시작 (패널은 dieAnimDelay + 페이드 후 ShowGameOverPanelAfterDeathAnim에서)
     public void BeginPlayerDeathSequence(GameOverCause cause = GameOverCause.ProtectionDepleted)
     {
         if (gameEnded || gameOverPending)
@@ -500,6 +502,15 @@ public class GameManager : MonoBehaviour
     {
         if (dieAnimDelay > 0f)
             yield return new WaitForSeconds(dieAnimDelay);
+
+        float fadeDuration = 0.5f;
+        if (player != null)
+            fadeDuration = player.dieFadeDuration;
+        if (fadeDuration > 0f)
+            yield return new WaitForSeconds(fadeDuration);
+
+        if (diePanelDelayAfterFade > 0f)
+            yield return new WaitForSeconds(diePanelDelayAfterFade);
 
         gameOverDelayRoutine = null;
         if (gameEnded || !gameOverPending)

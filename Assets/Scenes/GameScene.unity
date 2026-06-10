@@ -978,6 +978,7 @@ MonoBehaviour:
   wrongItemPenaltySeconds: 2
   clearAnimDelay: 2
   dieAnimDelay: 2
+  diePanelDelayAfterFade: 1
   dieGameOverFallbackDelay: 4
   enableDebugKeys: 1
   enableDebugSaveKeys: 1

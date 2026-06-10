@@ -472,26 +472,24 @@ public class Player : MonoBehaviour
     // 가스(D) + 가스밸브 접촉 시 Player_Valve (Animator 트리거 "Valve")
     public void SetValveAnimActive(bool active)
     {
-        if (valveAnimActive == active)
-            return;
-        if (active && currentState == PlayerState.Die)
-            return;
-
-        valveAnimActive = active;
-
-        if (AudioManager.Instance != null)
-        {
-            if (active)
-                AudioManager.Instance.PlayValveSfx();
-            else
-                AudioManager.Instance.StopValveSfx();
-        }
-
-        if (anim == null)
-            return;
-
         if (active)
         {
+            if (currentState == PlayerState.Die)
+                return;
+            if (GameManager.Instance != null &&
+                (GameManager.Instance.IsGameOverPending || GameManager.Instance.GameEnded))
+                return;
+            if (valveAnimActive)
+                return;
+
+            valveAnimActive = true;
+
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.PlayValveSfx();
+
+            if (anim == null)
+                return;
+
             SetNeutralizationVfx(false);
             isMoving = false;
             hasInput = false;
@@ -502,13 +500,27 @@ public class Player : MonoBehaviour
             EnsureSpriteVisible();
             anim.SetTrigger("Valve");
             anim.Play("Player_Valve", 0, 0f);
+            return;
         }
-        else
-        {
-            anim.ResetTrigger("Valve");
-            if (currentState != PlayerState.Die)
-                ReturnToIdleAfterValve();
-        }
+
+        bool hadValve = valveAnimActive;
+        valveAnimActive = false;
+
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.StopValveSfx();
+
+        if (anim == null)
+            return;
+
+        anim.ResetTrigger("Valve");
+
+        if (currentState == PlayerState.Die)
+            return;
+
+        if (!hadValve)
+            return;
+
+        ReturnToIdleAfterValve();
     }
 
     private void ReturnToIdleAfterValve()
@@ -595,7 +607,6 @@ public class Player : MonoBehaviour
 
         isDeathSequenceRunning = true;
         pollutantTouchCount = 0;
-        valveAnimActive = false;
         SetNeutralizationVfx(false);
         Debug.Log("플레이어가 사망했습니다.");
         canMove = false;
@@ -604,6 +615,7 @@ public class Player : MonoBehaviour
         if (rb != null)
             rb.linearVelocity = Vector2.zero;
         SetState(PlayerState.Die);
+        SetValveAnimActive(false);
 
         if (GameManager.Instance != null && !GameManager.Instance.IsGameOverPending)
             GameManager.Instance.BeginPlayerDeathSequence();

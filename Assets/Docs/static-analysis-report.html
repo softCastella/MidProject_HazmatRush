@@ -5,10 +5,10 @@ table{width:100%;border-collapse:collapse;}th,td{border:1px solid #dde3ea;paddin
 th{background:#e8f4f1;}.Pass{color:#1a7f4e;font-weight:600;}.Fail{color:#b33;font-weight:600;}.Skip{color:#886500;}
 .meta{color:#5a6578;}</style></head><body>
 <h1>정적 분석 리포트 — MidProject</h1>
-<p class="meta">생성: 2026-06-09 13:48 · Pass 20 / Fail 2 / Skip 0 · 규칙: Assets/Data/static_rules.json</p>
+<p class="meta">생성: 2026-06-10 22:44 · Pass 20 / Fail 2 / Skip 0 · 규칙: Assets/Data/static_rules.json</p>
 <table><thead><tr><th>ID</th><th>기능</th><th>의도</th><th>결과</th><th>메시지</th></tr></thead><tbody>
 <tr><td>F01</td><td>씬 흐름 (Build Settings)</td><td>Splash → Title → Intro → Loading → Game 순서 유지</td>
-<td class="Pass">Pass</td><td>Build Settings 5씬 순서 일치</td></tr>
+<td class="Fail">Fail</td><td>Build Settings 씬 수 6 (기대 5)</td></tr>
 <tr><td>F02</td><td>스테이지 데이터</td><td>stage_data.json 존재·mapPollutants 필드</td>
 <td class="Pass">Pass</td><td>Assets/Data/stage_data.json 패턴 OK</td></tr>
 <tr><td>F03</td><td>회복 아이템 데이터</td><td>recovery_items.json 존재</td>
@@ -22,7 +22,7 @@ th{background:#e8f4f1;}.Pass{color:#1a7f4e;font-weight:600;}.Fail{color:#b33;fon
 <tr><td>F07</td><td>오염원 접촉 (A~C/D 동일)</td><td>OnTriggerStay에서만 ApplyPlayerContactDamage, IsEdgeContact 미사용</td>
 <td class="Pass">Pass</td><td>Assets/Scripts/GamePlay/Pollutant.cs 패턴 OK</td></tr>
 <tr><td>F08</td><td>접촉 보정 (고속 이동)</td><td>LateUpdate bounds 겹침 fallback</td>
-<td class="Pass">Pass</td><td>Assets/Scripts/GamePlay/Pollutant.cs 패턴 OK</td></tr>
+<td class="Fail">Fail</td><td>미포함: void LateUpdate</td></tr>
 <tr><td>F09</td><td>금지 패턴 — BlockPollutant</td><td>이동 한계 조임 재도입 금지</td>
 <td class="Pass">Pass</td><td>Scripts 내 BlockPollutant 없음</td></tr>
 <tr><td>F10</td><td>아이템 선택 유지</td><td>오염원 HP 0 시 ResetToDefault 호출 금지 (Pollutant 경로)</td>
@@ -36,7 +36,7 @@ th{background:#e8f4f1;}.Pass{color:#1a7f4e;font-weight:600;}.Fail{color:#b33;fon
 <tr><td>F14</td><td>회복 인벤</td><td>RecoveryItemInventory + UI 스크립트 존재</td>
 <td class="Pass">Pass</td><td>3개 파일 존재</td></tr>
 <tr><td>F15</td><td>타입 규칙</td><td>전역 ItemType enum 금지 — Item.ItemType 사용</td>
-<td class="Fail">Fail</td><td>발견: enum ItemType @ Assets/Scripts/GamePlay/Item.cs</td></tr>
+<td class="Pass">Pass</td><td>Scripts 내 enum ItemType 없음</td></tr>
 <tr><td>F16</td><td>접촉 해제 HP 초기화</td><td>EndPlayerContact에서 pollutanMaxHp 복구 (가스 포함)</td>
 <td class="Pass">Pass</td><td>Assets/Scripts/GamePlay/Pollutant.cs 패턴 OK</td></tr>
 <tr><td>F17</td><td>중화 VFX</td><td>RefreshNeutralizationVfx — 정답 A~C 판정</td>

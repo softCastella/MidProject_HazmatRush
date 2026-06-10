@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
 
-// 로딩 화면에서 스테이지별 오염원 배치·등장 순서를 확정합니다 (RecoveryItemSpawnPlan과 동일 패턴).
+// 로딩 화면에서 스테이지별 오염원 배치·등장 순서를 확정합니다.
 public static class PollutantSpawnPlan
 {
     public struct Entry

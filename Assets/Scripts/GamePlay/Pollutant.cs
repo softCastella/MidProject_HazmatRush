@@ -260,7 +260,8 @@ public class Pollutant : MonoBehaviour
     {
         if (player == null || player.IsDead)
             return false;
-        if (GameManager.Instance != null && GameManager.Instance.GameEnded)
+        if (GameManager.Instance != null &&
+            (GameManager.Instance.GameEnded || GameManager.Instance.IsGameOverPending))
             return false;
         return true;
     }
@@ -350,7 +351,11 @@ public class Pollutant : MonoBehaviour
         if (!CanProcessPlayerContact(player))
         {
             if (player.IsDead || (GameManager.Instance != null && GameManager.Instance.GameEnded))
+            {
                 HideBars(player);
+                if (type == PollutantType.TypeD)
+                    player.SetValveAnimActive(false);
+            }
             return;
         }
 
@@ -422,17 +427,6 @@ public class Pollutant : MonoBehaviour
             return;
         }
 
-        if (type == PollutantType.TypeD && player.itemSelectManager != null)
-        {
-            Item.ItemType selectedType = player.itemSelectManager.SelectedItemType;
-            bool valveOn = selectedType == RecommendedItemType && selectedType == Item.ItemType.GasValve;
-            player.SetValveAnimActive(valveOn);
-        }
-        else
-        {
-            player.RefreshNeutralizationVfx();
-        }
-
         // 1) 접촉 판정 로그를 먼저 출력 (처음 1회 + 결과가 바뀔 때)
         if (player.itemSelectManager != null)
         {
@@ -472,6 +466,17 @@ public class Pollutant : MonoBehaviour
                 player.SetValveAnimActive(false);
             HideBars(player);
             return;
+        }
+
+        if (type == PollutantType.TypeD && player.itemSelectManager != null)
+        {
+            Item.ItemType selectedType = player.itemSelectManager.SelectedItemType;
+            bool valveOn = selectedType == RecommendedItemType && selectedType == Item.ItemType.GasValve;
+            player.SetValveAnimActive(valveOn);
+        }
+        else
+        {
+            player.RefreshNeutralizationVfx();
         }
 
         // 3) 오염원 현재 HP: 정답 아이템일 때만 초당 감소
