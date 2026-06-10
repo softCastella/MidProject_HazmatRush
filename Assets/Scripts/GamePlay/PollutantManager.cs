@@ -20,6 +20,12 @@ public class PollutantManager : MonoBehaviour
     public PopupUI popupUI;
     public Slider pollutantSlider;
     public float rangeBuffer = 0.5f;
+
+    public void HidePollutantHpBar()
+    {
+        if (pollutantSlider != null)
+            pollutantSlider.gameObject.SetActive(false);
+    }
     public Vector2 timeRange = new Vector2(2f, 3f);
     public float spawnFadeDuration = 0.7f;
     public float despawnFadeDuration = 0.7f;
@@ -502,7 +508,7 @@ public class PollutantManager : MonoBehaviour
         if (guideTxt != null && GuideTxt.IsTutorialStage())
         {
             yield return StartCoroutine(guideTxt.ShowItemSelectHintRoutine(
-                "Z키(왼쪽)/X키(오른쪽)로 대응 아이템을 골라주세요", itemSelectHintDuration));
+                "Z키(왼쪽)/X키(오른쪽)로\n대응 아이템을 골라주세요", itemSelectHintDuration));
         }
         else
         {

@@ -12,7 +12,7 @@
 | **회복 아이템 정의** | `Assets/Data/recovery_items.json` |
 | **AI·협업 규칙** | [AGENTS.md](AGENTS.md) |
 | **버그·수정 기록** | [Bug 폴더](Assets/Docs/Bug/) |
-| **회의·합의** | [회의록 폴더](Assets/Docs/회의록/) — 최근: [0609 일일](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1400-1차-합의.md) |
+| **회의·합의** | [회의록 폴더](Assets/Docs/회의록/) — 최근: [0610 일일](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md) |
 
 ---
 
@@ -91,7 +91,7 @@ GameScene
   └ 스테이지 플레이 → 클리어 / 게임오버
 ```
 
-> **BGM:** 타이틀·게임 씬만 BGM 재생(페이드 인/아웃). 스플래시·인트로·로딩에서는 BGM 없음(`StopBGM`).
+> **BGM:** 타이틀·게임 씬만 BGM 재생(페이드 인/아웃). 스플래시·인트로·로딩에서는 BGM 없음(`StopBGM`). **게임 BGM**은 `StageManager.LoadStage` → `PlayStageBgm(bgmIndex)` — 씬 로드 시 0번 강제 재생 없음 ([0610 합의](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md)).
 
 > **씬 페이드:** `TitleSceneFade`(타이틀→인트로 흰 암전), `AutoScrollIntro`(인트로 진입 페이드인·종료 검은 암전). 상세: [Bug 2026-06-06](Assets/Docs/Bug/2026-06-06-시각미상-씬전환-스플래시-인트로-fixes.md).
 
@@ -214,8 +214,9 @@ GameScene
 | `stageBgmClips` | 스테이지별 탐사 BGM (`StageManager` / `bgmIndex`) |
 | `splashClip` | 스플래시 로고 SFX |
 
-**씬별 BGM:** `TitleScene` / `GameScene`만 재생. 그 외는 페이드 아웃 후 정지.  
-**App 진입 시:** `AppScene` Inspector가 매니저 본체(클립·`stageBgmClips`·볼륨). 씬 직접 Play 시 해당 씬 인스턴스가 생성될 수 있음.
+**씬별 BGM:** `TitleScene`만 자동 재생. `GameScene`은 **`StageManager.LoadStage`가 `bgmIndex`로 재생** (`OnSceneLoaded`에서 0번 강제 금지).  
+**싱글톤 클립:** 중복 `AudioManager` 파괴 시 `stageBgmClips` 병합 (`CopyStageBgmClipsIfNeeded`).  
+**App · 단독 Play:** `AppScene` 또는 각 씬에서 Instance 생성 — 둘 다 동작하도록 위 규칙 유지.
 
 ### 회복 아이템 (`RecoveryItemManager`, `RecoveryItemInventory`)
 
@@ -230,16 +231,31 @@ GameScene
 - 5번째 종류~: `EnsureSlotRootCount`로 Content에 칸 추가 (Scroll View, 6종+ 실검증 보류)
 - 설계: [인벤 2026-06-06](Assets/Docs/회의록/2026-06-06-시각미상-회복아이템-인벤-설계-합의.md) · [드랍 연출 2026-06-08](Assets/Docs/회의록/2026-06-08-시각미상-회복아이템-드랍-연출-합의.md) · Bug: [인벤 UI](Assets/Docs/Bug/2026-06-06-시각미상-회복인벤-UI-fixes.md) · [아크 드랍](Assets/Docs/Bug/2026-06-08-시각미상-회복아이템-아크드랍-fixes.md)
 
+### 가이드·경고 팝업 (`GuideTxt`, `WarningTxt`)
+
+| 항목 | 규칙 |
+|------|------|
+| **GuideTxt** | `ApplyPopup` — `Hidden` / `Short`(`bg0`) / `Long`(`bg1`). 16자 초과 → `bg1`. **동시에 한 팝업만** |
+| **WarningTxt** | `Bg` + `WarningLabel` + `WarningMsg` 함께 표시·깜빡임 |
+| **자식 `bg (1~3)`** | 루트 Image와 중복 — 런타임 **항상 OFF** (이중 테두리 방지) |
+
+상세: [0610 합의](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md) · [0610 Bug](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후1830-1차-fixes.md)
+
+### 방호복 HUD 아웃라인
+
+- `protectionHp` → `Bg` (`5_7`) — `MidProject/UI/ImageOutline` + `ProtectionHpBar5_7Outline.mat`
+- 오염원 접촉 HP바(`pollutantHpSlider`)와 **별개**
+
 ### 기타
 
 | 모듈 | 역할 |
 |------|------|
 | `AppBootstrap` | App 진입 · `runInBackground` · 첫 씬(`SplashScene`) 로드 |
-| `GameManager` | 클리어·게임오버·일시정지·디버그 키 |
+| `GameManager` | 클리어·게임오버·일시정지·디버그 키 · 사망 시 `HidePollutantHpBar` |
 | `SceneLoadManager` | 씬 전환, `pendingStageIndex` |
 | `LoadingController` / `LoadingGuideTxt` | 페이드·플랜 준비·조작 안내 |
 | `Background` | 스크롤, 오염원 활성/구간 미완료 시 정지 |
-| `WorldSpaceUIFollower` | 방호복·오염원 HP 바 |
+| `WorldSpaceUIFollower` | 오염원 HP 바 (캔버스 직속, 접촉 시만 표시) |
 
 ---
 
@@ -269,7 +285,9 @@ Assets/
 ├── Scripts/
 │   ├── Core/          AppBootstrap, GameManager, SceneLoadManager, AudioManager, …
 │   ├── GamePlay/      Player, Pollutant, PollutantManager, Item, …
-│   └── UI/            GuideTxt, HelpGuideToggle, LoadingGuideTxt, SplashController, …
+│   └── UI/            GuideTxt, WarningTxt, ProtectionHpBarUI, …
+├── Shaders/           SpriteOutline, UIImageOutline
+├── Materials/         Pollutant*Outline, ProtectionHpBar5_7Outline
 ├── Prefabs/Game/      Player, PollutantA~D
 ├── Prefabs/Item/      Scanner, Neutralizer, pads, GasValve, map*Recov
 ├── Prefabs/InvenItem/ inv*Recov, invEmptySlotPrefab
@@ -333,8 +351,11 @@ Assets/
 - [ ] 정답: 오염원 HP + 중화 VFX / 오답: 방호복만 + VFX 없음
 - [ ] 오염원 1마리 제거 후 선택 아이템 유지
 - [ ] 가스: 밸브 애니 + 밸브 SFX
+- [ ] 가이드: 짧은 문구 `bg0` / Z·X 안내 `bg1` (겹침 없음)
+- [ ] 스테이지 전환 시 BGM `bgmIndex` 변경
 - [ ] 클리어: Clear 애니 2초 → 패널
-- [ ] 사망: Die 애니 2초 → 게임오버 패널
+- [ ] 사망: Die 애니 2초 → 게임오버 패널 · 오염원 HP바 숨김
+- [ ] **(미해결)** 가스 사망 시 밸브↔Die 애니 루프 없음 — [0610 Bug §5](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후1830-1차-fixes.md)
 - [ ] 클리어 별 **왼쪽부터** N개
 - [ ] 오염원 정화 후 회복 아이템 **아크 드랍** (위로 튀었다 좌/우 착지, 땅에 묻히지 않음)
 - [ ] 회복 아이템 픽업 → 인벤 아이콘·이름·Count 표시
@@ -347,7 +368,8 @@ Assets/
 
 ### 완료
 
-- **2026-06-09 일일** (경고·맵·이동·접촉·App·스플래시) — [회의록](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1400-1차-합의.md)
+- **2026-06-10 일일** (스테이지 BGM · 가이드/경고 팝업 · 방호복 UI 아웃라인 · 가스 사망 HP바) — [회의록](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후1830-1차-fixes.md)
+- **2026-06-09 일일** (경고·맵·이동·접촉·App·스플래시·방호복 HUD) — [회의록](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1700-2차-합의.md)
 - 씬 흐름·`stage_data.json`·로딩 프리스폰·맵 구간 (`mapPollutants`)
 - 접촉 판정·정답만 오염원 HP·가스 HP 초기화·밸브 애니/SFX
 - Z/X 방향, 아이템 선택 유지(맵 중), 틀린 아이템 시 VFX 미재생
@@ -362,6 +384,7 @@ Assets/
 
 ### 미구현·보류
 
+- **가스(D) 사망 시 밸브↔Die 애니 루프** — HP바는 숨김 처리됨, 애니 반복은 미해결 ([0610 Bug §5](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후1830-1차-fixes.md))
 - App **PR2** 중복 매니저 제거 · **PR3** Additive 로딩 · **서버** 연동 (계획만)
 - 좌우 연타 가속 체감 (`Background.SmoothDamp`) — 분석만, 수정 보류
 - 회복 인벤 6종+ Scroll View 스크롤 실검증, 중화 HUD와 패널 Hierarchy 최종 분리 확인
@@ -378,7 +401,9 @@ Assets/
 | [README.md](README.md) | 프로젝트 개요 (이 파일) |
 | [AGENTS.md](AGENTS.md) | AI·협업·코딩 규칙 |
 | [문서 하네스](Assets/Docs/문서-이름-규칙.md) | Bug/회의록 작성·당일 취합·5필드 파일명 |
-| [0609 일일 회의록](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1400-1차-합의.md) | **최근** — 당일 합의 취합 (1차) |
+| [0610 일일 회의록](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md) | **최근** — BGM·팝업·아웃라인·가스 사망 |
+| [0610 일일 Bug](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후1830-1차-fixes.md) | 위 합의 대응 fixes · **§5 밸브 애니 미해결** |
+| [0609 일일 회의록](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1700-2차-합의.md) | 방호복 HUD · 오염원 HP바 · 접촉 |
 | [회복 아이템 아크 드랍 fixes](Assets/Docs/Bug/2026-06-08-시각미상-회복아이템-아크드랍-fixes.md) | 아크 수치·Y 보정·디버그 로그 |
 | [회복 드랍 연출 합의](Assets/Docs/회의록/2026-06-08-시각미상-회복아이템-드랍-연출-합의.md) | 오염원 정화 드랍·아크·Inspector 파라미터 |
 | [회복 인벤 UI fixes](Assets/Docs/Bug/2026-06-06-시각미상-회복인벤-UI-fixes.md) | 획득 표시·레이아웃·비율 |
@@ -397,7 +422,8 @@ Assets/
 
 | 날짜 | 주요 내용 |
 |------|-----------|
-| 2026-06-09 | 경고·맵·이동·접촉·App·스플래시 — [회의록](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1400-1차-합의.md) |
+| 2026-06-10 | 스테이지 BGM·가이드/경고 팝업·방호복 UI 아웃라인·가스 사망 HP바 — [회의록](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후1830-1차-fixes.md) (밸브 애니 루프 보류) |
+| 2026-06-09 | 경고·맵·이동·접촉·App·스플래시·방호복 HUD — [회의록](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1700-2차-합의.md) |
 | 2026-06-08 | 회복 아이템 아크 드랍 수치·`dropYOffset`·디버그 로그 — [Bug](Assets/Docs/Bug/2026-06-08-시각미상-회복아이템-아크드랍-fixes.md) · [회의록](Assets/Docs/회의록/2026-06-08-시각미상-회복아이템-드랍-연출-합의.md) |
 | 2026-06-06 | 회복 인벤 1차 구현(스택·InvItemView·UI 레이아웃), 씬 전환 페이드 — [인벤 UI Bug](Assets/Docs/Bug/2026-06-06-시각미상-회복인벤-UI-fixes.md) · [씬 Bug](Assets/Docs/Bug/2026-06-06-시각미상-씬전환-스플래시-인트로-fixes.md) · [회의록](Assets/Docs/회의록/2026-06-06-시각미상-회복아이템-인벤-설계-합의.md) |
 | 2026-06-05 | 클리어/사망 2초 연출, K/I 가이드, 아이템 유지, 틀린 아이템 VFX 수정 — [Bug](Assets/Docs/Bug/2026-06-05-시각미상-클리어-가이드-중화VFX-fixes.md) |
