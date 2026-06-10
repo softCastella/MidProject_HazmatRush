@@ -60,7 +60,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: b8c71d4e6f0a4239ac2e1f3b5d7c9a08, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -83,12 +83,12 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -7990248633829071523, guid: 4c97908cc11a7924bbc4646381290b98, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4c4a140af5f001c4988f37e3a114efe4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 5.67, y: 2.24}
+  m_Size: {x: 237.14552, y: 143.7}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -113,6 +113,10 @@ MonoBehaviour:
   disappearDuration: 0.7
   spriteSortingOrder: 0
   pollutantSlider: {fileID: 0}
+  typeDScaleOptions:
+  - 1.5
+  - 2
+  - 3
 --- !u!70 &6571695734980903087
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -147,6 +151,6 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.0086887395, y: 0.017369559}
-  m_Size: {x: 5.8185725, y: 2.3448083}
+  m_Offset: {x: 0.008688748, y: 0.09069931}
+  m_Size: {x: 4.550236, y: 1.8470191}
   m_Direction: 1
