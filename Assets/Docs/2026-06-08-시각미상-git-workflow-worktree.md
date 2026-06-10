@@ -172,7 +172,7 @@ git push origin --delete 260609_회복스폰
 - AI에게 줄 때: **worktree 경로 + 브랜치명 + 작업 목적**을 한 줄로 명시
 
 ```text
-예: "C:\...\MidProject_0-260609-회복 의 260609_회복스폰 브랜치에서 RecoveryItemSpawner만 수정해줘"
+예: "C:\...\MidProject_0-260610-가스사망 의 260610_가스사망 브랜치에서 Player.cs 밸브 애니 루프만 수정해줘"
 ```
 
 ---

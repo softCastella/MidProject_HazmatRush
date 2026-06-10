@@ -110,7 +110,7 @@
 | 항목 | 내용 |
 |------|------|
 | **배경** | 런타임 `Instantiate` + 이동 막기 + 트리거 꼬임으로 예외 상황이 많았음. |
-| **해결** | `RecoveryItemSpawnPlan`과 같이 `PollutantSpawnPlan`으로 로딩 중 배치·순서 확정 → `PollutantManager`가 비활성으로 생성 후 경고 시 `SetActive`만. |
+| **해결** | `PollutantSpawnPlan`으로 로딩 중 오염원 배치·순서 확정 → `PollutantManager`가 비활성으로 생성 후 경고 시 `SetActive`만. (회복 아이템은 맵 스폰 없이 오염원 중화 드랍만 — [0610 Bug §7](2026-06-10-오후1430-0610-일일-오후2030-2차-fixes.md)) |
 | **파일** | `PollutantSpawnPlan.cs`, `LoadingController.cs`, `PollutantManager.cs`, `PollutantSpawner.cs`, `Pollutant.cs` |
 | **Unity** | LoadingScene `LoadingController`에 `stage_data.json` 연결 필요. |
 

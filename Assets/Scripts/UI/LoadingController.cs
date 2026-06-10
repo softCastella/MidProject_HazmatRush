@@ -23,11 +23,6 @@ public class LoadingController : MonoBehaviour
     public GameObject[] warmupPrefabs;
     public string fallbackSceneName = "GameScene";
 
-    [Header("RecoveryItem 배치 (로딩 시 확정)")]
-    public int recoverySpawnPointCount = 4;
-    public int recoverySpawnMinCount = 1;
-    public int recoverySpawnMaxCount = 3;
-
     [Header("오염원 배치 (로딩 시 확정)")]
     public TextAsset stageDataJson;
     public int pollutantAbcSpawnPointCount = 3;

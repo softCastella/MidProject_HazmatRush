@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>QA TC — MidProject (2026-06-10)</title>
+  <style>
+    body { font-family: "Malgun Gothic", sans-serif; max-width: 900px; margin: 1.25rem auto; padding: 0 1rem; line-height: 1.6; color: #1a2332; font-size: 0.92rem; }
+    h1 { color: #1e6b5c; font-size: 1.35rem; margin-bottom: 0.25rem; }
+    h2 { font-size: 1.05rem; margin: 0; padding: 0.55rem 0.75rem; background: #1e6b5c; color: #fff; border-radius: 6px 6px 0 0; page-break-after: avoid; }
+    h3 { font-size: 0.95rem; margin: 1rem 0 0.35rem; color: #1a4a42; }
+    .meta { color: #5a6578; font-size: 0.88rem; margin-bottom: 1rem; }
+    .flow { background: #f8fafb; border: 1px solid #dde3ea; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1.25rem; }
+    .flow-part { background: #eef6f3; border-left: 4px solid #1e6b5c; padding: 0.5rem 0.75rem; margin: 0.75rem 0; font-size: 0.88rem; }
+    .scenario { border: 1px solid #dde3ea; border-radius: 6px; margin-bottom: 2rem; overflow: hidden; page-break-inside: avoid; }
+    .scenario-body { padding: 0.5rem 0.75rem 0.75rem; }
+    .scenario-desc { margin: 0.5rem 0 0.75rem; color: #3d4a5c; font-size: 0.88rem; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #dde3ea; padding: 0.5rem 0.6rem; vertical-align: top; }
+    th { background: #e8f4f1; font-weight: 600; font-size: 0.85rem; }
+    .chk { width: 2.2em; text-align: center; }
+    .num { width: 2.8em; font-weight: 600; color: #2d4a6e; white-space: nowrap; }
+    .step { width: 9em; font-weight: 600; }
+    td.do ul, td.ok ul { margin: 0.15rem 0 0 1.1rem; padding: 0; }
+    td.do li, td.ok li { margin: 0.25rem 0; }
+    td.fail { width: 11em; font-size: 0.84rem; color: #6b3030; background: #fffaf8; }
+    .ok-text { color: #1a7f4e; }
+    input[type="checkbox"] { transform: scale(1.1); cursor: pointer; }
+    a { color: #1e6b5c; }
+    @media print {
+      body { max-width: none; font-size: 10pt; }
+      h2 { background: #333; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .scenario { page-break-after: always; margin-bottom: 0; border: none; }
+      .scenario:last-of-type { page-break-after: auto; }
+      input[type="checkbox"] { pointer-events: none; }
+    }
+  </style>
+</head>
+<body>
+
+<h1>QA TC — MidProject</h1>
+<p class="meta">
+  <strong>QA팀 배포용</strong> Test Case · 2026-06-10 ·
+  Unity <strong>6000.4.8f1</strong> ·
+  <strong>플레이어가 완성된 기능을 끝까지 쓸 수 있는가</strong> 중심
+</p>
+
+<div class="flow">
+  <strong>진행 방법</strong><br/>
+  <strong>A. 전체</strong> — <code>AppScene</code> ▶ Play → <strong>1~2</strong>(씬 흐름) → <strong>4~7</strong>(씬 상세) → <strong>8~14</strong>(GameScene)<br/>
+  <strong>B. 게임만</strong> — <code>GameScene</code> ▶ Play → <strong>8~14</strong><br/>
+  3) 한 단계 = <strong>한 씬·한 동작</strong> · 「정상 결과」 보이면 ✓ · Fail 칸에 기록<br/>
+  <strong>조작:</strong> ←→/AD · Z/X · C/V·Space · K/I · ESC · F1 강제 클리어
+</div>
+
+<div class="flow-part">
+  <strong>Part A — 흐름</strong> (1~3) · <strong>Part B — 씬 상세</strong> (4~7) · <strong>Part C — GameScene</strong> (8~14, 14=선택)
+</div>
+
+<!-- SCENARIO 1 -->
+<div class="scenario">
+  <h2>시나리오 1 — 씬 이동 (첫 시작)</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">목적: 저장 없이 <strong>시작하기</strong>로 App부터 GameScene까지 씬이 한 칸씩 이어지는지 확인. (연출·BGM 등 세부는 시나리오 4~7)</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">1-1</td><td class="step">AppScene</td>
+          <td class="do"><code>AppScene</code> Play</td>
+          <td class="ok"><span class="ok-text">Play 직후 App 씬 표시 · "No cameras rendering" 없음</span></td>
+          <td class="fail">카메라 경고·멈춤</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">1-2</td><td class="step">→ Splash</td>
+          <td class="do">자동 전환 대기</td>
+          <td class="ok"><span class="ok-text"><strong>SplashScene</strong>으로 바뀜</span></td>
+          <td class="fail">스플래시 없음·검은 화면 고정</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">1-3</td><td class="step">→ Title</td>
+          <td class="do">스플래시 연출 종료까지 대기</td>
+          <td class="ok"><span class="ok-text"><strong>TitleScene</strong>으로 바뀜</span></td>
+          <td class="fail">타이틀 안 뜸</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">1-4</td><td class="step">→ Intro</td>
+          <td class="do">저장 없을 때 <strong>시작하기</strong> 클릭</td>
+          <td class="ok"><span class="ok-text"><strong>IntroStoryScene</strong>으로 바뀜</span></td>
+          <td class="fail">무반응·로딩/게임 직행</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">1-5</td><td class="step">→ Loading</td>
+          <td class="do">인트로 스크롤 종료까지 대기</td>
+          <td class="ok"><span class="ok-text"><strong>LoadingScene</strong>으로 바뀜</span></td>
+          <td class="fail">인트로에서 멈춤</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">1-6</td><td class="step">→ Game</td>
+          <td class="do">로딩 연출 종료까지 대기</td>
+          <td class="ok"><span class="ok-text"><strong>GameScene</strong> · 스테이지 1-1</span></td>
+          <td class="fail">무한 로딩·게임 미진입</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SCENARIO 2 -->
+<div class="scenario">
+  <h2>시나리오 2 — 씬 이동 (이어하기)</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">목적: 중간 저장 후 타이틀 복귀 시 <strong>이어하기</strong> 경로가 Intro 없이 Loading → Game으로 이어지는지 확인. (준비: 1-1 플레이 후 ESC·결과 패널 등으로 타이틀 복귀, 또는 저장 데이터 있는 상태)</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">2-1</td><td class="step">TitleScene</td>
+          <td class="do">저장 있는 상태로 TitleScene 진입</td>
+          <td class="ok"><span class="ok-text"><strong>이어하기</strong> 버튼 노출</span></td>
+          <td class="fail">시작하기만 보임</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">2-2</td><td class="step">→ Loading</td>
+          <td class="do"><strong>이어하기</strong> 클릭</td>
+          <td class="ok"><span class="ok-text">Intro 없이 <strong>LoadingScene</strong>으로 바뀜</span></td>
+          <td class="fail">인트로 재생·무반응</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">2-3</td><td class="step">→ Game</td>
+          <td class="do">로딩 연출 종료까지 대기</td>
+          <td class="ok"><span class="ok-text"><strong>GameScene</strong> · 마지막 진행 스테이지에서 시작</span></td>
+          <td class="fail">항상 1-1·무한 로딩</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SCENARIO 3 -->
+<div class="scenario">
+  <h2>시나리오 3 — 스테이지 이동 (1-1 → 1-3)</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">목적: 스테이지마다 다른 BGM·배경으로 시작하는지 확인. 빠른 검증은 GameScene에서 <strong>F1</strong> 강제 클리어로 다음 스테이지 진행.</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">3-1</td><td class="step">1-1 시작</td>
+          <td class="do">GameScene · 스테이지 1-1 진입</td>
+          <td class="ok"><span class="ok-text">배경·BGM이 1-1용(첫 곡) · 가스(D) 위주 구성</span></td>
+          <td class="fail">배경·BGM 어긋남</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">3-2</td><td class="step">1-2 전환</td>
+          <td class="do">F1 강제 클리어 또는 정상 클리어 후 다음 스테이지</td>
+          <td class="ok"><span class="ok-text">배경이 <strong>1-1과 다름</strong> · BGM이 <strong>다른 곡</strong>으로 바뀜</span></td>
+          <td class="fail">배경·BGM 동일</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">3-3</td><td class="step">1-3 전환</td>
+          <td class="do">다시 F1 또는 클리어로 1-3 진입</td>
+          <td class="ok"><span class="ok-text">배경·BGM이 1-2와 또 다름 · A/B/C/D 혼합 스테이지</span></td>
+          <td class="fail">항상 0번 BGM·같은 배경</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">3-4</td><td class="step">플레이 가능</td>
+          <td class="do">각 스테이지에서 가이드 후 이동·타이머 확인</td>
+          <td class="ok"><span class="ok-text">전환 직후에도 이동·타이머·UI 정상</span></td>
+          <td class="fail">전환 후 입력 불가·UI 깨짐</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SCENARIO 4 -->
+<div class="scenario">
+  <h2>시나리오 4 — SplashScene</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">목적: 로고 연출·SFX가 의도대로 재생되는지 확인.</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">4-1</td><td class="step">로고 페이드인</td>
+          <td class="do">SplashScene 진입 직후 관찰</td>
+          <td class="ok"><span class="ok-text">로고가 약 0.65초에 걸쳐 서서히 나타남</span></td>
+          <td class="fail">로고 없음·즉시 점프</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">4-2</td><td class="step">로고 애니</td>
+          <td class="do">페이드인 이후</td>
+          <td class="ok"><span class="ok-text">로고 확대·샤인(반짝) 연출 후 페이드아웃</span></td>
+          <td class="fail">연출 없이 정지</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">4-3</td><td class="step">SFX</td>
+          <td class="do">페이드인 시작 직후 청취</td>
+          <td class="ok"><span class="ok-text">스플래시 SFX 1회 (BGM은 아직 없음)</span></td>
+          <td class="fail">무음·BGM이 먼저</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">4-4</td><td class="step">타이틀 전환</td>
+          <td class="do">연출 종료까지 대기</td>
+          <td class="ok"><span class="ok-text">TitleScene으로 자연스럽게 전환 (긴 검은 화면 대기 없음)</span></td>
+          <td class="fail">멈춤·중복 로딩</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SCENARIO 5 -->
+<div class="scenario">
+  <h2>시나리오 5 — TitleScene</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">목적: TitleScene 안에서 BGM·배경·버튼·클릭 반응이 의도대로인지 확인. (씬 간 전환은 시나리오 1·2)</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">5-1</td><td class="step">첫 플레이 UI</td>
+          <td class="do">저장 없을 때 TitleScene 진입</td>
+          <td class="ok"><span class="ok-text">타이틀 BGM · 배경 · <strong>시작하기</strong> 노출</span></td>
+          <td class="fail">이어하기만·UI 없음</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">5-2</td><td class="step">시작하기</td>
+          <td class="do">시작하기 클릭</td>
+          <td class="ok"><span class="ok-text">버튼 SFX · 흰 페이드 시작</span></td>
+          <td class="fail">무반응·음소거</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">5-3</td><td class="step">중간 복귀 UI</td>
+          <td class="do">저장 있는 상태로 TitleScene 진입 (ESC·결과 패널 타이틀 등)</td>
+          <td class="ok"><span class="ok-text"><strong>이어하기</strong> 버튼 노출</span></td>
+          <td class="fail">이어하기 없음</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">5-4</td><td class="step">이어하기</td>
+          <td class="do">이어하기 클릭</td>
+          <td class="ok"><span class="ok-text">버튼 SFX · 페이드 시작</span></td>
+          <td class="fail">무반응</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SCENARIO 6 -->
+<div class="scenario">
+  <h2>시나리오 6 — IntroStoryScene</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">목적: 첫 시작 시 인트로 스토리 연출이 정상 재생·종료되는지 확인. (이어하기 경로에는 해당 없음)</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">6-1</td><td class="step">진입</td>
+          <td class="do">시나리오 1-4 직후 IntroStoryScene 관찰</td>
+          <td class="ok"><span class="ok-text">스토리 스크롤·텍스트 연출 재생</span></td>
+          <td class="fail">빈 화면·멈춤</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">6-2</td><td class="step">종료</td>
+          <td class="do">스크롤 끝까지 대기 (또는 스킵 입력 시)</td>
+          <td class="ok"><span class="ok-text">연출 종료 후 다음 씬으로 넘어갈 준비 (Loading)</span></td>
+          <td class="fail">영구 고정</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SCENARIO 7 -->
+<div class="scenario">
+  <h2>시나리오 7 — LoadingScene</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">목적: 로딩 연출·안내 문구가 플레이어에게 조작법을 전달하는지 확인.</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">7-1</td><td class="step">경고 테이프</td>
+          <td class="do">좌측 상단 테이프 2줄 관찰 (5초 이상)</td>
+          <td class="ok"><span class="ok-text">2줄이 <strong>서로 다른 속도</strong>로 움직임 · 방향도 다름(한 줄은 좌→우, 한 줄은 우→좌)</span></td>
+          <td class="fail">정지·같은 속도·한 줄만</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">7-2</td><td class="step">로딩 스피너</td>
+          <td class="do">중앙 스피너 관찰</td>
+          <td class="ok"><span class="ok-text">균일하게 회전·반복 (끊김·역회전 없음)</span></td>
+          <td class="fail">멈춤·깜빡임</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">7-3</td><td class="step">가이드 순환</td>
+          <td class="do">중앙 상단 안내 텍스트 10초 이상 관찰</td>
+          <td class="ok"><span class="ok-text">이동·Z/X·C/V·K/I·ESC 안내가 <strong>순환</strong></span></td>
+          <td class="fail">문구 없음·한 줄 고정</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">7-4</td><td class="step">가이드 전환</td>
+          <td class="do">문구가 바뀔 때 관찰</td>
+          <td class="ok"><span class="ok-text">페이드로 전환 · 문구 겹침 없음</span></td>
+          <td class="fail">겹침·깜빡임</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">7-5</td><td class="step">게임 진입</td>
+          <td class="do">로딩 종료까지 대기</td>
+          <td class="ok"><span class="ok-text">페이드 아웃 후 GameScene · 플레이어·HUD 표시</span></td>
+          <td class="fail">무한 로딩·검은 화면</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SCENARIO 8 -->
+<div class="scenario">
+  <h2>시나리오 8 — GameScene · 시작 · 가이드 · 첫 이동</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">목적: 튜토리얼 후 짧은 구간만 걸을 수 있고, 오염원 등장 전후로 이동 범위가 바뀌는지 확인.</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">8-1</td><td class="step">게임 진입</td>
+          <td class="do">GameScene Play (또는 시나리오 1·7 완료 후)</td>
+          <td class="ok"><span class="ok-text">플레이어·UI·타이머·배경·방호복 바 표시</span></td>
+          <td class="fail">검은 화면·멈춤</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">8-2</td><td class="step">가이드 중</td>
+          <td class="do">시작 안내 문구가 나온 동안 ←→ 입력</td>
+          <td class="ok"><span class="ok-text">캐릭터가 움직이지 않음 · 짧은 팝업(bg0) 배경 보임</span></td>
+          <td class="fail">가이드 중 이동됨</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">8-3</td><td class="step">가이드 후</td>
+          <td class="do">안내가 끝난 뒤 좌우 이동</td>
+          <td class="ok"><span class="ok-text">이동 가능 · 타이머 감소 · 배경이 함께 흐름</span></td>
+          <td class="fail">이동·타이머·배경 중 하나라도 안 됨</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">8-4</td><td class="step">1차 구간 한계</td>
+          <td class="do">오른쪽 끝까지 이동 (오염원 없을 때)</td>
+          <td class="ok"><span class="ok-text">일정 지점에서 더 이상 오른쪽으로 못 감</span></td>
+          <td class="fail">끝없이 오른쪽으로만 감</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">8-5</td><td class="step">K / I</td>
+          <td class="do">K · I 키로 가이드 패널 열기/닫기</td>
+          <td class="ok"><span class="ok-text">키 가이드·아이템 가이드 패널 토글</span></td>
+          <td class="fail">패널 안 뜸</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SCENARIO 9 -->
+<div class="scenario">
+  <h2>시나리오 9 — GameScene · 오염원 경고 · 등장</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">목적: 경고 때 게임 전체가 멈춘 것처럼 보이지 않고, 필요한 것만 멈추는지 확인.</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">9-1</td><td class="step">경고 발생</td>
+          <td class="do">가이드 후 오른쪽으로 2~3초 이동</td>
+          <td class="ok"><span class="ok-text">경고 문구·깜빡임 · Bg+라벨+메시지 함께 표시</span></td>
+          <td class="fail">경고 없음</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">9-2</td><td class="step">경고 중</td>
+          <td class="do">경고 중 ←→ · Z/X · C/V 입력 시도</td>
+          <td class="ok"><span class="ok-text">캐릭터·배경·타이머 멈춤 · BGM은 계속</span></td>
+          <td class="fail">이동·타이머 됨</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">9-3</td><td class="step">Z/X 안내</td>
+          <td class="do">긴 안내 문구(Z/X) 표시 시</td>
+          <td class="ok"><span class="ok-text">긴 팝업(bg1)만 · bg0와 겹치지 않음</span></td>
+          <td class="fail">이중 테두리·배경 없음</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">9-4</td><td class="step">오염원 등장</td>
+          <td class="do">연출 종료까지 대기</td>
+          <td class="ok"><span class="ok-text">오염원 페이드인 · 이후 이동·타이머·Z/X 재개</span></td>
+          <td class="fail">오염원 없음·영구 잠금</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">9-5</td><td class="step">이동 확장</td>
+          <td class="do">첫 오염원 등장 후 오른쪽 끝까지 이동</td>
+          <td class="ok"><span class="ok-text">경고 전보다 더 오른쪽까지 이동 가능</span></td>
+          <td class="fail">여전히 짧은 구간</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SCENARIO 10 -->
+<div class="scenario">
+  <h2>시나리오 10 — GameScene · 오염원 접촉 · 중화</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">목적: 맞는/틀린 도구·접촉 유지·가스(D) 연출 확인.</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">10-1</td><td class="step">접촉</td>
+          <td class="do">오염원에 닿기 · 닿은 채 5초 이동</td>
+          <td class="ok"><span class="ok-text">방호복·오염원 HP바 · 접촉 끊기지 않음</span></td>
+          <td class="fail">바 없음·끊김</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">10-2</td><td class="step">틀린 도구</td>
+          <td class="do">Z/X로 틀린 도구 선택 후 접촉</td>
+          <td class="ok"><span class="ok-text">방호복만 감소 · 오염원 HP·중화 VFX 없음</span></td>
+          <td class="fail">오염원 HP 감소·VFX</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">10-3</td><td class="step">맞는 도구</td>
+          <td class="do">맞는 중화제 선택 후 접촉 (A~C)</td>
+          <td class="ok"><span class="ok-text">방호복 감소 + 오염원 HP 감소 + 중화 VFX</span></td>
+          <td class="fail">HP·VFX 없음</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">10-4</td><td class="step">가스(D)</td>
+          <td class="do">가스 오염원 · 가스밸브 정답 접촉</td>
+          <td class="ok"><span class="ok-text">밸브 애니·밸브 SFX · 중화 VFX <strong>없음</strong></span></td>
+          <td class="fail">VFX만 켜짐·접촉 안 됨</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">10-5</td><td class="step">제거 후</td>
+          <td class="do">오염원 제거 후 Z/X로 다른 도구 선택</td>
+          <td class="ok"><span class="ok-text">선택한 중화 아이템 유지 (스캐너로 강제 초기화 없음)</span></td>
+          <td class="fail">제거 직후 리셋</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SCENARIO 11 -->
+<div class="scenario">
+  <h2>시나리오 11 — GameScene · 회복 아이템 (정화 드랍)</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">목적: 오염원 제거 후 회복 아이템 드랍·인벤·배경 스크롤 확인. (맵 고정 스폰 없음)</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">11-1</td><td class="step">드랍</td>
+          <td class="do">오염원 중화 제거 (드랍 발생 시)</td>
+          <td class="ok"><span class="ok-text">회복 아이템이 위로 튀었다 좌/우 착지</span></td>
+          <td class="fail">드랍 없음·땅 묻힘</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">11-2</td><td class="step">픽업</td>
+          <td class="do">아이템에 접촉 · C/V·Space 사용</td>
+          <td class="ok"><span class="ok-text">인벤 아이콘·이름·Count · 방호복/시간 회복 반영</span></td>
+          <td class="fail">인벤·효과 없음</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">11-3</td><td class="step">스택</td>
+          <td class="do">같은 회복 아이템 다시 획득</td>
+          <td class="ok"><span class="ok-text">Count만 증가</span></td>
+          <td class="fail">칸 중복·표시 깨짐</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SCENARIO 12 -->
+<div class="scenario">
+  <h2>시나리오 12 — GameScene · 맵 구간 · 다음 구역</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">목적: 구간 오염원 전부 처리 후 안내대로 이동해 다음 맵으로 넘어가는지 확인.</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">12-1</td><td class="step">구간 클리어</td>
+          <td class="do">현재 맵 예정 오염원(가스 포함) 전부 처리</td>
+          <td class="ok"><span class="ok-text">「오른쪽으로 이동」류 안내 · 즉시 전체 페이드 없음</span></td>
+          <td class="fail">미처리인데 안내·이동 가능</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">12-2</td><td class="step">맵 전환</td>
+          <td class="do">안내대로 맵 오른쪽 끝까지 이동</td>
+          <td class="ok"><span class="ok-text">페이드 후 다음 구역 · 배경·오염원 준비</span></td>
+          <td class="fail">끝까지 가도 전환 안 됨</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SCENARIO 13 -->
+<div class="scenario">
+  <h2>시나리오 13 — GameScene · 스테이지 클리어 · 사망</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">목적: 클리어·사망 결과 연출 순서 확인 (2026-06-10 기준). 한 단계 = 한 연출 구간.</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">13-1</td><td class="step">클리어 애니</td>
+          <td class="do">스테이지 최종 클리어</td>
+          <td class="ok"><span class="ok-text">Clear 애니 약 2초 재생</span></td>
+          <td class="fail">애니 없음</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">13-2</td><td class="step">클리어 패널</td>
+          <td class="do">Clear 애니 종료 후 관찰</td>
+          <td class="ok"><span class="ok-text">클리어 결과 패널·별 표시 (애니와 동시 아님)</span></td>
+          <td class="fail">애니와 패널 동시</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">13-3</td><td class="step">Die 애니</td>
+          <td class="do">방호복 0까지 접촉</td>
+          <td class="ok"><span class="ok-text">Die 포즈 약 <strong>2초</strong></span></td>
+          <td class="fail">즉시 패널·밸브 루프</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">13-4</td><td class="step">페이드 아웃</td>
+          <td class="do">Die 애니 직후 관찰</td>
+          <td class="ok"><span class="ok-text">플레이어 페이드 아웃 약 0.5초</span></td>
+          <td class="fail">페이드 없음</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">13-5</td><td class="step">게임오버 패널</td>
+          <td class="do">페이드 종료 후 관찰</td>
+          <td class="ok"><span class="ok-text">약 1초 여백 뒤 게임오버 패널 + SFX</span></td>
+          <td class="fail">페이드와 동시·너무 빠름</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">13-6</td><td class="step">가스 사망</td>
+          <td class="do">가스+가스밸브 접촉 중 방호복 0</td>
+          <td class="ok"><span class="ok-text">Die만 · 밸브 재진입 없음 · HP바 숨김</span></td>
+          <td class="fail">밸브↔Die 반복</td>
+        </tr>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">13-7</td><td class="step">타이틀 복귀</td>
+          <td class="do">게임오버 패널에서 타이틀 버튼</td>
+          <td class="ok"><span class="ok-text">TitleScene 전환 · 이어하기 노출(저장 시)</span></td>
+          <td class="fail">타이틀 안 감</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SCENARIO 14 optional -->
+<div class="scenario">
+  <h2>시나리오 14 — GameScene · 이동·배경 체감 (선택)</h2>
+  <div class="scenario-body">
+    <p class="scenario-desc">주관 체감. 애매하면 메모만 남기면 됨.</p>
+    <table>
+      <thead>
+        <tr><th class="chk">✓</th><th class="num">#</th><th class="step">단계</th><th>시나리오</th><th>정상 결과 (화면)</th><th class="fail">Fail 시</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="chk"><input type="checkbox"/></td><td class="num">14-1</td><td class="step">속도</td>
+          <td class="do">가이드 후 5초 이상 이동</td>
+          <td class="ok"><span class="ok-text">배경·캐릭터 속도 비율 자연스러움</span></td>
+          <td class="fail">배경만 비정상</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div class="scenario">
+  <h2>결과 기록</h2>
+  <div class="scenario-body">
+    <table>
+      <tbody>
+        <tr><td style="width:8em;font-weight:600;">테스트 일자</td><td>____________________</td></tr>
+        <tr><td style="font-weight:600;">테스터</td><td>____________________</td></tr>
+        <tr><td style="font-weight:600;">진행 방식</td><td>□ A 전체(AppScene) · □ B 게임만(GameScene)</td></tr>
+        <tr><td style="font-weight:600;">빌드/환경</td><td>____________________</td></tr>
+        <tr><td style="font-weight:600;">Pass</td><td>시나리오 ___ ~ ___ / Fail 번호: _______________</td></tr>
+        <tr><td style="font-weight:600;">Fail 요약</td><td>________________________________________________________</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<p class="meta" style="margin-top:1.5rem;">
+  Assets/Docs/QA/qa-tc-2026-06-10.html · 인쇄 Ctrl+P (시나리오별 1장) ·
+  개발 내부: <a href="qa-2026-06-10.html">qa-2026-06-10.html</a> ·
+  이전 TC: <a href="qa-tc-2026-06-09.html">qa-tc-2026-06-09.html</a>
+</p>
+</body>
+</html>
