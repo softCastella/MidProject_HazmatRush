@@ -67,7 +67,7 @@ public class AudioManager : MonoBehaviour
         }
         else if (Instance != this)
         {
-            Instance.CopyClipsIfEmpty(titleBGM, gameBGM, buttonClickClip, clearClip, gameOverClip, neutralizationClip, squeakyValveClip, splashClip);
+            Instance.CopyClipsIfEmpty(titleBGM, gameBGM, buttonClickClip, clearClip, gameOverClip, neutralizationClip, squeakyValveClip, splashClip, stageBgmClips);
             Destroy(gameObject);
         }
     }
@@ -272,7 +272,7 @@ public class AudioManager : MonoBehaviour
         if (sceneName == titleSceneName)
             PlayTitleBGM();
         else if (sceneName == gameSceneName)
-            PlayGameBGM();
+            return;
         else
             StopBGM();
     }
@@ -336,7 +336,7 @@ public class AudioManager : MonoBehaviour
         bgmFadeRoutine = null;
     }
 
-    void CopyClipsIfEmpty(AudioClip title, AudioClip game, AudioClip buttonClick, AudioClip clear, AudioClip gameOver, AudioClip neutralization, AudioClip valve, AudioClip splash)
+    void CopyClipsIfEmpty(AudioClip title, AudioClip game, AudioClip buttonClick, AudioClip clear, AudioClip gameOver, AudioClip neutralization, AudioClip valve, AudioClip splash, AudioClip[] stageBgms)
     {
         if (titleBGM == null && title != null)
             titleBGM = title;
@@ -354,6 +354,33 @@ public class AudioManager : MonoBehaviour
             squeakyValveClip = valve;
         if (splashClip == null && splash != null)
             splashClip = splash;
+        CopyStageBgmClipsIfNeeded(stageBgms);
+    }
+
+    void CopyStageBgmClipsIfNeeded(AudioClip[] from)
+    {
+        if (from == null || from.Length == 0)
+            return;
+
+        if (stageBgmClips == null || stageBgmClips.Length == 0)
+        {
+            stageBgmClips = from;
+            return;
+        }
+
+        if (from.Length > stageBgmClips.Length)
+        {
+            stageBgmClips = from;
+            return;
+        }
+
+        for (int i = 0; i < stageBgmClips.Length; i++)
+        {
+            if (stageBgmClips[i] != null)
+                continue;
+            if (i < from.Length && from[i] != null)
+                stageBgmClips[i] = from[i];
+        }
     }
 
     void PlayBGM(AudioClip clip)

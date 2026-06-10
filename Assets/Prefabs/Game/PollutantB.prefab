@@ -60,7 +60,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: f2a9c8e71b4d4920a3f8e7d6c5b4a391, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -83,7 +83,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 6062392498791687778, guid: 56c27751e880e864b9089025f7f34ee2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f725ac450797d05439d6fea8d569804f, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -106,10 +106,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Pollutant
   type: 1
-  hp: 0
+  pollutanMaxHp: 0
+  pollutanCurHp: 0
   edgeHitRatio: 0.7
   appearDuration: 0.7
   disappearDuration: 0.7
+  spriteSortingOrder: 0
+  pollutantSlider: {fileID: 0}
+  typeDScaleOptions:
+  - 1.5
+  - 2
+  - 3
 --- !u!70 &1119910211428263324
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
