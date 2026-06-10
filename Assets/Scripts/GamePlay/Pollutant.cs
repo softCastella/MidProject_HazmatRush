@@ -421,7 +421,9 @@ public class Pollutant : MonoBehaviour
             StopNeutralizationSfxLocal();
             if (type == PollutantType.TypeD)
                 player.SetValveAnimActive(false);
-            player.RefreshNeutralizationVfx();
+            else
+                player.RefreshNeutralizationVfx();
+            HideBars(player);
             return;
         }
 

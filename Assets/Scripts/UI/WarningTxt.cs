@@ -5,14 +5,49 @@ using TMPro;
 public class WarningTxt : MonoBehaviour
 {
     public TMP_Text warningMsg;
+    public TMP_Text warningLabel;
+    public Transform popupBg;
     public int blinkCount = 3;
     public float blinkInterval = 0.3f;
 
     void Awake()
     {
-        if (warningMsg == null)
-            warningMsg = GetComponentInChildren<TMP_Text>(true);
+        ResolveRefs();
         HideWarning();
+    }
+
+    void ResolveRefs()
+    {
+        if (warningMsg == null)
+        {
+            Transform msg = transform.Find("WarningMsg");
+            if (msg != null)
+                warningMsg = msg.GetComponent<TMP_Text>();
+        }
+
+        if (warningLabel == null)
+        {
+            Transform label = transform.Find("WarningLabel");
+            if (label != null)
+                warningLabel = label.GetComponent<TMP_Text>();
+        }
+
+        if (popupBg == null)
+            popupBg = transform.Find("Bg");
+    }
+
+    void SetPopupVisible(bool visible)
+    {
+        ResolveRefs();
+
+        if (popupBg != null)
+            popupBg.gameObject.SetActive(visible);
+
+        if (warningLabel != null)
+            warningLabel.gameObject.SetActive(visible);
+
+        if (warningMsg != null)
+            warningMsg.gameObject.SetActive(visible);
     }
 
     public void ShowWarning(string text)
@@ -21,7 +56,6 @@ public class WarningTxt : MonoBehaviour
             return;
 
         warningMsg.text = text;
-        warningMsg.gameObject.SetActive(true);
         StopAllCoroutines();
         StartCoroutine(BlinkWarning(blinkCount, blinkInterval));
     }
@@ -40,10 +74,10 @@ public class WarningTxt : MonoBehaviour
 
         for (int i = 0; i < safeCount; i++)
         {
-            warningMsg.gameObject.SetActive(true);
+            SetPopupVisible(true);
             warningMsg.ForceMeshUpdate(true);
             yield return new WaitForSeconds(safeInterval);
-            warningMsg.gameObject.SetActive(false);
+            SetPopupVisible(false);
             yield return new WaitForSeconds(safeInterval);
         }
 
@@ -54,10 +88,8 @@ public class WarningTxt : MonoBehaviour
     {
         StopAllCoroutines();
         if (warningMsg != null)
-        {
             warningMsg.text = string.Empty;
-            warningMsg.gameObject.SetActive(false);
-        }
+        SetPopupVisible(false);
     }
 
     private System.Collections.IEnumerator BlinkWarning(int count, float interval)
@@ -67,12 +99,12 @@ public class WarningTxt : MonoBehaviour
 
         for (int i = 0; i < safeCount; i++)
         {
-            warningMsg.gameObject.SetActive(true);
+            SetPopupVisible(true);
             yield return new WaitForSeconds(safeInterval);
-            warningMsg.gameObject.SetActive(false);
+            SetPopupVisible(false);
             yield return new WaitForSeconds(safeInterval);
         }
 
-        warningMsg.gameObject.SetActive(false);
+        SetPopupVisible(false);
     }
 }

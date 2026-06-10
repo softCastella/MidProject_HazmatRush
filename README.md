@@ -12,7 +12,7 @@
 | **회복 아이템 정의** | `Assets/Data/recovery_items.json` |
 | **AI·협업 규칙** | [AGENTS.md](AGENTS.md) |
 | **버그·수정 기록** | [Bug 폴더](Assets/Docs/Bug/) |
-| **회의·합의** | [회의록 폴더](Assets/Docs/회의록/) — 최근: [0609 일일](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1400-1차-합의.md) |
+| **회의·합의** | [회의록 폴더](Assets/Docs/회의록/) — 최근: [0610 일일](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md) |
 
 ---
 
@@ -91,7 +91,7 @@ GameScene
   └ 스테이지 플레이 → 클리어 / 게임오버
 ```
 
-> **BGM:** 타이틀·게임 씬만 BGM 재생(페이드 인/아웃). 스플래시·인트로·로딩에서는 BGM 없음(`StopBGM`).
+> **BGM:** 타이틀·게임 씬만 BGM 재생(페이드 인/아웃). 스플래시·인트로·로딩에서는 BGM 없음(`StopBGM`). **게임 BGM**은 `StageManager.LoadStage` → `PlayStageBgm(bgmIndex)` — 씬 로드 시 0번 강제 재생 없음 ([0610 합의](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md)).
 
 > **씬 페이드:** `TitleSceneFade`(타이틀→인트로 흰 암전), `AutoScrollIntro`(인트로 진입 페이드인·종료 검은 암전). 상세: [Bug 2026-06-06](Assets/Docs/Bug/2026-06-06-시각미상-씬전환-스플래시-인트로-fixes.md).
 
@@ -214,8 +214,9 @@ GameScene
 | `stageBgmClips` | 스테이지별 탐사 BGM (`StageManager` / `bgmIndex`) |
 | `splashClip` | 스플래시 로고 SFX |
 
-**씬별 BGM:** `TitleScene` / `GameScene`만 재생. 그 외는 페이드 아웃 후 정지.  
-**App 진입 시:** `AppScene` Inspector가 매니저 본체(클립·`stageBgmClips`·볼륨). 씬 직접 Play 시 해당 씬 인스턴스가 생성될 수 있음.
+**씬별 BGM:** `TitleScene`만 자동 재생. `GameScene`은 **`StageManager.LoadStage`가 `bgmIndex`로 재생** (`OnSceneLoaded`에서 0번 강제 금지).  
+**싱글톤 클립:** 중복 `AudioManager` 파괴 시 `stageBgmClips` 병합 (`CopyStageBgmClipsIfNeeded`).  
+**App · 단독 Play:** `AppScene` 또는 각 씬에서 Instance 생성 — 둘 다 동작하도록 위 규칙 유지.
 
 ### 회복 아이템 (`RecoveryItemManager`, `RecoveryItemInventory`)
 
@@ -250,11 +251,11 @@ GameScene
 | 모듈 | 역할 |
 |------|------|
 | `AppBootstrap` | App 진입 · `runInBackground` · 첫 씬(`SplashScene`) 로드 |
-| `GameManager` | 클리어·게임오버·일시정지·디버그 키 |
+| `GameManager` | 클리어·게임오버·일시정지·디버그 키 · 사망 시 `HidePollutantHpBar` |
 | `SceneLoadManager` | 씬 전환, `pendingStageIndex` |
 | `LoadingController` / `LoadingGuideTxt` | 페이드·플랜 준비·조작 안내 |
 | `Background` | 스크롤, 오염원 활성/구간 미완료 시 정지 |
-| `WorldSpaceUIFollower` | 방호복·오염원 HP 바 |
+| `WorldSpaceUIFollower` | 오염원 HP 바 (캔버스 직속, 접촉 시만 표시) |
 
 ---
 
@@ -284,7 +285,9 @@ Assets/
 ├── Scripts/
 │   ├── Core/          AppBootstrap, GameManager, SceneLoadManager, AudioManager, …
 │   ├── GamePlay/      Player, Pollutant, PollutantManager, Item, …
-│   └── UI/            GuideTxt, HelpGuideToggle, LoadingGuideTxt, SplashController, …
+│   └── UI/            GuideTxt, WarningTxt, ProtectionHpBarUI, …
+├── Shaders/           SpriteOutline, UIImageOutline
+├── Materials/         Pollutant*Outline, ProtectionHpBar5_7Outline
 ├── Prefabs/Game/      Player, PollutantA~D
 ├── Prefabs/Item/      Scanner, Neutralizer, pads, GasValve, map*Recov
 ├── Prefabs/InvenItem/ inv*Recov, invEmptySlotPrefab
@@ -348,6 +351,8 @@ Assets/
 - [ ] 정답: 오염원 HP + 중화 VFX / 오답: 방호복만 + VFX 없음
 - [ ] 오염원 1마리 제거 후 선택 아이템 유지
 - [ ] 가스: 밸브 애니 + 밸브 SFX
+- [ ] 가이드: 짧은 문구 `bg0` / Z·X 안내 `bg1` (겹침 없음)
+- [ ] 스테이지 전환 시 BGM `bgmIndex` 변경
 - [ ] 클리어: Clear 애니 2초 → 패널
 - [ ] 사망: Die 애니 2초 → 페이드 → 1초 여백 → 게임오버 패널 · 오염원 HP바 숨김
 - [x] 가스 사망 시 밸브↔Die 애니 루프 없음 — [0610 Bug §5](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후2030-2차-fixes.md)
@@ -380,6 +385,7 @@ Assets/
 
 ### 미구현·보류
 
+- **가스(D) 사망 시 밸브↔Die 애니 루프** — HP바는 숨김 처리됨, 애니 반복은 미해결 ([0610 Bug §5](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후1830-1차-fixes.md))
 - App **PR2** 중복 매니저 제거 · **PR3** Additive 로딩 · **서버** 연동 (계획만)
 - 좌우 연타 가속 체감 (`Background.SmoothDamp`) — 분석만, 수정 보류
 - 회복 인벤 6종+ Scroll View 스크롤 실검증, 중화 HUD와 패널 Hierarchy 최종 분리 확인

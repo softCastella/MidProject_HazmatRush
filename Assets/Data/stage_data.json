@@ -3,7 +3,7 @@
         "stageId": 1,
         "label": "Stage 1-1",
         "placeName": "1F A area",
-        "pollutantTypes": "B|D",
+        "pollutantTypes": "D",
         "totalPollutant": 2,
         "mapPollutants": [2],
         "timeLimit": 120,
