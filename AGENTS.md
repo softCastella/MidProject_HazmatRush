@@ -294,6 +294,7 @@ Cursor에서 확인: **Settings → Rules** 또는 채팅 입력창 근처 Rules
 | 2026-06-06 | 회복 인벤 1차 구현(스택·InvItemView·UI 레이아웃) — [회의록](Assets/Docs/회의록/2026-06-06-시각미상-회복아이템-인벤-설계-합의.md) · [Bug](Assets/Docs/Bug/2026-06-06-시각미상-회복인벤-UI-fixes.md) |
 | 2026-06-06 | Git 임의 실행 금지 규칙 강화 (요청 시에만 commit·checkout·restore 등) |
 | 2026-06-09 | 회의록 일일 취합 · Docs 하네스 |
+| 2026-06-10 | 스테이지 BGM·GuideTxt 팝업·UIImageOutline·가스 사망 HP바 — [회의록](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후1830-1차-fixes.md) (밸브 애니 루프 미해결) |
 | | *(이 아래에 본인이 직접 추가)* |
 
 ---

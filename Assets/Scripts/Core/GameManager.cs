@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
     public ItemSelectManager itemSelectManager;     // 패널티 종료 후 아이템 UI 복구
     public RecoveryItemInventoryUI recoveryInventoryUI;
     [TextArea]
-    public string wrongItemPenaltyMessage = "잘못된 아이템 선택으로 2초 후에 아이템선택이 가능합니다.";
+    public string wrongItemPenaltyMessage = "잘못된 아이템 선택으로\n2초 후에 아이템선택이 가능합니다.";
     public float wrongItemPenaltySeconds = 2f;
 
     [Header("Clear")]
@@ -480,6 +480,8 @@ public class GameManager : MonoBehaviour
         pendingDeathCause = cause;
         gameOverPending = true;
         FreezePlayOnResult();
+        if (pollutantManager != null)
+            pollutantManager.HidePollutantHpBar();
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.StopNeutralizationSfx();

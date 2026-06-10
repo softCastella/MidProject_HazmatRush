@@ -348,7 +348,11 @@ public class Pollutant : MonoBehaviour
         }
 
         if (!CanProcessPlayerContact(player))
+        {
+            if (player.IsDead || (GameManager.Instance != null && GameManager.Instance.GameEnded))
+                HideBars(player);
             return;
+        }
 
         ApplyPlayerContactDamage(player);
     }
@@ -412,7 +416,9 @@ public class Pollutant : MonoBehaviour
             StopNeutralizationSfxLocal();
             if (type == PollutantType.TypeD)
                 player.SetValveAnimActive(false);
-            player.RefreshNeutralizationVfx();
+            else
+                player.RefreshNeutralizationVfx();
+            HideBars(player);
             return;
         }
 
@@ -457,6 +463,16 @@ public class Pollutant : MonoBehaviour
 
         // 2) 플레이어 방호복 HP: 접촉 중 계속 초당 감소
         player.ApplyPollutantDamage(pollutanDps);
+
+        if (!CanProcessPlayerContact(player))
+        {
+            StopContactFlash();
+            StopNeutralizationSfxLocal();
+            if (type == PollutantType.TypeD)
+                player.SetValveAnimActive(false);
+            HideBars(player);
+            return;
+        }
 
         // 3) 오염원 현재 HP: 정답 아이템일 때만 초당 감소
         float itemDps = 0f;
