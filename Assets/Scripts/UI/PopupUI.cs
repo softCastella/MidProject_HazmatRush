@@ -10,6 +10,9 @@ public class PopupUI : MonoBehaviour
     public float fadeDuration = 0.25f;
 
     private CanvasGroup canvasGroup;
+    private bool isShowing;
+
+    public bool IsShowing => isShowing;
 
     void Awake()
     {
@@ -40,19 +43,57 @@ public class PopupUI : MonoBehaviour
 
         popupText.text = message;
         StopAllCoroutines();
-        popupPanel.SetActive(true);
 
         float showTime = duration > 0f ? duration : showDuration;
         float fadeTime = fade >= 0f ? fade : fadeDuration;
         StartCoroutine(ShowRoutine(showTime, fadeTime));
     }
 
+    public void HideImmediate()
+    {
+        StopAllCoroutines();
+        isShowing = false;
+        if (popupPanel != null)
+            popupPanel.SetActive(false);
+        if (canvasGroup != null)
+            canvasGroup.alpha = 0f;
+    }
+
     private IEnumerator ShowRoutine(float showTime, float fadeTime)
     {
+        yield return WaitForPriorityHudMessages();
+
+        popupPanel.SetActive(true);
+        isShowing = true;
+
         yield return StartCoroutine(FadeTo(1f, fadeTime));
         yield return new WaitForSeconds(showTime);
         yield return StartCoroutine(FadeTo(0f, fadeTime));
         popupPanel.SetActive(false);
+        isShowing = false;
+    }
+
+    // 가이드·경고·패널티 안내가 끝난 뒤 대응 아이템 팝업 표시
+    private IEnumerator WaitForPriorityHudMessages()
+    {
+        while (IsPriorityHudMessageActive())
+            yield return null;
+    }
+
+    private static bool IsPriorityHudMessageActive()
+    {
+        if (GameManager.Instance != null && GameManager.Instance.IsPenalty)
+            return true;
+
+        GuideTxt guide = FindAnyObjectByType<GuideTxt>();
+        if (guide != null && guide.IsMessageVisible)
+            return true;
+
+        WarningTxt warning = FindAnyObjectByType<WarningTxt>();
+        if (warning != null && warning.IsMessageVisible)
+            return true;
+
+        return false;
     }
 
     private IEnumerator FadeTo(float targetAlpha, float duration)

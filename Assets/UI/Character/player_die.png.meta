@@ -1,16 +1,16 @@
 fileFormatVersion: 2
-guid: 075b0e02bf9f2984cbd7f8317eee89d9
+guid: 04f4f3ef4f340584c9e88b7c5b10ce99
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -4851044444466554067
-    second: death_add-removebg-preview_(1)_0
+      213: 9153922942712861666
+    second: Player_Die 1_0
   - first:
-      213: -1140368649073748294
-    second: death_add-removebg-preview_(1)_1
+      213: 5894431516138803474
+    second: Player_Die 1_1
   - first:
-      213: 3830906123929969727
-    second: death_add-removebg-preview_(1)_2
+      213: 6224662280613784427
+    second: Player_Die 1_2
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -119,13 +119,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: death_add-removebg-preview_(1)_0
+      name: Player_Die 1_0
       rect:
         serializedVersion: 2
-        x: 6
-        y: 8
+        x: 2
+        y: 7
         width: 42
-        height: 64
+        height: 65
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -134,19 +134,19 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: d2b50f997c0adacb0800000000000000
-      internalID: -4851044444466554067
+      spriteID: 2e3d2b5ba64490f70800000000000000
+      internalID: 9153922942712861666
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: death_add-removebg-preview_(1)_1
+      name: Player_Die 1_1
       rect:
         serializedVersion: 2
-        x: 65
+        x: 63
         y: 8
-        width: 57
+        width: 53
         height: 55
       alignment: 7
       pivot: {x: 0.5, y: 0}
@@ -156,20 +156,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ab697fe61c89c20f0800000000000000
-      internalID: -1140368649073748294
+      spriteID: 2111250eb3a3dc150800000000000000
+      internalID: 5894431516138803474
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: death_add-removebg-preview_(1)_2
+      name: Player_Die 1_2
       rect:
         serializedVersion: 2
-        x: 141
-        y: 7
-        width: 57
-        height: 35
+        x: 137
+        y: 4
+        width: 56
+        height: 38
       alignment: 7
       pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -178,8 +178,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: f34e6bc92dc1a2530800000000000000
-      internalID: 3830906123929969727
+      spriteID: b6be1c25d51726650800000000000000
+      internalID: 6224662280613784427
       vertices: []
       indices: 
       edges: []
@@ -188,7 +188,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 28c32b8cfa7f68240b22f046f40e0eb6
+    spriteID: 0a30c9953f355ae4d9511ac459a38402
     internalID: 0
     vertices: []
     indices: 
@@ -198,9 +198,9 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      death_add-removebg-preview_(1)_0: -4851044444466554067
-      death_add-removebg-preview_(1)_1: -1140368649073748294
-      death_add-removebg-preview_(1)_2: 3830906123929969727
+      Player_Die 1_0: 9153922942712861666
+      Player_Die 1_1: 5894431516138803474
+      Player_Die 1_2: 6224662280613784427
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

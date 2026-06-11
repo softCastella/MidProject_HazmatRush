@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
     }
 
     public float moveSpeed = 400f; // 플레이어 이동 속도
+    [Tooltip("배경 스크롤 잠금 중(PollutantManager) moveSpeed 배율. 1이면 변화 없음.")]
+    public float bgLockedSpeedMultiplier = 1.5f;
     public float returnMoveSpeed = 900f; // 시작 지점 복귀 속도 (씬에서 10000 등 과하게 올리지 않기)
     public float returnStopDistance = 0.2f; // 이 거리 안이면 복귀 완료
     public float leftLimit = -785f; // 왼쪽 이동 제한
@@ -164,7 +166,7 @@ public class Player : MonoBehaviour
         if (moveInput == 0f)
             return;
 
-        float step = moveInput * moveSpeed * Time.fixedDeltaTime;
+        float step = moveInput * GetMoveSpeed() * Time.fixedDeltaTime;
         float newX = transform.position.x + step;
         newX = Mathf.Clamp(newX, Mathf.Min(leftLimit, rightLimit), Mathf.Max(leftLimit, rightLimit));
 
@@ -172,6 +174,22 @@ public class Player : MonoBehaviour
             rb.MovePosition(new Vector2(newX, transform.position.y));
         else
             transform.position = new Vector3(newX, transform.position.y, transform.position.z);
+    }
+
+    private float GetMoveSpeed()
+    {
+        if (bgLockedSpeedMultiplier <= 1f)
+            return moveSpeed;
+
+        PollutantManager mgr = null;
+        if (GameManager.Instance != null)
+            mgr = GameManager.Instance.pollutantManager;
+        if (mgr == null)
+            mgr = FindAnyObjectByType<PollutantManager>();
+        if (mgr != null && mgr.IsBackgroundScrollLocked())
+            return moveSpeed * bgLockedSpeedMultiplier;
+
+        return moveSpeed;
     }
 
     public void GrowRange(float targetX, float buffer = 0.5f)

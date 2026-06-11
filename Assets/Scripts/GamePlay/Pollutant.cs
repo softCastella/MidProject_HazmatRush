@@ -67,7 +67,7 @@ public class Pollutant : MonoBehaviour
         {
             var list = Substances[(int)type];
             var substance = list[Random.Range(0, list.Length)];
-            return $"{substance}에 {RecommendedItem}을 사용하세요";
+            return $"{substance}에 \n{RecommendedItem}을 사용하세요";
         }
     }
 
@@ -442,16 +442,15 @@ public class Pollutant : MonoBehaviour
                 lastJudgeMatched = isMatched;
             }
 
-            // 접촉 구간마다 1회 — 해제 후 재접촉 시 다시 발동 (패널티 중이면 성공할 때까지 대기)
+            // 접촉 구간마다 1회 — 해제 후 재접촉 시 다시 발동 (패널티 중이면 트리거만 스킵)
             if (!isMatched && !wrongPenaltyUsedThisContact)
             {
-                if (GameManager.Instance != null && GameManager.Instance.TriggerWrongItemPenalty())
-                {
-                    wrongPenaltyUsedThisContact = true;
-                    StageScoreTracker scoreTracker = FindAnyObjectByType<StageScoreTracker>();
-                    if (scoreTracker != null)
-                        scoreTracker.RegisterWrongItem();
-                }
+                wrongPenaltyUsedThisContact = true;
+                StageScoreTracker scoreTracker = FindAnyObjectByType<StageScoreTracker>();
+                if (scoreTracker != null)
+                    scoreTracker.RegisterWrongItem();
+                if (GameManager.Instance != null)
+                    GameManager.Instance.TriggerWrongItemPenalty();
             }
         }
 
@@ -826,6 +825,17 @@ public class Pollutant : MonoBehaviour
             col.enabled = true;
 
         appearInProgress = false;
+        NotifySpawnArrow();
+    }
+
+    private void NotifySpawnArrow()
+    {
+        if (type == PollutantType.TypeD)
+            return;
+
+        PollutantManager mgr = FindAnyObjectByType<PollutantManager>();
+        if (mgr != null)
+            mgr.ShowPollutantArrow(transform);
     }
 
     private void ApplyTypeDRandomScale()

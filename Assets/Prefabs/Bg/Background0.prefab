@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 13ae3645549227146bf61a3f65c8241e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Background
-  scrollSpeed: 0.2
+  scrollSpeed: 0.15
   scrollRight: 1
   pauseWhenPlayerStops: 1
   isPaused: 1

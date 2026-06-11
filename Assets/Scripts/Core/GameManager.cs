@@ -30,7 +30,7 @@ public class GameManager : MonoBehaviour
     [Header("Pause")]
     public GameObject pauseSet;     // HUD_Canvas/Pause_HUD
 
-    [Header("Wrong Item Penalty (Stage 1-1 튜토리얼 전용)")]
+    [Header("Wrong Item Penalty")]
     public GuideTxt guideTxt;                       // 패널티 안내 문구 표시
     public ItemManager itemManager;                 // 아이템 창 전체 dim
     public ItemSelectManager itemSelectManager;     // 패널티 종료 후 아이템 UI 복구
@@ -209,14 +209,10 @@ public class GameManager : MonoBehaviour
         Debug.Log("[GameManager] 재개");
     }
 
-    // 중화모드에서 틀린 아이템으로 접촉했을 때 호출. (스테이지 1-1 튜토리얼 전용)
+    // 중화모드에서 틀린 아이템으로 접촉했을 때 호출.
     public bool TriggerWrongItemPenalty()
     {
         if (isPenalty || gameEnded || isPaused)
-            return false;
-
-        // 첫 스테이지(1-1)에서만 패널티 안내가 동작합니다.
-        if (stageManager == null || stageManager.currentStageIndex != 0)
             return false;
 
         StartCoroutine(WrongItemPenaltyRoutine());

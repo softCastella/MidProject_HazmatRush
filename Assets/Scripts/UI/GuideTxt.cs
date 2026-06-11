@@ -29,6 +29,9 @@ public class GuideTxt : MonoBehaviour
     public Background background;
 
     private CanvasGroup canvasGroup;
+    private bool isMessageVisible;
+
+    public bool IsMessageVisible => isMessageVisible;
 
     void Awake()
     {
@@ -189,6 +192,7 @@ public class GuideTxt : MonoBehaviour
             yield break;
 
         StopAllCoroutines();
+        isMessageVisible = true;
         SetGuideText(message);
         ApplyPopup(GetPopupMode(message, true));
 
@@ -196,6 +200,7 @@ public class GuideTxt : MonoBehaviour
         yield return new WaitForSeconds(duration > 0f ? duration : showDuration);
         yield return StartCoroutine(FadeTo(0f, fadeDuration));
         ApplyPopup(PopupMode.Hidden);
+        isMessageVisible = false;
 
         Debug.Log($"[GuideTxt] {message}");
     }
@@ -206,6 +211,7 @@ public class GuideTxt : MonoBehaviour
         if (canvasGroup == null)
             canvasGroup = GetComponent<CanvasGroup>();
         gameObject.SetActive(true);
+        isMessageVisible = true;
         SetGuideText(message);
         ApplyPopup(GetPopupMode(message, true));
         if (canvasGroup != null)
@@ -219,6 +225,7 @@ public class GuideTxt : MonoBehaviour
     public void HideGuide()
     {
         StopAllCoroutines();
+        isMessageVisible = false;
         if (canvasGroup != null)
             canvasGroup.alpha = 0f;
         ApplyPopup(PopupMode.Hidden);
@@ -229,6 +236,7 @@ public class GuideTxt : MonoBehaviour
         if (delay > 0f)
             yield return new WaitForSeconds(delay);
 
+        isMessageVisible = true;
         SetGuideText(message);
         ApplyPopup(GetPopupMode(message, true));
 
@@ -237,6 +245,7 @@ public class GuideTxt : MonoBehaviour
         yield return new WaitForSeconds(displayDuration);
         yield return StartCoroutine(FadeTo(0f, fadeDuration));
         ApplyPopup(PopupMode.Hidden);
+        isMessageVisible = false;
 
         introFinished = true;
 

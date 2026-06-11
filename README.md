@@ -12,7 +12,7 @@
 | **회복 아이템 정의** | `Assets/Data/recovery_items.json` |
 | **AI·협업 규칙** | [AGENTS.md](AGENTS.md) |
 | **버그·수정 기록** | [Bug 폴더](Assets/Docs/Bug/) |
-| **회의·합의** | [회의록 폴더](Assets/Docs/회의록/) — 최근: [0611 일일](Assets/Docs/회의록/2026-06-11-오후1430-0611-일일-오후2100-2차-합의.md) |
+| **회의·합의** | [회의록 폴더](Assets/Docs/회의록/) — 최근: [0611 일일 4차](Assets/Docs/회의록/2026-06-11-오후1430-0611-일일-오후2100-2차-합의.md) |
 
 ---
 
@@ -110,10 +110,13 @@ GameScene
 ```text
 시작 가이드 종료 → 이동·타이머·배경 ON
   └ 1차 범위(-785~-403)에서 우측 이동 (누적 시간)
-        └ 경고 (WarningTxt) + Z/X 안내 (GuideTxt)
-        └ 오염원 등장 (로딩 때 만든 인스턴스 활성화 + 페이드인)
-              └ 팝업: 물질·추천 아이템 안내
+        └ ① 경고 WarningTxt — 고정 1.2s → 깜빡임 3회 (Bg~Bg(5)+WarningMsg 동시)
+        └ ② Z/X 안내 GuideTxt (Stage 1-1만) 또는 itemSelectHintDuration 대기 (1-2+)
+        └ ③ 오염원 등장 (로딩 때 만든 인스턴스 활성화 + 페이드인)
+              └ ④ PopupUI: 「{물질}에 {추천도구}을 사용하세요」 — ①② 끝난 뒤
+              └ A~C: PollutantArrow 바운스 3회 후 숨김 (1-2+, D·1-1 제외)
         └ 접촉: 판정 로그 → 방호복 감소 → 정답 아이템만 오염원 HP 감소
+              └ 오답: 전 스테이지 오대응 패널티 2초 (dim + GuideTxt)
               └ 정답 A~C: 중화 VFX + 중화 SFX 루프
               └ D+가스밸브: 밸브 애니 + 밸브 SFX (중화 VFX 없음)
               └ 오답: 방호복만 감소, 중화 VFX·오염원 HP 감소 없음
@@ -136,7 +139,9 @@ GameScene
 - 방호복 `curProtection` / `maxProtection` (float), UI는 정수 %
 - 이동: 입력·애니 `Update`, **`Rigidbody2D.MovePosition`은 `FixedUpdate`** (물리·트리거 동기)
 - 1차 범위 `leftLimit`~`rightLimit` — **이동 입력 있을 때만** `Clamp` (범위 밖에서 -403으로 끌림 방지)
-- `moveSpeed` **400** (`GameScene`) — 배경 `scrollSpeed` **0.2**와 쌍으로 조정 (`scrollSpeed ≈ moveSpeed / 1920` 참고)
+- `moveSpeed` **200** (`Player` 프리팹·`GameScene`) — 배경 `scrollSpeed` **0.2**와 **함께** 튜닝 (`scrollSpeed ≈ moveSpeed / 1920` 참고 · 코드 기본 400과 씬 값 다를 수 있음)
+- **배경 잠금 시 가속:** `bgLockedSpeedMultiplier` (씬 **1.7**) — `PollutantManager.IsBackgroundScrollLocked()`일 때만 (`GetMoveSpeed()`). 경고·전투·맵 회복 아이템·맵 전환. 1차 자유 이동 구간은 미적용.
+- 걷기 애니: `State` 0/1 · 미끄러짐 시 Animator `Player_Move` Speed 또는 클립 `SampleRate` 추가 조절
 - 첫 오염원 등장 후 `UnlockMapSegmentMovement()` — 1차 우측 한계(`-403`) 해제, 맵 끝(`769`)까지 이동 (`PollutantManager.TryUnlockSegmentMovement`)
 - **중화 VFX:** 접촉 중이고 **추천 아이템과 일치**할 때만 (틀린 도구면 OFF)
 - 가스 밸브 연출: `SetValveAnimActive` — `Player_Valve` + 밸브 SFX
@@ -153,11 +158,19 @@ GameScene
 접촉 해제(전 타입): 오염원 HP `pollutanMaxHp`로 리셋.  
 오염원 제거 시 아이템 선택 **유지** (스캐너/중화제로 자동 초기화 안 함).
 
+**팝업·경고 문구 (코드):**
+
+| 용도 | 위치 |
+|------|------|
+| 대응 아이템 팝업 `PopupUI` | `Pollutant.PopupText` — `Substances[][]` + `RecommendedItems[]` → `"{물질}에 {도구}을 사용하세요"` |
+| 경고 `[경고] … 발견` | `PollutantManager` + `Pollutant.TypeLabels` |
+| Z/X·패널티·맵 이동 | `PollutantManager` / `GameManager.wrongItemPenaltyMessage` / `GuideTxt.defaultMessage` |
+
 ### 오염원 스폰·구간 (`PollutantManager.cs`, `PollutantSpawnPlan.cs`)
 
 | 단계 | 동작 |
 |------|------|
-| **로딩** | `PollutantSpawnPlan.Prepare` — 스테이지별 A~C/D 개수·위치·타입 확정 |
+| **로딩** | `PollutantSpawnPlan.Prepare` — 스테이지별 A~C/D 개수·위치·**타입 순서 확정** (한 판 고정) |
 | **GameScene Start** | 비활성으로 미리 생성 (`SetActive(false)`) |
 | **등장** | 경고 코루틴 후 해당 슬롯 `SetActive(true)` (Instantiate 최소화) |
 | **구간 이탈** | `CanLeaveCurrentSegment()` — 활성 없음 + 미등장 큐 없음 + 남은 프리로드 없음 |
@@ -165,6 +178,7 @@ GameScene
 - `PollutantSpawner`: 인덱스 0~2 = A~C, 3~6 = D
 - `mapPollutants`: 스테이지를 맵(화면) 단위로 나눔 — 맵당 오염원 수, 맵 클리어 후 `AdvanceMap()`
 - `clearPanelDelay`: 마지막 오염원 페이드 후 클리어 연출까지 대기
+- **타입 추첨:** ABC 슬롯마다 `stage_data`의 `pollutantTypes`에서 **독립 랜덤** → Stage 1-2(`A|B`)에서 `B,B,B` 등 **연속 동일 타입 가능** (로딩 시 한 번 확정)
 
 ### 아이템 선택 (`ItemSelectManager.cs`)
 
@@ -173,12 +187,13 @@ GameScene
 - **이후** 경고: 이미 고른 중화 도구 **유지**
 - 스테이지 재시작만 `ResetToDefault()` → Scanner
 
-### 결과 연출 (`GameManager.cs`)
+### 결과 연출·오대응 패널티 (`GameManager.cs`)
 
 | 설정 | 기본 | 동작 |
 |------|------|------|
 | `clearAnimDelay` | 2초 | 클리어 애니 후 ClearSet·SFX |
 | `dieAnimDelay` | 2초 | Die 애니 후 GameOverSet·SFX |
+| `wrongItemPenaltySeconds` | 2초 | 틀린 중화 도구 접촉 — **전 스테이지** 아이템 dim + `GuideTxt` + Z/X·타이머 정지 (방호복 감소는 유지) |
 
 ### HUD 가이드 (`HelpGuideToggle.cs`)
 
@@ -239,15 +254,29 @@ GameScene
 - 5번째 종류~: `EnsureSlotRootCount`로 Content에 칸 추가 (Scroll View, 6종+ 실검증 보류)
 - 설계: [인벤 2026-06-06](Assets/Docs/회의록/2026-06-06-시각미상-회복아이템-인벤-설계-합의.md) · [드랍 연출 2026-06-08](Assets/Docs/회의록/2026-06-08-시각미상-회복아이템-드랍-연출-합의.md) · Bug: [인벤 UI](Assets/Docs/Bug/2026-06-06-시각미상-회복인벤-UI-fixes.md) · [아크 드랍](Assets/Docs/Bug/2026-06-08-시각미상-회복아이템-아크드랍-fixes.md)
 
-### 가이드·경고 팝업 (`GuideTxt`, `WarningTxt`)
+### 가이드·경고·대응 팝업 (`GuideTxt`, `WarningTxt`, `PopupUI`)
+
+| UI | 역할 | 우선순위 |
+|----|------|----------|
+| **WarningTxt** | `[경고] {타입} 오염물질 발견` — 고정 표시 후 깜빡임 | **1** |
+| **GuideTxt** | 시작·Z/X(1-1)·맵 이동·오대응 패널티 — `bg0`/`bg1` | **2** |
+| **PopupUI** | 오염원 등장 후 추천 도구 안내 (`Pollutant.PopupText`) | **3** (①② 종료 후) |
 
 | 항목 | 규칙 |
 |------|------|
-| **GuideTxt** | `ApplyPopup` — `Hidden` / `Short`(`bg0`) / `Long`(`bg1`). 16자 초과 → `bg1`. **동시에 한 팝업만** |
-| **WarningTxt** | `Bg` + `WarningLabel` + `WarningMsg` 함께 표시·깜빡임 |
-| **자식 `bg (1~3)`** | 루트 Image와 중복 — 런타임 **항상 OFF** (이중 테두리 방지) |
+| **GuideTxt** | `ApplyPopup` — `Hidden` / `Short`(`bg0`) / `Long`(`bg1`). 16자 초과 → `bg1` |
+| **GuideTxt 자식 `bg (1~3)`** | 루트 Image와 중복 — **항상 OFF** |
+| **WarningTxt** | 직계 자식 **전체** ON/OFF (`Bg`~`Bg (5)` + `WarningMsg`). 인스펙터: `PollutantManager` → **경고 연출** (`warningHoldDuration` 기본 **1.2s**, `warningBlinkCount`, `warningBlinkInterval`) |
+| **PopupUI** | `WaitForPriorityHudMessages` — 가이드·경고·패널티 중이면 대기 |
 
-상세: [0610 합의](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md) · [0610 Bug](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후2030-2차-fixes.md)
+상세: [0610 합의](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md) · [0611 Bug 3차](Assets/Docs/Bug/2026-06-11-오후1430-0611-일일-오후2100-2차-fixes.md) §10~§14
+
+### 오염원 등장 화살표 (`PollutantArrowUI`)
+
+- **A~C** 페이드인 완료 후 · **D·Stage 1-1** 제외
+- `WorldSpaceUIFollower` + 코드 바운스 **3회** 후 숨김
+- `PollutantManager.pollutantArrowPrefab` → `HUD_Canvas` 하위 생성
+- 설정: [pollutant-arrow-유니티-설정가이드.md](Assets/Docs/2026-06-11-시각미상-pollutant-arrow-유니티-설정가이드.md)
 
 ### 방호복 HUD 아웃라인
 
@@ -315,8 +344,9 @@ Assets/
 | Player | 이동·방호복·애니·중화 VFX |
 | PollutantManager | 경고·등장·맵 전환 |
 | RecoveryItemManager | 오염원 정화 후 회복 아이템 드랍·아크 |
-| HUD_Canvas | `HelpGuideToggle`, `KeyGuidePannel`, `ItemGuide` |
+| HUD_Canvas | `HelpGuideToggle`, `KeyGuidePannel`, `ItemGuide`, **`PollutantArrow`** (A~C 등장 화살표) |
 | ItemSelectManager | Z/X 아이템 |
+| PollutantManager | 오염원 등장·`pollutantArrow` 참조 |
 
 > Title/Game/Splash 등에도 `SceneLoadManager`·`AudioManager` 중복 배치(개발용). App Play 시 App 인스턴스가 우선.
 
@@ -333,6 +363,12 @@ Assets/
 | **TitleSceneFade** | `fadeOutDuration` (타이틀→인트로 검정) |
 | **TitleScene / VersionTxt** | 빌드 버전 표시 |
 | **RecoveryItemManager** | `protectionItemPrefab` / `timeItemPrefab`, `dropYOffset`·`dropJumpHeight`·`dropLandOffsetX`, `testAlwaysDrop` 빌드 전 OFF |
+| **PollutantManager** | **경고 연출** · `itemSelectHintDuration` · `popupShowDuration` · `pollutantArrowPrefab` |
+| **PollutantArrow** (프리팹) | `worldOffsetY` · `bounceCount`(3) · `dropDownDuration` / `riseDuration` → [설정 가이드](Assets/Docs/2026-06-11-시각미상-pollutant-arrow-유니티-설정가이드.md) |
+| **GameManager** | `wrongItemPenaltyMessage` · `guideTxt` · `itemManager` 연결 |
+
+> **오염원 화살표 (Unity 초보용):** [pollutant-arrow-유니티-설정가이드.md](Assets/Docs/2026-06-11-시각미상-pollutant-arrow-유니티-설정가이드.md) — Hierarchy 위치, **어디에 뭘 붙이는지**, Play 확인법.
+
 ---
 
 ## 실행 방법

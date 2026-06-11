@@ -118,6 +118,7 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 | 아이템 DPS·타입 | `Assets/Scripts/GamePlay/Item.cs` |
 | Z키 아이템 선택 | `Assets/Scripts/Core/ItemSelectManager.cs` |
 | 오염원 스폰·경고 | `Assets/Scripts/GamePlay/PollutantManager.cs` |
+| 오염원 등장 화살표 UI | `Assets/Scripts/UI/PollutantArrowUI.cs` · [Unity 설정 가이드](Assets/Docs/2026-06-11-시각미상-pollutant-arrow-유니티-설정가이드.md) |
 | 시작 가이드·이동 잠금 | `Assets/Scripts/UI/GuideTxt.cs` |
 | App 진입·백그라운드 | `Assets/Scripts/Core/AppBootstrap.cs`, `Assets/Scenes/AppScene.unity` |
 | 씬 전환 | `Assets/Scripts/Core/SceneLoadManager.cs` |
@@ -152,6 +153,7 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 | PollutantManager | 오염원 생성·경고 |
 | PollutantSpawner | 오염원 생성 위치 |
 | (Canvas) GuideTxt | 시작 안내, 끝나면 이동 가능 |
+| **HUD_Canvas / PollutantArrow** | A~C 등장 1초 화살표 (`PollutantArrowUI`) — [설정 가이드](Assets/Docs/2026-06-11-시각미상-pollutant-arrow-유니티-설정가이드.md) |
 | ItemSelectManager | 중화 아이템 선택 (Z/X) |
 | InventoryContainer | 회복 인벤 Scroll View (`RecoveryItemInventory` + `RecoveryItemInventoryUI`) |
 
@@ -296,6 +298,7 @@ Cursor에서 확인: **Settings → Rules** 또는 채팅 입력창 근처 Rules
 | 2026-06-06 | Git 임의 실행 금지 규칙 강화 (요청 시에만 commit·checkout·restore 등) |
 | 2026-06-09 | 회의록 일일 취합 · Docs 하네스 |
 | 2026-06-10 | 스테이지 BGM·GuideTxt 팝업·UIImageOutline·가스 사망 HP바·맵 회복 스폰 폐기 — [회의록](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후2030-2차-fixes.md) (밸브·사망 패널 2차) |
+| 2026-06-12 | 플레이어·배경·걷기 애니 체감 속도 — `bgLockedSpeedMultiplier` · [0611 합의 4차](Assets/Docs/회의록/2026-06-11-오후1430-0611-일일-오후2100-2차-합의.md) · [Bug §17](Assets/Docs/Bug/2026-06-11-오후1430-0611-일일-오후2100-2차-fixes.md) |
 | | *(이 아래에 본인이 직접 추가)* |
 
 ---
