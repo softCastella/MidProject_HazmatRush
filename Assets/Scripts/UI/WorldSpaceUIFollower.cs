@@ -20,7 +20,12 @@ public class WorldSpaceUIFollower : MonoBehaviour
 
     void LateUpdate()
     {
-        if (worldTarget == null || rootCanvas == null || cam == null)
+        if (worldTarget == null || rootCanvas == null)
+            return;
+
+        if (cam == null)
+            cam = Camera.main;
+        if (cam == null)
             return;
 
         Vector3 worldPos = GetFollowWorldPosition();

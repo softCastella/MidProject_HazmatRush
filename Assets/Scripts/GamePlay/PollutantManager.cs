@@ -19,17 +19,30 @@ public class PollutantManager : MonoBehaviour
     public RecoveryItemManager recoveryItemManager;
     public PopupUI popupUI;
     public Slider pollutantSlider;
+    public PollutantArrowUI pollutantArrowPrefab;
     public float rangeBuffer = 0.5f;
+
+    private PollutantArrowUI pollutantArrow;
 
     public void HidePollutantHpBar()
     {
         if (pollutantSlider != null)
             pollutantSlider.gameObject.SetActive(false);
+        if (pollutantArrow != null)
+            pollutantArrow.Hide();
     }
     public Vector2 timeRange = new Vector2(2f, 3f);
     public float spawnFadeDuration = 0.7f;
     public float despawnFadeDuration = 0.7f;
     public float popupShowDuration = 1.5f;
+
+    [Header("경고 연출")]
+    [Tooltip("깜빡이기 전 고정 표시 시간(초).")]
+    public float warningHoldDuration = 1.2f;
+    [Tooltip("깜빡임 횟수.")]
+    public int warningBlinkCount = 3;
+    [Tooltip("깜빡임 ON/OFF 각각 유지 시간(초).")]
+    public float warningBlinkInterval = 0.28f;
 
     [Header("스테이지 클리어")]
     public float clearPanelDelay = 1f; // 마지막 오염원 페이드아웃 후 클리어 패널까지 대기(초)
@@ -75,6 +88,8 @@ public class PollutantManager : MonoBehaviour
             mapFadeOverlay.alpha = 0f;
             mapFadeOverlay.blocksRaycasts = false;
         }
+        if (pollutantArrow != null)
+            pollutantArrow.Hide();
     }
 
     public void ResetForStage(bool clearRecoveryInventory)
@@ -103,6 +118,8 @@ public class PollutantManager : MonoBehaviour
             warningTxt.HideWarning();
         if (guideTxt != null)
             guideTxt.HideGuide();
+        if (pollutantArrow != null)
+            pollutantArrow.Hide();
         if (scroll != null)
             scroll.ResumeScroll();
         ResetItemSelectToScanner();
@@ -147,6 +164,8 @@ public class PollutantManager : MonoBehaviour
 
         if (recoveryItemManager == null)
             recoveryItemManager = FindAnyObjectByType<RecoveryItemManager>();
+
+        EnsurePollutantArrow();
 
         nextSpawnTime = Random.Range(timeRange.x, timeRange.y);
         EnsureMapFadeOverlay();
@@ -225,6 +244,12 @@ public class PollutantManager : MonoBehaviour
             scroll.PauseScroll();
         else
             scroll.ResumeScroll();
+    }
+
+    // 오염원·경고·맵 전환 등으로 배경 스크롤을 강제 정지 중인지
+    public bool IsBackgroundScrollLocked()
+    {
+        return ShouldPauseBackgroundScroll();
     }
 
     private bool ShouldPauseBackgroundScroll()
@@ -498,8 +523,15 @@ public class PollutantManager : MonoBehaviour
         if (prefabPoll != null && itemSelectManager != null)
             itemSelectManager.OnWarningShown();
 
+        if (popupUI != null)
+            popupUI.HideImmediate();
+
         if (warningTxt != null && prefabPoll != null)
         {
+            warningTxt.warningHoldDuration = warningHoldDuration;
+            warningTxt.blinkCount = warningBlinkCount;
+            warningTxt.blinkInterval = warningBlinkInterval;
+
             string warningText = $"[경고] {prefabPoll.TypeLabel} 오염물질 발견";
             Debug.Log(warningText);
             yield return StartCoroutine(warningTxt.ShowWarningRoutine(warningText));
@@ -578,6 +610,64 @@ public class PollutantManager : MonoBehaviour
         abcClearedPending = true;
     }
 
+    private void EnsurePollutantArrow()
+    {
+        if (pollutantArrow != null && pollutantArrow.gameObject.scene.IsValid())
+            return;
+
+        PollutantArrowUI inScene = FindAnyObjectByType<PollutantArrowUI>(FindObjectsInactive.Include);
+        if (inScene != null && inScene.gameObject.scene.IsValid())
+        {
+            pollutantArrow = inScene;
+            return;
+        }
+
+        if (pollutantArrowPrefab == null)
+            return;
+
+        Transform hud = FindHudCanvasTransform();
+        if (hud == null)
+        {
+            Debug.LogWarning("[PollutantManager] HUD_Canvas 없음 — PollutantArrow 생성 실패");
+            return;
+        }
+
+        pollutantArrow = Instantiate(pollutantArrowPrefab, hud);
+        pollutantArrow.name = "PollutantArrow";
+        pollutantArrow.gameObject.SetActive(false);
+    }
+
+    private Transform FindHudCanvasTransform()
+    {
+        Canvas[] canvases = FindObjectsByType<Canvas>(FindObjectsSortMode.None);
+        for (int i = 0; i < canvases.Length; i++)
+        {
+            if (canvases[i].gameObject.name == "HUD_Canvas")
+                return canvases[i].transform;
+        }
+
+        return null;
+    }
+
+    public void ShowPollutantArrow(Transform pollutantTarget)
+    {
+        if (pollutantTarget == null)
+            return;
+
+        Pollutant poll = pollutantTarget.GetComponent<Pollutant>();
+        if (poll != null && poll.type == Pollutant.PollutantType.TypeD)
+            return;
+
+        EnsurePollutantArrow();
+        if (pollutantArrow == null)
+        {
+            Debug.LogWarning("[PollutantManager] PollutantArrow 프리팹이 없습니다.");
+            return;
+        }
+
+        pollutantArrow.ShowAt(pollutantTarget);
+    }
+
     private void TryUnlockSegmentMovement()
     {
         if (player == null || segmentMovementUnlocked)
@@ -589,11 +679,8 @@ public class PollutantManager : MonoBehaviour
         Debug.Log($"[PollutantManager] 1차 이동 해제 — rightLimit={mapEndX}");
     }
 
-    // BlinkWarning 로직은 WarningTxt로 이동
-
     private IEnumerator ShowPopupAfterFadeIn(string message, float fadeInDuration)
     {
-        // 페이드인이 거의 끝날 때 (80% 시점) 팝업 표시
         yield return new WaitForSeconds(fadeInDuration * 0.8f);
         if (popupUI != null)
             popupUI.Show(message, popupShowDuration);
