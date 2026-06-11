@@ -1,0 +1,56 @@
+﻿<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"/>
+<title>Static Analysis Report — MidProject</title>
+<style>body{font-family:'Malgun Gothic',sans-serif;max-width:1050px;margin:1rem auto;padding:0 1rem;font-size:0.88rem;}
+table{width:100%;border-collapse:collapse;}th,td{border:1px solid #dde3ea;padding:0.45rem;vertical-align:top;}
+th{background:#e8f4f1;}.Pass{color:#1a7f4e;font-weight:600;}.Fail{color:#b33;font-weight:600;}.Skip{color:#886500;}
+.meta{color:#5a6578;}</style></head><body>
+<h1>정적 분석 리포트 — MidProject</h1>
+<p class="meta">생성: 2026-06-11 14:40 · Pass 19 / Fail 3 / Skip 0 · 규칙: Assets/Data/static_rules.json</p>
+<table><thead><tr><th>ID</th><th>기능</th><th>의도</th><th>결과</th><th>메시지</th></tr></thead><tbody>
+<tr><td>F01</td><td>씬 흐름 (Build Settings)</td><td>Splash → Title → Intro → Loading → Game 순서 유지</td>
+<td class="Fail">Fail</td><td>Build Settings 씬 수 6 (기대 5)</td></tr>
+<tr><td>F02</td><td>스테이지 데이터</td><td>stage_data.json 존재·mapPollutants 필드</td>
+<td class="Pass">Pass</td><td>Assets/Data/stage_data.json 패턴 OK</td></tr>
+<tr><td>F03</td><td>회복 아이템 데이터</td><td>recovery_items.json 존재</td>
+<td class="Pass">Pass</td><td>Assets/Data/recovery_items.json</td></tr>
+<tr><td>F04</td><td>플레이어 이동</td><td>물리 동기 — FixedUpdate에서 MovePosition</td>
+<td class="Pass">Pass</td><td>Assets/Scripts/GamePlay/Player.cs 패턴 OK</td></tr>
+<tr><td>F05</td><td>1차 이동 구간</td><td>기본 left/right limit 및 mapAdvanceRightX</td>
+<td class="Pass">Pass</td><td>Assets/Scripts/GamePlay/Player.cs 패턴 OK</td></tr>
+<tr><td>F06</td><td>1차 구간 해제</td><td>첫 오염원 후 TryUnlockMapSegmentMovement</td>
+<td class="Pass">Pass</td><td>Assets/Scripts/GamePlay/PollutantManager.cs 패턴 OK</td></tr>
+<tr><td>F07</td><td>오염원 접촉 (A~C/D 동일)</td><td>OnTriggerStay에서만 ApplyPlayerContactDamage, IsEdgeContact 미사용</td>
+<td class="Pass">Pass</td><td>Assets/Scripts/GamePlay/Pollutant.cs 패턴 OK</td></tr>
+<tr><td>F08</td><td>접촉 보정 (고속 이동)</td><td>LateUpdate bounds 겹침 fallback</td>
+<td class="Fail">Fail</td><td>미포함: void LateUpdate</td></tr>
+<tr><td>F09</td><td>금지 패턴 — BlockPollutant</td><td>이동 한계 조임 재도입 금지</td>
+<td class="Pass">Pass</td><td>Scripts 내 BlockPollutant 없음</td></tr>
+<tr><td>F10</td><td>아이템 선택 유지</td><td>오염원 HP 0 시 ResetToDefault 호출 금지 (Pollutant 경로)</td>
+<td class="Pass">Pass</td><td>Assets/Scripts/GamePlay/Pollutant.cs 패턴 OK</td></tr>
+<tr><td>F11</td><td>클리어·사망 연출</td><td>clearAnimDelay / dieAnimDelay 기본 2초</td>
+<td class="Pass">Pass</td><td>Assets/Scripts/Core/GameManager.cs 패턴 OK</td></tr>
+<tr><td>F12</td><td>경고 구간 입력 차단</td><td>IsWarningFreeze 연동</td>
+<td class="Pass">Pass</td><td>Assets/Scripts/Core/ItemSelectManager.cs 패턴 OK</td></tr>
+<tr><td>F13</td><td>맵 구간 전환</td><td>pendingMapAdvance · mapEndX 도달 후 전환</td>
+<td class="Pass">Pass</td><td>Assets/Scripts/GamePlay/PollutantManager.cs 패턴 OK</td></tr>
+<tr><td>F14</td><td>회복 인벤</td><td>RecoveryItemInventory + UI 스크립트 존재</td>
+<td class="Pass">Pass</td><td>3개 파일 존재</td></tr>
+<tr><td>F15</td><td>타입 규칙</td><td>전역 ItemType enum 금지 — Item.ItemType 사용</td>
+<td class="Pass">Pass</td><td>Scripts 내 enum ItemType 없음</td></tr>
+<tr><td>F16</td><td>접촉 해제 HP 초기화</td><td>EndPlayerContact에서 pollutanMaxHp 복구 (가스 포함)</td>
+<td class="Pass">Pass</td><td>Assets/Scripts/GamePlay/Pollutant.cs 패턴 OK</td></tr>
+<tr><td>F17</td><td>중화 VFX</td><td>RefreshNeutralizationVfx — 정답 A~C 판정</td>
+<td class="Pass">Pass</td><td>Assets/Scripts/GamePlay/Player.cs 패턴 OK</td></tr>
+<tr><td>F18</td><td>오염원 스폰 플랜</td><td>PollutantSpawnPlan · 프리로드 큐</td>
+<td class="Pass">Pass</td><td>Assets/Scripts/GamePlay/PollutantManager.cs 패턴 OK</td></tr>
+<tr><td>F19</td><td>GameScene Inspector (씬 열림 시)</td><td>핵심 Manager 참조 null 아님</td>
+<td class="Pass">Pass</td><td>GameScene 참조 OK</td></tr>
+<tr><td>F20</td><td>GameScene Player 속도 (씬 열림 시)</td><td>moveSpeed 400 · scrollSpeed 0.2 (오프셋 스크롤 · 실플레이 확정)</td>
+<td class="Fail">Fail</td><td>Background.scrollSpeed = 0.3 (기대 0.2)</td></tr>
+<tr><td>F21</td><td>핵심 스크립트 존재</td><td>README 핵심 파일 맵</td>
+<td class="Pass">Pass</td><td>7개 파일 존재</td></tr>
+<tr><td>F22</td><td>회복 맵 드랍·클리어 수집</td><td>맵 회복 아이템 매니저·자동 획득</td>
+<td class="Pass">Pass</td><td>Assets/Scripts/GamePlay/RecoveryItemManager.cs 패턴 OK</td></tr>
+</tbody></table>
+<p class="meta">스펙: <a href="project-static-analysis.html">project-static-analysis.html</a></p>
+</body></html>

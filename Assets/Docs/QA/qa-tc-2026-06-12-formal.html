@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="qa-favicon.svg" />
+  <title>Project Hazmat Rush 외부 플레이 피드백 안내서</title>
+  <style>
+    :root {
+      --bg:#f0f7f5;--paper:#ffffff;--ink:#1a2332;--muted:#5a6578;--line:#c5ddd8;
+      --green:#1e6b5c;--green-dark:#1a4a42;--teal:#7dd3c0;--blue:#0ea5e9;
+      --ok:#16a34a;--bad:#dc2626;--hold:#d97706;
+      --soft-green:#e8f4f1;--soft-teal:#d4f5ed;--soft-ok:#dcfce7;--soft-bad:#fee2e2;--soft-hold:#fef3c7;--soft-yellow:#fffdf8;--code:#f0f3f6;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:"Pretendard","Noto Sans KR","Malgun Gothic",Arial,sans-serif;background:radial-gradient(circle at top left,rgba(125,211,192,.2),transparent 350px),radial-gradient(circle at bottom right,rgba(30,107,92,.12),transparent 380px),var(--bg);color:var(--ink);line-height:1.7;padding:32px 18px;word-break:keep-all;}
+    .container{max-width:1040px;margin:0 auto;}
+    .header{background:linear-gradient(135deg,#1e6b5c,#164f46 55%,#0f766e);color:white;border-radius:24px;padding:34px;box-shadow:0 16px 34px rgba(26,74,66,.18);display:flex;gap:20px;align-items:center;justify-content:space-between;margin-bottom:24px;}
+    .title h1{font-size:32px;line-height:1.25;letter-spacing:-0.04em;margin-bottom:8px;}
+    .title p{color:rgba(255,255,255,.94);font-size:16px;font-weight:700;}
+    .title .badge{display:inline-block;background:#ffd966;color:#1a4a42;font-size:12px;font-weight:900;padding:3px 10px;border-radius:6px;margin-bottom:8px;letter-spacing:.04em;}
+    .title .meta-line{font-size:14px;font-weight:600;color:#b8ebe0;margin-top:6px;}
+    .hazmat-badge{font-size:48px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.25);border-radius:24px;padding:16px 20px;}
+    .btn{border:none;background:#111827;color:white;padding:13px 18px;border-radius:14px;font-size:15px;font-weight:900;cursor:pointer;margin-top:16px;}
+    .btn:active{transform:scale(0.97);}
+    section{background:var(--paper);border:2px solid var(--line);border-radius:22px;padding:26px;margin-bottom:20px;box-shadow:0 10px 24px rgba(26,74,66,.06);}
+    h2{font-size:25px;color:var(--green-dark);margin-bottom:16px;letter-spacing:-0.03em;}
+    h3{font-size:20px;margin:20px 0 10px;color:#0f172a;}
+    h4{font-size:16px;margin:16px 0 8px;color:var(--green);}
+    p,li{font-size:16px;color:#374151;}
+    ul,ol{margin-left:24px;margin-bottom:10px;}
+    li{margin-bottom:8px;}
+    .big-text{font-size:18px;font-weight:800;color:#1f2937;}
+    .card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px;}
+    .info-card{background:var(--soft-green);border:2px solid var(--line);border-radius:16px;padding:16px;}
+    .info-card strong{display:block;font-size:16px;color:var(--green-dark);margin-bottom:4px;}
+    .info-card span{font-size:15px;color:#374151;}
+    .simple-flow{display:grid;gap:10px;margin-top:14px;}
+    .flow-step{background:var(--soft-teal);border:2px solid #7dd3c0;border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;font-size:16px;font-weight:800;}
+    .num{width:34px;height:34px;border-radius:50%;background:var(--green);color:white;display:inline-flex;justify-content:center;align-items:center;font-weight:900;flex-shrink:0;}
+    .callout{background:var(--soft-yellow);border-left:7px solid #e8b84a;border-radius:14px;padding:15px 17px;margin:16px 0;}
+    .callout p{font-weight:800;color:#78350f;}
+    .warn-callout{background:#fff8f0;border-left:7px solid var(--green);border-radius:14px;padding:15px 17px;margin:16px 0;}
+    .warn-callout p{font-weight:800;color:var(--green-dark);}
+    .guide-msg{display:inline-block;margin:2px 0;padding:2px 8px;background:#fff;border:1px solid var(--line);border-radius:6px;font-weight:700;color:var(--green-dark);font-size:15px;}
+    .in-game-hint{background:#fff;border:2px dashed var(--line);border-radius:12px;padding:12px 14px;margin-bottom:12px;}
+    .in-game-hint .hint-label{display:block;font-size:13px;color:var(--muted);font-weight:800;margin-bottom:6px;}
+    .in-game-hint .hint-note{font-size:13px;color:var(--muted);margin-top:8px;font-weight:600;line-height:1.5;}
+
+    .prog-wrap{background:var(--soft-green);border:2px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:20px;}
+    .prog-inner{height:10px;background:linear-gradient(90deg,#1e6b5c,#7dd3c0);transition:width .3s;}
+    .prog-label{display:flex;justify-content:space-between;font-size:13px;font-weight:800;color:var(--green-dark);padding:6px 12px 2px;}
+
+    .how-to{background:var(--paper);border:3px solid var(--green);border-radius:20px;padding:22px 24px;margin-bottom:20px;}
+    .how-to h2{margin:0 0 14px;font-size:22px;color:var(--green-dark);}
+    .how-to-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+    .how-to-step{background:var(--soft-green);border-radius:14px;padding:16px;text-align:center;}
+    .how-to-step .step-n{font-size:28px;font-weight:900;color:var(--green);line-height:1;}
+    .how-to-step p{margin-top:8px;font-size:15px;font-weight:800;color:#374151;}
+    .test-card{border:2px solid var(--line);background:#f9fcfb;border-radius:20px;padding:20px;margin-bottom:16px;}
+    .test-title{font-size:20px;font-weight:900;color:var(--green-dark);margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+    .q-num{display:inline-flex;width:36px;height:36px;border-radius:50%;background:var(--green);color:#fff;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+    .card-when{font-size:15px;color:var(--muted);margin-bottom:10px;font-weight:600;}
+    .card-ask{font-size:17px;font-weight:800;color:#1f2937;margin-bottom:14px;line-height:1.55;}
+    .feel-group{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
+    .feel-opt{display:inline-flex;align-items:center;gap:6px;padding:10px 14px;border:2px solid var(--line);border-radius:999px;background:#fff;font-size:15px;font-weight:800;cursor:pointer;user-select:none;}
+    .feel-opt input{margin:0;accent-color:var(--green);}
+    .feel-opt:has(input:checked){border-color:var(--green);background:var(--soft-green);color:var(--green-dark);}
+    .feel-opt.feel-ok:has(input:checked){border-color:var(--ok);background:var(--soft-ok);color:var(--ok);}
+    .feel-opt.feel-bad:has(input:checked){border-color:var(--bad);background:var(--soft-bad);color:var(--bad);}
+    .feel-opt.feel-mid:has(input:checked){border-color:var(--hold);background:var(--soft-hold);color:var(--hold);}
+    .card-note textarea{min-height:72px;margin-top:0;}
+    details.glossary{margin-top:12px;}
+    details.glossary summary{cursor:pointer;font-weight:800;color:var(--green);font-size:15px;padding:8px 0;}
+    details.glossary .card-grid{margin-top:8px;}
+
+    select{width:100%;padding:12px;border-radius:12px;border:2px solid var(--line);background:white;font-family:inherit;font-size:15px;font-weight:900;cursor:pointer;color:var(--ink);}
+    select.pass{border-color:var(--ok);color:var(--ok);background:var(--soft-ok);}
+    select.fail{border-color:var(--bad);color:var(--bad);background:var(--soft-bad);}
+    select.hold{border-color:var(--hold);color:var(--hold);background:var(--soft-hold);}
+
+    textarea,input[type="text"]{width:100%;border:2px solid var(--line);border-radius:14px;background:white;padding:13px;font-size:15px;font-family:inherit;outline:none;color:var(--ink);}
+    textarea{min-height:96px;resize:vertical;margin-top:8px;}
+    textarea:focus,input[type="text"]:focus,select:focus{border-color:var(--green);}
+
+    .bug-section{background:#fff1f2;border:2px solid #fca5a5;border-radius:20px;padding:20px;margin-top:16px;}
+    .bug-item{border-top:2px solid #fecdd3;padding-top:14px;margin-top:14px;}
+    .bug-item:first-child{border-top:none;padding-top:0;margin-top:0;}
+    .bug-item-title{font-size:17px;font-weight:900;color:#b91c1c;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+    .bug-row{display:grid;grid-template-columns:130px 1fr;gap:10px;align-items:center;margin-bottom:8px;}
+    .bug-row label{font-size:14px;font-weight:800;color:var(--green);}
+    .add-bug-btn{width:100%;margin-top:12px;background:white;border:2px dashed var(--green);color:var(--green);font-size:15px;font-weight:800;padding:11px;border-radius:14px;cursor:pointer;}
+    .add-bug-btn:hover{background:var(--soft-green);}
+    .bug-remove{background:white;border:2px solid #fca5a5;color:#dc2626;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:800;cursor:pointer;}
+
+    .feedback-grid{display:grid;gap:16px;}
+    .feedback-card{background:var(--soft-green);border:2px solid var(--line);border-radius:18px;padding:16px;}
+    .feedback-card h3{margin-top:0;color:var(--green-dark);}
+    .final-table{width:100%;border-collapse:collapse;margin-top:10px;}
+    .final-table th,.final-table td{border:2px solid var(--line);padding:14px;text-align:left;font-size:16px;}
+    .final-table th{background:var(--soft-green);color:var(--green-dark);width:26%;}
+    code{background:var(--code);border-radius:6px;padding:2px 6px;font-family:Consolas,"D2Coding",monospace;color:#111827;}
+    .footer{text-align:center;color:var(--green-dark);font-weight:800;margin-top:24px;padding-bottom:20px;}
+    .footer a{color:var(--green);}
+
+    @media print{
+      body{background:white;padding:0;}
+      .header{background:white;color:#111827;border:3px solid #111827;box-shadow:none;}
+      .title p,.title .meta-line{color:#374151;}
+      .btn,.add-bug-btn{display:none;}
+      section{box-shadow:none;break-inside:avoid;}
+    }
+    @media(max-width:800px){
+      body{padding:18px 10px;}
+      .header{flex-direction:column;align-items:flex-start;padding:24px;}
+      .title h1{font-size:26px;}
+      .hazmat-badge{font-size:38px;}
+      .card-grid,.how-to-steps{grid-template-columns:1fr;}
+      section{padding:20px;}
+      .bug-row{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+<header class="header">
+  <div class="title">
+    <span class="badge">플레이 후 설문</span>
+    <h1>Project Hazmat Rush<br/>플레이 느낌 적기</h1>
+    <p>게임 한 번 하고 → 아래에서 느낌 고르기 → 저장. 정답 없습니다.</p>
+    <p class="meta-line">PC 빌드 (.exe) · v1.0 · 2026-06-12</p>
+  </div>
+  <div class="hazmat-badge">☣️🦺</div>
+</header>
+
+<div class="how-to">
+  <h2>하는 일은 3가지뿐입니다</h2>
+  <div class="how-to-steps">
+    <div class="how-to-step"><div class="step-n">1</div><p><code>.exe</code> 실행<br/>게임 한 번 플레이</p></div>
+    <div class="how-to-step"><div class="step-n">2</div><p>아래 질문 10개<br/>느낌 버튼 누르기</p></div>
+    <div class="how-to-step"><div class="step-n">3</div><p>맨 아래<br/><strong>저장</strong> 눌러 제출</p></div>
+  </div>
+  <p style="margin-top:14px;font-size:15px;color:var(--muted);font-weight:700;">기능 테스트가 아닙니다. 「헷갈렸다」「재밌었다」만 솔직히 적어 주세요. <code>_Data</code> 폴더는 exe와 같이 두세요.</p>
+</div>
+
+<div class="prog-wrap">
+  <div class="prog-label"><span>질문 답변</span><span id="progText">0 / 10</span></div>
+  <div class="prog-inner" id="progBar" style="width:0%"></div>
+</div>
+
+<!-- 질문 10개 -->
+<section>
+  <h2>질문 10개</h2>
+  <p style="margin-bottom:16px;">각 질문마다 <strong>버튼 하나</strong>만 누르면 됩니다. 메모는 적어도 되고 안 적어도 됩니다.</p>
+  <p style="margin-bottom:16px;font-size:15px;font-weight:800;color:var(--green-dark);">괜찮았어요 = 이해했거나 불편하지 않았음 · 헷갈렸어요 = 뭔지 모르겠거나 답답했음 · 잘 모르겠어요 = 기억 안 남</p>
+
+  <details class="glossary">
+    <summary>용어가 궁금할 때만 펼치기</summary>
+    <div class="card-grid">
+      <div class="info-card"><strong>방호복</strong><span>오른쪽 위 막대. 오염원에 닿으면 줄어듭니다.</span></div>
+      <div class="info-card"><strong>Z / X</strong><span>왼쪽 아래 도구 바꾸기</span></div>
+      <div class="info-card"><strong>C / V · Space</strong><span>오른쪽 아래 회복 아이템</span></div>
+    </div>
+  </details>
+
+  <div class="test-card">
+    <div class="test-title"><span class="q-num">1</span> 게임 막 시작했을 때</div>
+    <p class="card-when">안내: <span class="guide-msg">오른쪽으로 이동하세요</span> (게임 들어오자마자)</p>
+    <p class="card-ask">뭘 해야 할지, 언제 움직이면 되는지 바로 알겠나요?</p>
+    <div class="feel-group">
+      <label class="feel-opt feel-ok"><input type="radio" name="feel1" value="괜찮았어요" onchange="onFeel(1)"> 괜찮았어요</label>
+      <label class="feel-opt feel-bad"><input type="radio" name="feel1" value="헷갈렸어요" onchange="onFeel(1)"> 헷갈렸어요</label>
+      <label class="feel-opt feel-mid"><input type="radio" name="feel1" value="잘 모르겠어요" onchange="onFeel(1)"> 잘 모르겠어요</label>
+    </div>
+    <div class="card-note"><textarea id="note1" placeholder="한 줄 메모 (선택)"></textarea></div>
+  </div>
+
+  <div class="test-card">
+    <div class="test-title"><span class="q-num">2</span> 첫 안내가 떠 있을 때</div>
+    <p class="card-when">같은 안내 중 · K / I 키로 설명 창을 열 수 있음</p>
+    <p class="card-ask">읽을 시간이나 K/I 도움말이 도움이 됐나요?</p>
+    <div class="feel-group">
+      <label class="feel-opt feel-ok"><input type="radio" name="feel2" value="괜찮았어요" onchange="onFeel(2)"> 괜찮았어요</label>
+      <label class="feel-opt feel-bad"><input type="radio" name="feel2" value="헷갈렸어요" onchange="onFeel(2)"> 헷갈렸어요</label>
+      <label class="feel-opt feel-mid"><input type="radio" name="feel2" value="잘 모르겠어요" onchange="onFeel(2)"> 잘 모르겠어요</label>
+    </div>
+    <div class="card-note"><textarea id="note2" placeholder="한 줄 메모 (선택)"></textarea></div>
+  </div>
+
+  <div class="test-card">
+    <div class="test-title"><span class="q-num">3</span> 오염원 경고가 떴을 때</div>
+    <p class="card-when">안내: <span class="guide-msg">[경고] ○○ 오염물질 발견</span> (조금 걸은 뒤)</p>
+    <p class="card-ask">왜 멈췄는지, 앞으로 뭘 하면 되는지 알겠나요?</p>
+    <div class="feel-group">
+      <label class="feel-opt feel-ok"><input type="radio" name="feel3" value="괜찮았어요" onchange="onFeel(3)"> 괜찮았어요</label>
+      <label class="feel-opt feel-bad"><input type="radio" name="feel3" value="헷갈렸어요" onchange="onFeel(3)"> 헷갈렸어요</label>
+      <label class="feel-opt feel-mid"><input type="radio" name="feel3" value="잘 모르겠어요" onchange="onFeel(3)"> 잘 모르겠어요</label>
+    </div>
+    <div class="card-note"><textarea id="note3" placeholder="한 줄 메모 (선택)"></textarea></div>
+  </div>
+
+  <div class="test-card">
+    <div class="test-title"><span class="q-num">4</span> 도구 고를 때 (Z / X)</div>
+    <p class="card-when">안내: <span class="guide-msg">Z키(왼쪽)/X키(오른쪽)로 대응 아이템을 골라주세요</span></p>
+    <p class="card-ask">어떻게·뭘 고르는지 알겠나요?</p>
+    <div class="feel-group">
+      <label class="feel-opt feel-ok"><input type="radio" name="feel4" value="괜찮았어요" onchange="onFeel(4)"> 괜찮았어요</label>
+      <label class="feel-opt feel-bad"><input type="radio" name="feel4" value="헷갈렸어요" onchange="onFeel(4)"> 헷갈렸어요</label>
+      <label class="feel-opt feel-mid"><input type="radio" name="feel4" value="잘 모르겠어요" onchange="onFeel(4)"> 잘 모르겠어요</label>
+    </div>
+    <div class="card-note"><textarea id="note4" placeholder="한 줄 메모 (선택)"></textarea></div>
+  </div>
+
+  <div class="test-card">
+    <div class="test-title"><span class="q-num">5</span> 오염원에 닿았을 때</div>
+    <p class="card-when">오염원과 닿아 있을 때 (위험하다는 느낌)</p>
+    <p class="card-ask">위험하다는 게 화면에서 느껴졌나요?</p>
+    <div class="feel-group">
+      <label class="feel-opt feel-ok"><input type="radio" name="feel5" value="괜찮았어요" onchange="onFeel(5)"> 괜찮았어요</label>
+      <label class="feel-opt feel-bad"><input type="radio" name="feel5" value="헷갈렸어요" onchange="onFeel(5)"> 헷갈렸어요</label>
+      <label class="feel-opt feel-mid"><input type="radio" name="feel5" value="잘 모르겠어요" onchange="onFeel(5)"> 잘 모르겠어요</label>
+    </div>
+    <div class="card-note"><textarea id="note5" placeholder="한 줄 메모 (선택)"></textarea></div>
+  </div>
+
+  <div class="test-card">
+    <div class="test-title"><span class="q-num">6</span> 도구가 맞거나 틀렸을 때</div>
+    <p class="card-when">틀리면: <span class="guide-msg">잘못된 아이템 선택으로 2초 후에…</span> (안 봤으면 넘어가도 됨)</p>
+    <p class="card-ask">맞는지 틀린지, 게임이 알려주는 방식이 이해됐나요?</p>
+    <div class="feel-group">
+      <label class="feel-opt feel-ok"><input type="radio" name="feel6" value="괜찮았어요" onchange="onFeel(6)"> 괜찮았어요</label>
+      <label class="feel-opt feel-bad"><input type="radio" name="feel6" value="헷갈렸어요" onchange="onFeel(6)"> 헷갈렸어요</label>
+      <label class="feel-opt feel-mid"><input type="radio" name="feel6" value="잘 모르겠어요" onchange="onFeel(6)"> 잘 모르겠어요</label>
+    </div>
+    <div class="card-note"><textarea id="note6" placeholder="한 줄 메모 (선택)"></textarea></div>
+  </div>
+
+  <div class="test-card">
+    <div class="test-title"><span class="q-num">7</span> 가스 · 밸브 연출</div>
+    <p class="card-when">가스 오염원에 닿을 때 밸브가 도는 장면</p>
+    <p class="card-ask">무슨 상황인지 느껴졌나요?</p>
+    <div class="feel-group">
+      <label class="feel-opt feel-ok"><input type="radio" name="feel7" value="괜찮았어요" onchange="onFeel(7)"> 괜찮았어요</label>
+      <label class="feel-opt feel-bad"><input type="radio" name="feel7" value="헷갈렸어요" onchange="onFeel(7)"> 헷갈렸어요</label>
+      <label class="feel-opt feel-mid"><input type="radio" name="feel7" value="잘 모르겠어요" onchange="onFeel(7)"> 잘 모르겠어요</label>
+    </div>
+    <div class="card-note"><textarea id="note7" placeholder="한 줄 메모 (선택)"></textarea></div>
+  </div>
+
+  <div class="test-card">
+    <div class="test-title"><span class="q-num">8</span> 회복 아이템 · 인벤</div>
+    <p class="card-when">오염원 없앤 뒤 떨어진 아이템 · 오른쪽 아래 인벤</p>
+    <p class="card-ask">아이템 찾고 쓰는 방법이 알겠나요?</p>
+    <div class="feel-group">
+      <label class="feel-opt feel-ok"><input type="radio" name="feel8" value="괜찮았어요" onchange="onFeel(8)"> 괜찮았어요</label>
+      <label class="feel-opt feel-bad"><input type="radio" name="feel8" value="헷갈렸어요" onchange="onFeel(8)"> 헷갈렸어요</label>
+      <label class="feel-opt feel-mid"><input type="radio" name="feel8" value="잘 모르겠어요" onchange="onFeel(8)"> 잘 모르겠어요</label>
+    </div>
+    <div class="card-note"><textarea id="note8" placeholder="한 줄 메모 (선택)"></textarea></div>
+  </div>
+
+  <div class="test-card">
+    <div class="test-title"><span class="q-num">9</span> 다음 맵으로 넘어갈 때</div>
+    <p class="card-when">오염원 다 없앤 뒤 다시: <span class="guide-msg">오른쪽으로 이동하세요</span></p>
+    <p class="card-ask">언제·왜 넘어가는지 알겠나요? (시작 때와 같은 글자일 수 있음)</p>
+    <div class="feel-group">
+      <label class="feel-opt feel-ok"><input type="radio" name="feel9" value="괜찮았어요" onchange="onFeel(9)"> 괜찮았어요</label>
+      <label class="feel-opt feel-bad"><input type="radio" name="feel9" value="헷갈렸어요" onchange="onFeel(9)"> 헷갈렸어요</label>
+      <label class="feel-opt feel-mid"><input type="radio" name="feel9" value="잘 모르겠어요" onchange="onFeel(9)"> 잘 모르겠어요</label>
+    </div>
+    <div class="card-note"><textarea id="note9" placeholder="한 줄 메모 (선택)"></textarea></div>
+  </div>
+
+  <div class="test-card">
+    <div class="test-title"><span class="q-num">10</span> 클리어 · 게임오버</div>
+    <p class="card-when">이겼을 때 / 졌을 때 결과 화면</p>
+    <p class="card-ask">결과가 자연스럽게 느껴졌나요?</p>
+    <div class="feel-group">
+      <label class="feel-opt feel-ok"><input type="radio" name="feel10" value="괜찮았어요" onchange="onFeel(10)"> 괜찮았어요</label>
+      <label class="feel-opt feel-bad"><input type="radio" name="feel10" value="헷갈렸어요" onchange="onFeel(10)"> 헷갈렸어요</label>
+      <label class="feel-opt feel-mid"><input type="radio" name="feel10" value="잘 모르겠어요" onchange="onFeel(10)"> 잘 모르겠어요</label>
+    </div>
+    <div class="card-note"><textarea id="note10" placeholder="한 줄 메모 (선택)"></textarea></div>
+  </div>
+</section>
+
+<!-- 마무리 -->
+<section>
+  <h2>하고 싶은 말 (제일 중요)</h2>
+  <p style="margin-bottom:14px;">질문 10개보다 <strong>여기가 더 중요</strong>합니다. 뭐든 편하게 적어 주세요.</p>
+  <textarea id="good" style="min-height:100px;margin-bottom:12px;" placeholder="좋았던 점, 어려웠던 점, 불편했던 점 — 구분 없이 자유롭게"></textarea>
+  <p style="font-size:15px;font-weight:800;margin-bottom:8px;">전체적으로 게임이 어땠나요?</p>
+  <div class="feel-group" style="margin-bottom:12px;">
+    <label class="feel-opt feel-ok"><input type="radio" name="feelFinal" value="처음 해봐도 괜찮았어요" onchange="onFeelFinal()"> 처음 해봐도 괜찮았어요</label>
+    <label class="feel-opt feel-mid"><input type="radio" name="feelFinal" value="안내가 더 있으면 좋겠어요" onchange="onFeelFinal()"> 안내가 더 있으면 좋겠어요</label>
+    <label class="feel-opt feel-bad"><input type="radio" name="feelFinal" value="전체적으로 헷갈렸어요" onchange="onFeelFinal()"> 전체적으로 헷갈렸어요</label>
+  </div>
+  <input id="oneLine" type="text" placeholder="한 줄로 요약 (선택) — 예: 분위기는 좋은데 처음엔 막막했어요" />
+
+  <details class="glossary" style="margin-top:20px;">
+    <summary>기억에 남는 이상한 점 적기 (선택)</summary>
+    <div class="bug-section" id="bugContainer" style="margin-top:12px;">
+      <div class="bug-item" id="bug-0">
+        <textarea id="bug0-desc" placeholder="이상했거나 기억에 남는 일을 자유롭게 적어 주세요."></textarea>
+      </div>
+    </div>
+    <button class="add-bug-btn" type="button" onclick="addBug()">+ 항목 추가</button>
+  </details>
+</section>
+
+<section style="text-align:center;border:none;box-shadow:none;background:transparent;padding:0 0 24px;">
+  <button class="btn" style="font-size:17px;padding:16px 28px;margin:0;" onclick="downloadMD()">▶ 플레이 피드백 저장 (.md)</button>
+  <p style="margin-top:12px;font-size:14px;color:var(--muted);font-weight:700;">저장한 파일을 제출해 주세요</p>
+</section>
+
+<div class="footer">
+  <a href="qa-tc-2026-06-11.html">개발팀용 기능 체크 문서</a>
+</div>
+</div>
+
+<script>
+  var bugCount = 1;
+  var qTitles = [
+    "", "게임 막 시작했을 때", "첫 안내가 떠 있을 때", "오염원 경고가 떴을 때",
+    "도구 고를 때 (Z/X)", "오염원에 닿았을 때", "도구가 맞거나 틀렸을 때",
+    "가스 · 밸브 연출", "회복 아이템 · 인벤", "다음 맵으로 넘어갈 때", "클리어 · 게임오버"
+  ];
+
+  function getFeel(n) {
+    var picked = document.querySelector('input[name="feel' + n + '"]:checked');
+    return picked ? picked.value : "미작성";
+  }
+
+  function getFinalFeel() {
+    var picked = document.querySelector('input[name="feelFinal"]:checked');
+    return picked ? picked.value : "미선택";
+  }
+
+  function onFeel(n) {
+    updateProg();
+  }
+
+  function onFeelFinal() {
+    /* no-op — final not in progress bar */
+  }
+
+  function updateProg() {
+    var done = 0;
+    for (var i = 1; i <= 10; i++) {
+      if (getFeel(i) !== "미작성") done++;
+    }
+    var pct = Math.round((done / 10) * 100);
+    document.getElementById("progBar").style.width = pct + "%";
+    document.getElementById("progText").textContent = done + " / 10";
+  }
+
+  function addBug() {
+    var idx = bugCount++;
+    var container = document.getElementById("bugContainer");
+    var div = document.createElement("div");
+    div.className = "bug-item";
+    div.id = "bug-" + idx;
+    div.innerHTML = '<div class="bug-item-title"><span>추가 메모 #' + (idx + 1) + '</span><button type="button" class="bug-remove" onclick="this.closest(\'.bug-item\').remove()">삭제</button></div>'
+      + '<textarea id="bug' + idx + '-desc" placeholder="자유롭게 적어 주세요."></textarea>';
+    container.appendChild(div);
+  }
+
+  function val(id, fb) {
+    if (fb === undefined) fb = "";
+    var el = document.getElementById(id);
+    return (el && el.value && el.value.trim()) ? el.value.trim() : fb;
+  }
+
+  function collectBugs() {
+    var r = "";
+    var items = document.querySelectorAll(".bug-item");
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      var x = item.id.replace("bug-", "");
+      var text = val("bug" + x + "-desc", "");
+      if (text) r += "\n- " + text + "\n";
+    }
+    return r || "\n(없음)\n";
+  }
+
+  function downloadMD() {
+    var now = new Date();
+    var stamp = now.getFullYear() + "-"
+      + String(now.getMonth() + 1).padStart(2, "0") + "-"
+      + String(now.getDate()).padStart(2, "0") + " "
+      + String(now.getHours()).padStart(2, "0") + ":"
+      + String(now.getMinutes()).padStart(2, "0");
+
+    var md = "# 플레이 피드백 — Project Hazmat Rush (PC 빌드)\n\n";
+    md += "> 외부 플레이어 체험·이해도·느낌 기록 (기능 동작 점검용 아님)\n\n";
+    md += "## 1. 게임 정보\n\n";
+    md += "* **게임 이름:** Project Hazmat Rush\n";
+    md += "* **제출 시각:** " + stamp + "\n";
+    md += "* **빌드 버전:** v1.0\n";
+    md += "* **실행 방식:** PC 빌드 (.exe)\n\n";
+
+    md += "## 2. 질문 10개\n\n";
+    md += "| 번호 | 질문 | 느낌 | 메모 |\n";
+    md += "|---|---|---|---|\n";
+    for (var q = 1; q <= 10; q++) {
+      var num = q < 10 ? "0" + q : String(q);
+      md += "| " + num + " | " + qTitles[q] + " | " + getFeel(q) + " | " + val("note" + q, "") + " |\n";
+    }
+    md += "\n";
+
+    var done = 0;
+    for (var d = 1; d <= 10; d++) {
+      if (getFeel(d) !== "미작성") done++;
+    }
+    md += "**답변:** " + done + " / 10\n\n";
+
+    md += "## 3. 하고 싶은 말\n\n";
+    md += val("good", "(없음)") + "\n\n";
+
+    md += "## 4. 기억에 남는 점 (선택)\n";
+    md += collectBugs() + "\n";
+
+    md += "## 5. 전체 느낌\n\n";
+    md += "* **선택:** " + getFinalFeel() + "\n";
+    md += "* **한 줄:** " + val("oneLine", "(없음)") + "\n\n";
+    md += "*qa-tc-2026-06-12-formal.html 에서 자동 생성*\n";
+
+    var blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement("a");
+    var dateStr = now.getFullYear() + String(now.getMonth() + 1).padStart(2, "0") + String(now.getDate()).padStart(2, "0");
+    link.href = url;
+    link.download = "qa-feedback-hazmat-rush-" + dateStr + ".md";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+</script>
+</body>
+</html>

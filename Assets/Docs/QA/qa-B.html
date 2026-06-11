@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="qa-favicon.svg" />
+  <title>Project Hazmat Rush 외부 QA 안내서</title>
+  <style>
+    :root {
+      --bg:#f0f7f5;--paper:#ffffff;--ink:#1a2332;--muted:#5a6578;--line:#c5ddd8;
+      --green:#1e6b5c;--green-dark:#1a4a42;--teal:#7dd3c0;--blue:#0ea5e9;
+      --ok:#16a34a;--bad:#dc2626;--hold:#d97706;
+      --soft-green:#e8f4f1;--soft-teal:#d4f5ed;--soft-ok:#dcfce7;--soft-bad:#fee2e2;--soft-hold:#fef3c7;--soft-yellow:#fffdf8;--code:#f0f3f6;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:"Pretendard","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",Arial,sans-serif;background:radial-gradient(circle at top left,rgba(125,211,192,.2),transparent 350px),radial-gradient(circle at bottom right,rgba(30,107,92,.12),transparent 380px),var(--bg);color:var(--ink);line-height:1.7;padding:32px 18px;word-break:keep-all;}
+    .container{max-width:1040px;margin:0 auto;}
+    .header{background:linear-gradient(135deg,#1e6b5c,#164f46 55%,#0f766e);color:white;border-radius:24px;padding:34px;box-shadow:0 16px 34px rgba(26,74,66,.18);display:flex;gap:20px;align-items:center;justify-content:space-between;margin-bottom:24px;}
+    .title h1{font-size:32px;line-height:1.25;letter-spacing:-0.04em;margin-bottom:8px;}
+    .title p{color:rgba(255,255,255,.94);font-size:16px;font-weight:700;}
+    .title .meta-line{font-size:14px;font-weight:600;color:#b8ebe0;margin-top:6px;}
+    .hazmat-badge{font-size:48px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.25);border-radius:24px;padding:16px 20px;}
+    .btn{border:none;background:#111827;color:white;padding:13px 18px;border-radius:14px;font-size:15px;font-weight:900;cursor:pointer;margin-top:16px;}
+    .btn:active{transform:scale(0.97);}
+    section{background:var(--paper);border:2px solid var(--line);border-radius:22px;padding:26px;margin-bottom:20px;box-shadow:0 10px 24px rgba(26,74,66,.06);}
+    h2{font-size:25px;color:var(--green-dark);margin-bottom:16px;letter-spacing:-0.03em;}
+    h3{font-size:20px;margin:20px 0 10px;color:#0f172a;}
+    h4{font-size:16px;margin:16px 0 8px;color:var(--green);}
+    p,li{font-size:16px;color:#374151;}
+    ul,ol{margin-left:24px;margin-bottom:10px;}
+    li{margin-bottom:8px;}
+    .big-text{font-size:18px;font-weight:800;color:#1f2937;}
+    .card-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px;}
+    .info-card{background:var(--soft-green);border:2px solid var(--line);border-radius:16px;padding:16px;}
+    .info-card strong{display:block;font-size:16px;color:var(--green-dark);margin-bottom:4px;}
+    .info-card span{font-size:15px;color:#374151;}
+    .simple-flow{display:grid;gap:10px;margin-top:14px;}
+    .flow-step{background:var(--soft-teal);border:2px solid #7dd3c0;border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;font-size:16px;font-weight:800;}
+    .num{width:34px;height:34px;border-radius:50%;background:var(--green);color:white;display:inline-flex;justify-content:center;align-items:center;font-weight:900;flex-shrink:0;}
+    .callout{background:var(--soft-yellow);border-left:7px solid #e8b84a;border-radius:14px;padding:15px 17px;margin:16px 0;}
+    .callout p{font-weight:800;color:#78350f;}
+    .warn-callout{background:#fff8f0;border-left:7px solid var(--green);border-radius:14px;padding:15px 17px;margin:16px 0;}
+    .warn-callout p{font-weight:800;color:var(--green-dark);}
+    .guide-msg{display:inline-block;margin:2px 0;padding:2px 8px;background:#fff;border:1px solid var(--line);border-radius:6px;font-weight:700;color:var(--green-dark);font-size:15px;}
+
+    .unit-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:12px;}
+    .unit-card{background:var(--soft-green);border:2px solid var(--line);border-radius:16px;padding:16px 10px;text-align:center;box-shadow:0 4px 12px rgba(26,74,66,.06);}
+    .unit-card .ui{font-size:32px;margin-bottom:8px;}
+    .unit-card .un{color:var(--green-dark);font-size:14px;font-weight:900;margin-bottom:3px;}
+    .unit-card .uc{color:var(--blue);font-size:12px;font-weight:800;margin-bottom:7px;}
+    .unit-card .ud{color:#4b5563;font-size:12px;line-height:1.45;}
+
+    .prog-wrap{background:var(--soft-green);border:2px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:20px;}
+    .prog-inner{height:10px;background:linear-gradient(90deg,#1e6b5c,#7dd3c0);transition:width .3s;}
+    .prog-label{display:flex;justify-content:space-between;font-size:13px;font-weight:800;color:var(--green-dark);padding:6px 12px 2px;}
+
+    .test-card{border:2px solid var(--line);background:#f9fcfb;border-radius:20px;padding:20px;margin-bottom:18px;}
+    .test-title{font-size:21px;font-weight:900;color:var(--green-dark);margin-bottom:8px;}
+    .what-to-do,.good-box,.bad-box{border-radius:15px;padding:14px;margin-top:10px;}
+    .what-to-do{background:var(--soft-teal);border:2px solid #7dd3c0;}
+    .good-box{background:var(--soft-ok);border:2px solid #86efac;}
+    .bad-box{background:var(--soft-bad);border:2px solid #fca5a5;}
+    .what-to-do strong,.good-box strong,.bad-box strong{display:block;margin-bottom:5px;font-size:16px;}
+    .good-box strong{color:var(--ok);}
+    .bad-box strong{color:var(--bad);}
+    .what-to-do strong{color:#0369a1;}
+    .result-area{display:grid;grid-template-columns:180px 1fr;gap:12px;margin-top:14px;align-items:start;}
+
+    select{width:100%;padding:12px;border-radius:12px;border:2px solid var(--line);background:white;font-family:inherit;font-size:15px;font-weight:900;cursor:pointer;color:var(--ink);}
+    select.pass{border-color:var(--ok);color:var(--ok);background:var(--soft-ok);}
+    select.fail{border-color:var(--bad);color:var(--bad);background:var(--soft-bad);}
+    select.hold{border-color:var(--hold);color:var(--hold);background:var(--soft-hold);}
+
+    textarea,input[type="text"]{width:100%;border:2px solid var(--line);border-radius:14px;background:white;padding:13px;font-size:15px;font-family:inherit;outline:none;color:var(--ink);}
+    textarea{min-height:96px;resize:vertical;margin-top:8px;}
+    textarea:focus,input[type="text"]:focus,select:focus{border-color:var(--green);}
+
+    .bug-section{background:#fff1f2;border:2px solid #fca5a5;border-radius:20px;padding:20px;margin-top:16px;}
+    .bug-item{border-top:2px solid #fecdd3;padding-top:14px;margin-top:14px;}
+    .bug-item:first-child{border-top:none;padding-top:0;margin-top:0;}
+    .bug-item-title{font-size:17px;font-weight:900;color:#b91c1c;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+    .bug-row{display:grid;grid-template-columns:130px 1fr;gap:10px;align-items:center;margin-bottom:8px;}
+    .bug-row label{font-size:14px;font-weight:800;color:var(--green);}
+    .add-bug-btn{width:100%;margin-top:12px;background:white;border:2px dashed var(--green);color:var(--green);font-size:15px;font-weight:800;padding:11px;border-radius:14px;cursor:pointer;}
+    .add-bug-btn:hover{background:var(--soft-green);}
+    .bug-remove{background:white;border:2px solid #fca5a5;color:#dc2626;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:800;cursor:pointer;}
+
+    .feedback-grid{display:grid;gap:16px;}
+    .feedback-card{background:var(--soft-green);border:2px solid var(--line);border-radius:18px;padding:16px;}
+    .feedback-card h3{margin-top:0;color:var(--green-dark);}
+    .final-table{width:100%;border-collapse:collapse;margin-top:10px;}
+    .final-table th,.final-table td{border:2px solid var(--line);padding:14px;text-align:left;font-size:16px;}
+    .final-table th{background:var(--soft-green);color:var(--green-dark);width:26%;}
+    code{background:var(--code);border-radius:6px;padding:2px 6px;font-family:Consolas,"D2Coding",monospace;color:#111827;}
+    .footer{text-align:center;color:var(--green-dark);font-weight:800;margin-top:24px;padding-bottom:20px;}
+    .footer a{color:var(--green);}
+
+    @media print{
+      body{background:white;padding:0;}
+      .header{background:white;color:#111827;border:3px solid #111827;box-shadow:none;}
+      .title p,.title .meta-line{color:#374151;}
+      .btn,.add-bug-btn{display:none;}
+      section{box-shadow:none;break-inside:avoid;}
+    }
+    @media(max-width:800px){
+      body{padding:18px 10px;}
+      .header{flex-direction:column;align-items:flex-start;padding:24px;}
+      .title h1{font-size:26px;}
+      .hazmat-badge{font-size:38px;}
+      .card-grid,.result-area,.unit-grid{grid-template-columns:1fr;}
+      .unit-grid{grid-template-columns:repeat(2,1fr);}
+      section{padding:20px;}
+      .bug-row{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+<header class="header">
+  <div class="title">
+    <h1>☣️ Project Hazmat Rush<br/>외부 QA 안내서</h1>
+    <p>전문 지식이 없어도 따라 할 수 있는 게임 테스트 문서</p>
+    <p class="meta-line">PC 빌드 (.exe) · v1.0 · 2026-06-11</p>
+    <button class="btn" onclick="downloadMD()">QA 결과 .md 저장하기</button>
+  </div>
+  <div class="hazmat-badge">🦺☣️</div>
+</header>
+
+<div class="prog-wrap">
+  <div class="prog-label"><span>테스트 진행 현황</span><span id="progText">0 / 10 완료</span></div>
+  <div class="prog-inner" id="progBar" style="width:0%"></div>
+</div>
+
+<!-- 1. 게임 개요 -->
+<section>
+  <h2>1. 게임 개요</h2>
+  <p class="big-text">Project Hazmat Rush는 방호복을 입은 캐릭터가 좌우로 이동하며, 맵에 나타나는 오염원을 맞는 중화 도구로 제거하는 2D 횡스크롤 게임입니다.</p>
+  <div class="card-grid">
+    <div class="info-card"><strong>게임 이름</strong><span>Project Hazmat Rush (해즈멧 러시)</span></div>
+    <div class="info-card"><strong>게임 방식</strong><span>맵을 걸으며 오염원에 접촉하고, Z/X로 고른 도구로 중화합니다.</span></div>
+    <div class="info-card"><strong>플레이 목표</strong><span>각 구역의 오염원을 모두 제거하고, 스테이지를 클리어합니다.</span></div>
+    <div class="info-card"><strong>승리 조건</strong><span>스테이지의 모든 오염원을 중화하고 클리어 결과 화면이 나옵니다.</span></div>
+    <div class="info-card"><strong>패배 조건</strong><span>방호복 HP가 0이 되거나, 제한 시간이 다하면 게임 오버입니다.</span></div>
+    <div class="info-card"><strong>중점 확인 사항</strong><span>화면 이동, 안내 문구, 도구 선택, 접촉·중화, 결과 화면·재시작이 정상인지 확인합니다.</span></div>
+  </div>
+  <div class="callout"><p>이 문서는 게임을 처음 접하는 분도 기능을 확인할 수 있도록 구성되었습니다. 플레이 실력보다, 화면과 기능이 이해하기 쉬운지 확인하는 것이 중요합니다.</p></div>
+  <p style="font-size:15px;color:var(--muted);font-weight:700;margin-top:12px;">실행 시 <code>.exe</code>와 같은 폴더의 <code>_Data</code> 폴더를 함께 두세요. exe만 따로 옮기면 실행되지 않을 수 있습니다.</p>
+</section>
+
+<!-- 2. 게임 진행 순서 -->
+<section>
+  <h2>2. 게임 진행 순서</h2>
+  <div class="simple-flow">
+    <div class="flow-step"><span class="num">1</span><span>받은 <code>.exe</code>를 실행합니다. 스플래시 → 타이틀 화면이 나옵니다.</span></div>
+    <div class="flow-step"><span class="num">2</span><span>타이틀에서 <strong>시작하기</strong>를 누릅니다. (처음이면 인트로 스토리 → 로딩 화면을 거칩니다.)</span></div>
+    <div class="flow-step"><span class="num">3</span><span>게임 화면에 들어가면 <span class="guide-msg">오른쪽으로 이동하세요</span> 안내가 나옵니다. 안내가 사라진 뒤 이동이 시작됩니다.</span></div>
+    <div class="flow-step"><span class="num">4</span><span>잠시 이동하면 <span class="guide-msg">[경고] ○○ 오염물질 발견</span>이 뜨고 오염원이 등장합니다. Z/X로 도구를 고릅니다.</span></div>
+    <div class="flow-step"><span class="num">5</span><span>오염원에 닿아 중화합니다. 구역의 오염원을 모두 없애면 다시 이동해 다음 구역으로 넘어갑니다.</span></div>
+    <div class="flow-step"><span class="num">6</span><span>스테이지를 클리어하거나 방호복이 0이 되면 결과 화면이 나옵니다. 다시 시작이 되는지도 확인합니다.</span></div>
+  </div>
+</section>
+
+<!-- 3. 화면 구성 -->
+<section>
+  <h2>3. 화면에서 확인할 요소</h2>
+  <div class="card-grid">
+    <div class="info-card"><strong>방호복 HP (오른쪽 위)</strong><span>오염원에 닿으면 줄어듭니다. 0이 되면 게임 오버입니다.</span></div>
+    <div class="info-card"><strong>남은 시간</strong><span>제한 시간이 지나면 게임 오버입니다.</span></div>
+    <div class="info-card"><strong>중화 도구 창 (왼쪽 아래)</strong><span>Z/X로 도구를 바꿉니다. 고른 칸이 더 밝게 보입니다.</span></div>
+    <div class="info-card"><strong>안내 팝업 (GuideTxt)</strong><span>이동·도구 선택·틀린 도구 등 상황별 안내 문구가 뜹니다.</span></div>
+    <div class="info-card"><strong>K / I 키</strong><span>조작 설명·아이템 설명 창을 열고 닫습니다.</span></div>
+    <div class="info-card"><strong>회복 인벤 (오른쪽 아래)</strong><span>오염원 제거 후 떨어진 아이템. C/V로 고르고 Space로 사용합니다.</span></div>
+  </div>
+
+  <h3>오염원 4종 · 맞는 도구</h3>
+  <p style="font-size:14px;color:var(--muted);margin-bottom:12px;">QA-07에서 맞는 도구와 틀린 도구 차이를 확인합니다. 아래는 테스트어가 역할을 이해하기 쉽도록 정리한 QA용 표기입니다.</p>
+  <div class="unit-grid">
+    <div class="unit-card">
+      <div class="ui">🧪</div>
+      <div class="un">부식성 (A)</div>
+      <div class="uc">염산·황산 등</div>
+      <div class="ud">맞는 도구: <strong>중화제</strong></div>
+    </div>
+    <div class="unit-card">
+      <div class="ui">🛢️</div>
+      <div class="un">유류 (B)</div>
+      <div class="uc">폐유·윤활유 등</div>
+      <div class="ud">맞는 도구: <strong>오일패드</strong></div>
+    </div>
+    <div class="unit-card">
+      <div class="ui">⚗️</div>
+      <div class="un">혼합화학 (C)</div>
+      <div class="uc">폐산 혼합액 등</div>
+      <div class="ud">맞는 도구: <strong>범용패드</strong></div>
+    </div>
+    <div class="unit-card">
+      <div class="ui">💨</div>
+      <div class="un">가스 (D)</div>
+      <div class="uc">독성가스 등</div>
+      <div class="ud">맞는 도구: <strong>가스밸브</strong> · 밸브 연출만 (파란 이펙트 없음)</div>
+    </div>
+  </div>
+
+  <div class="warn-callout">
+    <p>확인 기준: 오염원에 닿으면 방호복이 줄고, <strong>맞는 도구</strong>일 때만 오염원 체력이 줄어듭니다. 틀린 도구면 방호복만 감소합니다.</p>
+  </div>
+  <div class="callout" style="margin-top:14px;"><p>조작 방법이나 화면 목적이 명확하지 않은 부분이 있다면, 버그가 아니더라도 피드백 항목에 적어 주세요.</p></div>
+</section>
+
+<!-- 4. QA 10항목 -->
+<section>
+  <h2>4. 주요 QA 항목 10가지</h2>
+
+  <div class="test-card">
+    <div class="test-title">QA-01. 게임 실행 확인</div>
+    <div class="what-to-do"><strong>확인 방법</strong><p>배포받은 실행 파일(<code>Project Hazmat Rush.exe</code> 등)을 더블클릭하고, 첫 화면(스플래시 또는 타이틀)이 정상적으로 표시되는지 확인합니다.</p></div>
+    <div class="good-box"><strong>정상 기준</strong><p>게임이 종료되지 않고 첫 화면이 표시되며, 타이틀에서 시작 버튼을 클릭할 수 있습니다.</p></div>
+    <div class="bad-box"><strong>문제 기준</strong><p>게임이 실행되지 않거나, 화면이 멈추거나, 시작 버튼이 반응하지 않습니다.</p></div>
+    <div class="result-area"><select id="tc1" onchange="updateSelectColor(this);updateProg()"><option value="미테스트">결과 선택</option><option value="정상">정상</option><option value="문제 있음">문제 있음</option><option value="판단 어려움">판단 어려움</option></select><textarea id="note1" placeholder="메모: 실행 상태, 첫 화면 구성, 버튼 반응 등을 적어 주세요."></textarea></div>
+  </div>
+
+  <div class="test-card">
+    <div class="test-title">QA-02. 화면 이동 흐름 확인</div>
+    <div class="what-to-do"><strong>확인 방법</strong><p>타이틀에서 <strong>시작하기</strong>를 누른 뒤, 인트로·로딩을 거쳐 실제 게임 화면(캐릭터가 보이는 화면)까지 진행해 봅니다. 중간에 「다음에 무엇을 눌러야 하는지」「현재 화면이 어떤 역할인지」가 자연스럽게 이해되는지 확인합니다.</p></div>
+    <div class="good-box"><strong>정상 기준</strong><p>처음 플레이하는 사람도 큰 설명 없이 게임 화면까지 도달할 수 있고, 캐릭터·방호복 막대·시간 등 HUD가 보입니다.</p></div>
+    <div class="bad-box"><strong>문제 기준</strong><p>중간에 다음 버튼을 찾기 어렵거나, 게임 화면까지 진행하지 못하거나, 화면이 검은 채로 멈춥니다.</p></div>
+    <div class="result-area"><select id="tc2" onchange="updateSelectColor(this);updateProg()"><option value="미테스트">결과 선택</option><option value="정상">정상</option><option value="문제 있음">문제 있음</option><option value="판단 어려움">판단 어려움</option></select><textarea id="note2" placeholder="메모: 어느 화면에서 막혔는지, 부족한 안내가 있었는지 적어 주세요."></textarea></div>
+  </div>
+
+  <div class="test-card">
+    <div class="test-title">QA-03. 시작 안내 및 이동 시작</div>
+    <div class="what-to-do"><strong>확인 방법</strong><p>게임 화면에 들어가면 <span class="guide-msg">오른쪽으로 이동하세요</span> 안내가 뜹니다. 안내가 <strong>떠 있는 동안</strong>과 <strong>사라진 뒤</strong> 각각 ←→ 키로 이동해 봅니다.</p></div>
+    <div class="good-box"><strong>정상 기준</strong><p>안내가 떠 있을 때는 이동·시간이 멈추고, 안내가 사라진 뒤 이동·시간·배경 스크롤이 시작됩니다. K/I로 도움말 창도 열 수 있습니다.</p></div>
+    <div class="bad-box"><strong>문제 기준</strong><p>안내 없이 갑자기 시작되거나, 안내가 사라져도 이동이 안 되거나, 언제 움직여도 되는지 알기 어렵습니다.</p></div>
+    <div class="result-area"><select id="tc3" onchange="updateSelectColor(this);updateProg()"><option value="미테스트">결과 선택</option><option value="정상">정상</option><option value="문제 있음">문제 있음</option><option value="판단 어려움">판단 어려움</option></select><textarea id="note3" placeholder="메모: 안내 문구 가독성, 이동 시작 타이밍 등을 적어 주세요."></textarea></div>
+  </div>
+
+  <div class="test-card">
+    <div class="test-title">QA-04. 오염원 경고 및 등장</div>
+    <div class="what-to-do"><strong>확인 방법</strong><p>첫 안내가 끝난 뒤 오른쪽으로 2~3초 걸어갑니다. <span class="guide-msg">[경고] ○○ 오염물질 발견</span> 경고가 뜨고, 이어서 오염원이 서서히 나타나는지 확인합니다.</p></div>
+    <div class="good-box"><strong>정상 기준</strong><p>경고 → 오염원 등장 연출이 자연스럽고, 등장 후 다시 이동할 수 있으며, 이전보다 오른쪽으로 더 멀리 갈 수 있습니다.</p></div>
+    <div class="bad-box"><strong>문제 기준</strong><p>경고나 오염원이 나오지 않거나, 등장 후에도 이동이 안 되거나, 게임 진행이 멈춥니다.</p></div>
+    <div class="result-area"><select id="tc4" onchange="updateSelectColor(this);updateProg()"><option value="미테스트">결과 선택</option><option value="정상">정상</option><option value="문제 있음">문제 있음</option><option value="판단 어려움">판단 어려움</option></select><textarea id="note4" placeholder="메모: 경고 타이밍, 등장 연출, 이동 범위 등을 적어 주세요."></textarea></div>
+  </div>
+
+  <div class="test-card">
+    <div class="test-title">QA-05. 중화 도구 선택 (Z / X)</div>
+    <div class="what-to-do"><strong>확인 방법</strong><p>경고 직후 <span class="guide-msg">Z키(왼쪽)/X키(오른쪽)로 대응 아이템을 골라주세요</span> 안내가 보이는지 확인하고, Z/X 키로 왼쪽 아래 도구 창의 중화 도구를 바꿔 봅니다.</p></div>
+    <div class="good-box"><strong>정상 기준</strong><p>Z/X로 도구가 바로 바뀌고, 지금 고른 도구 칸이 다른 칸보다 밝게 보입니다.</p></div>
+    <div class="bad-box"><strong>문제 기준</strong><p>키를 눌러도 도구가 바뀌지 않거나, 어떤 도구가 선택됐는지 구분하기 어렵습니다.</p></div>
+    <div class="result-area"><select id="tc5" onchange="updateSelectColor(this);updateProg()"><option value="미테스트">결과 선택</option><option value="정상">정상</option><option value="문제 있음">문제 있음</option><option value="판단 어려움">판단 어려움</option></select><textarea id="note5" placeholder="메모: Z/X 반응, 선택 표시, 안내 문구 이해도를 적어 주세요."></textarea></div>
+  </div>
+
+  <div class="test-card">
+    <div class="test-title">QA-06. 오염원 접촉 및 방호복 감소</div>
+    <div class="what-to-do"><strong>확인 방법</strong><p>오염원에 닿은 채로 잠시 기다립니다. 방호복 HP(오른쪽 위)와 오염원 체력 막대가 보이는지, 닿는 동안 방호복이 줄어드는지 확인합니다. 오염원에서 떨어져 보세요.</p></div>
+    <div class="good-box"><strong>정상 기준</strong><p>접촉 중 막대가 유지되고 방호복이 감소합니다. 떨어지면 막대가 사라지고 오염원 체력이 처음으로 돌아갑니다.</p></div>
+    <div class="bad-box"><strong>문제 기준</strong><p>닿아도 방호복이 안 줄거나, 떨어져도 체력이 초기화되지 않거나, 막대가 보이지 않습니다.</p></div>
+    <div class="result-area"><select id="tc6" onchange="updateSelectColor(this);updateProg()"><option value="미테스트">결과 선택</option><option value="정상">정상</option><option value="문제 있음">문제 있음</option><option value="판단 어려움">판단 어려움</option></select><textarea id="note6" placeholder="메모: 접촉 판정, HP 표시, 해제 시 동작을 적어 주세요."></textarea></div>
+  </div>
+
+  <div class="test-card">
+    <div class="test-title">QA-07. 맞는/틀린 도구 판정</div>
+    <div class="what-to-do"><strong>확인 방법</strong><p>먼저 <strong>틀린</strong> 도구를 고른 뒤 오염원에 닿아 보세요. 그다음 <strong>맞는</strong> 도구로 바꿔 닿아 보세요. (1-1 첫 구역은 가스 2마리 — 가스밸브가 맞는 도구입니다.)</p></div>
+    <div class="good-box"><strong>정상 기준</strong><p>틀리면 방호복만 줄고 오염원 체력·파란 중화 이펙트는 없습니다. 맞으면 오염원 체력도 줄고 파란 중화 이펙트가 나옵니다. (가스는 QA-08 참고)</p></div>
+    <div class="bad-box"><strong>문제 기준</strong><p>틀린 도구인데도 오염원이 줄거나, 맞는 도구인데 중화가 안 되거나, 맞고 틀린 구분이 전혀 안 됩니다.</p></div>
+    <div class="result-area"><select id="tc7" onchange="updateSelectColor(this);updateProg()"><option value="미테스트">결과 선택</option><option value="정상">정상</option><option value="문제 있음">문제 있음</option><option value="판단 어려움">판단 어려움</option></select><textarea id="note7" placeholder="메모: 맞음/틀림 피드백, 이펙트, 틀렸을 때 안내 문구를 적어 주세요."></textarea></div>
+  </div>
+
+  <div class="test-card">
+    <div class="test-title">QA-08. 가스(D) 밸브 연출</div>
+    <div class="what-to-do"><strong>확인 방법</strong><p>가스 오염원에 <strong>가스밸브</strong>를 고른 뒤 닿아 보세요. 캐릭터가 밸브를 돌리는 연출과 효과음이 나오는지, 파란 중화 이펙트는 <strong>없는지</strong> 확인합니다.</p></div>
+    <div class="good-box"><strong>정상 기준</strong><p>가스밸브 + 가스 접촉 시 밸브 돌리기 애니·효과음이 나오고, 일반 파란 중화 이펙트는 나오지 않습니다. 오염원 체력은 줄어듭니다.</p></div>
+    <div class="bad-box"><strong>문제 기준</strong><p>밸브 연출이 없거나, 가스에도 파란 이펙트가 나오거나, 가스밸브로도 중화가 안 됩니다.</p></div>
+    <div class="result-area"><select id="tc8" onchange="updateSelectColor(this);updateProg()"><option value="미테스트">결과 선택</option><option value="정상">정상</option><option value="문제 있음">문제 있음</option><option value="판단 어려움">판단 어려움</option></select><textarea id="note8" placeholder="메모: 밸브 연출, 사운드, 이펙트 유무를 적어 주세요."></textarea></div>
+  </div>
+
+  <div class="test-card">
+    <div class="test-title">QA-09. 클리어·게임오버 결과 화면</div>
+    <div class="what-to-do"><strong>확인 방법</strong><p><strong>클리어:</strong> 스테이지를 끝까지 진행하거나, 테스트 빌드에 F1이 있다면 F1으로 클리어 연출을 확인합니다.<br/><strong>게임오버:</strong> 방호복이 0이 되도록 일부러 오염원에 오래 닿아 있거나, F2로 확인합니다. 결과 패널이 나오는지 봅니다.</p></div>
+    <div class="good-box"><strong>정상 기준</strong><p>클리어/사망 연출 후 약 2초 뒤 결과 패널(클리어 또는 게임오버)이 자연스럽게 표시됩니다. 연출과 패널이 동시에 겹치지 않습니다.</p></div>
+    <div class="bad-box"><strong>문제 기준</strong><p>조건을 만족해도 결과 화면이 안 나오거나, 화면이 멈추거나, 패널이 연출 전에 바로 뜹니다.</p></div>
+    <div class="result-area"><select id="tc9" onchange="updateSelectColor(this);updateProg()"><option value="미테스트">결과 선택</option><option value="정상">정상</option><option value="문제 있음">문제 있음</option><option value="판단 어려움">판단 어려움</option></select><textarea id="note9" placeholder="메모: 클리어/게임오버 타이밍, 결과 화면 구성을 적어 주세요."></textarea></div>
+  </div>
+
+  <div class="test-card">
+    <div class="test-title">QA-10. 다시 시작 기능</div>
+    <div class="what-to-do"><strong>확인 방법</strong><p>클리어 또는 게임오버 결과 화면에서 <strong>다시 시작</strong>(또는 재시작) 버튼을 눌러, 새 게임처럼 정상적으로 시작되는지 확인합니다.</p></div>
+    <div class="good-box"><strong>정상 기준</strong><p>다시 시작 후 이전 오염원·이펙트·UI 상태가 남지 않고, 처음 안내부터 정상적으로 진행됩니다.</p></div>
+    <div class="bad-box"><strong>문제 기준</strong><p>이전 오염원이나 이펙트가 남거나, 버튼이 반응하지 않거나, 게임 속도·사운드가 비정상적입니다.</p></div>
+    <div class="result-area"><select id="tc10" onchange="updateSelectColor(this);updateProg()"><option value="미테스트">결과 선택</option><option value="정상">정상</option><option value="문제 있음">문제 있음</option><option value="판단 어려움">판단 어려움</option></select><textarea id="note10" placeholder="메모: 재시작 후 남는 오브젝트, 사운드 겹침 등을 적어 주세요."></textarea></div>
+  </div>
+</section>
+
+<!-- 5. 피드백 -->
+<section>
+  <h2>5. 테스트 의견</h2>
+  <div class="feedback-grid">
+    <div class="feedback-card"><h3>좋았던 점</h3><textarea id="good" placeholder="예: 오염 대응 콘셉트가 직관적이었고, 경고 연출이 긴장감을 줬습니다."></textarea></div>
+    <div class="feedback-card"><h3>이해하기 어려웠던 점</h3><textarea id="confusing" placeholder="예: 어떤 도구가 맞는지 처음엔 알기 어려웠습니다."></textarea></div>
+    <div class="feedback-card"><h3>불편했던 점</h3><textarea id="bad" placeholder="예: 안내 문구가 너무 빨리 사라졌습니다."></textarea></div>
+    <div class="feedback-card"><h3>개선 의견</h3><textarea id="idea" placeholder="예: 첫 오염원 전에 도구 설명을 한 번 더 보여주면 좋겠습니다."></textarea></div>
+  </div>
+</section>
+
+<!-- 6. 버그 리포트 -->
+<section>
+  <h2>6. 버그 리포트</h2>
+  <p style="margin-bottom:12px;">발견한 버그마다 하나씩 작성해 주세요. 없으면 비워 두셔도 됩니다.</p>
+  <div class="bug-section" id="bugContainer">
+    <div class="bug-item" id="bug-0">
+      <div class="bug-item-title"><span>버그 #1</span></div>
+      <div class="bug-row"><label>발생 화면</label><select id="bug0-screen"><option value="">선택</option><option>스플래시/타이틀</option><option>인트로 스토리</option><option>로딩 화면</option><option>게임 플레이</option><option>결과(클리어) 화면</option><option>결과(게임오버) 화면</option><option>재시작 후</option><option>기타</option></select></div>
+      <div class="bug-row"><label>심각도</label><select id="bug0-severity"><option value="">선택</option><option>🔴 크리티컬 (게임 진행 불가)</option><option>🟠 높음 (주요 기능 오작동)</option><option>🟡 중간 (불편하지만 진행 가능)</option><option>🟢 낮음 (미관/마이너)</option></select></div>
+      <div class="bug-row"><label>재현 빈도</label><select id="bug0-freq"><option value="">선택</option><option>항상 (100%)</option><option>자주 (50% 이상)</option><option>가끔 (50% 미만)</option><option>1회만 발생</option></select></div>
+      <div class="bug-row" style="align-items:flex-start;"><label style="padding-top:8px;">버그 설명</label><textarea id="bug0-desc" placeholder="어떤 상황에서 무슨 일이 발생했는지 설명해 주세요."></textarea></div>
+      <div class="bug-row" style="align-items:flex-start;"><label style="padding-top:8px;">재현 방법</label><textarea id="bug0-repro" placeholder="어떻게 하면 이 버그가 다시 나타나는지 순서대로 적어 주세요."></textarea></div>
+    </div>
+  </div>
+  <button class="add-bug-btn" type="button" onclick="addBug()">+ 버그 추가</button>
+</section>
+
+<!-- 7. 최종 평가 -->
+<section>
+  <h2>7. 최종 평가</h2>
+  <table class="final-table">
+    <tr><th>전체 평가</th><td><select id="finalResult" onchange="updateSelectColor(this)"><option value="미선택">선택하기</option><option value="전반적으로 정상">전반적으로 정상</option><option value="일부 수정 필요">일부 수정 필요</option><option value="재확인 필요">재확인 필요</option></select></td></tr>
+    <tr><th>한 줄 평가</th><td><input id="oneLine" type="text" placeholder="예: 핵심 플레이는 정상이지만, 초반 안내가 조금 더 보강되면 좋겠습니다."/></td></tr>
+  </table>
+</section>
+
+<div class="footer">
+  Project Hazmat Rush 외부 QA 안내서 · 결과는 .md 파일로 저장할 수 있습니다.<br/>
+</div>
+</div>
+
+<script>
+  var bugCount = 1;
+  var tcTitles = [
+    "", "게임 실행 확인", "화면 이동 흐름 확인", "시작 안내 및 이동 시작",
+    "오염원 경고 및 등장", "중화 도구 선택 (Z/X)", "오염원 접촉 및 방호복 감소",
+    "맞는/틀린 도구 판정", "가스(D) 밸브 연출", "클리어·게임오버 결과 화면", "다시 시작 기능"
+  ];
+
+  function updateSelectColor(el) {
+    el.className = "";
+    var v = el.value;
+    if (v === "정상" || v === "전반적으로 정상") el.classList.add("pass");
+    else if (v === "문제 있음" || v === "재확인 필요") el.classList.add("fail");
+    else if (v === "판단 어려움" || v === "일부 수정 필요") el.classList.add("hold");
+  }
+
+  function updateProg() {
+    var done = 0;
+    for (var i = 1; i <= 10; i++) {
+      if (document.getElementById("tc" + i).value !== "미테스트") done++;
+    }
+    var pct = Math.round((done / 10) * 100);
+    document.getElementById("progBar").style.width = pct + "%";
+    document.getElementById("progText").textContent = done + " / 10 완료";
+  }
+
+  function addBug() {
+    var idx = bugCount++;
+    var container = document.getElementById("bugContainer");
+    var div = document.createElement("div");
+    div.className = "bug-item";
+    div.id = "bug-" + idx;
+    div.innerHTML = '<div class="bug-item-title"><span>버그 #' + (idx + 1) + '</span><button type="button" class="bug-remove" onclick="this.closest(\'.bug-item\').remove()">삭제</button></div>'
+      + '<div class="bug-row"><label>발생 화면</label><select id="bug' + idx + '-screen"><option value="">선택</option><option>스플래시/타이틀</option><option>인트로 스토리</option><option>로딩 화면</option><option>게임 플레이</option><option>결과(클리어) 화면</option><option>결과(게임오버) 화면</option><option>재시작 후</option><option>기타</option></select></div>'
+      + '<div class="bug-row"><label>심각도</label><select id="bug' + idx + '-severity"><option value="">선택</option><option>🔴 크리티컬 (게임 진행 불가)</option><option>🟠 높음 (주요 기능 오작동)</option><option>🟡 중간 (불편하지만 진행 가능)</option><option>🟢 낮음 (미관/마이너)</option></select></div>'
+      + '<div class="bug-row"><label>재현 빈도</label><select id="bug' + idx + '-freq"><option value="">선택</option><option>항상 (100%)</option><option>자주 (50% 이상)</option><option>가끔 (50% 미만)</option><option>1회만 발생</option></select></div>'
+      + '<div class="bug-row" style="align-items:flex-start;"><label style="padding-top:8px;">버그 설명</label><textarea id="bug' + idx + '-desc" placeholder="어떤 상황에서 무슨 일이 발생했는지 설명해 주세요."></textarea></div>'
+      + '<div class="bug-row" style="align-items:flex-start;"><label style="padding-top:8px;">재현 방법</label><textarea id="bug' + idx + '-repro" placeholder="어떻게 하면 이 버그가 다시 나타나는지 순서대로 적어 주세요."></textarea></div>';
+    container.appendChild(div);
+  }
+
+  function val(id, fb) {
+    if (fb === undefined) fb = "";
+    var el = document.getElementById(id);
+    return (el && el.value && el.value.trim()) ? el.value.trim() : fb;
+  }
+
+  function tc(id) {
+    return document.getElementById(id) ? document.getElementById(id).value : "미테스트";
+  }
+
+  function collectBugs() {
+    var r = "";
+    var items = document.querySelectorAll(".bug-item");
+    for (var i = 0; i < items.length; i++) {
+      var item = items[i];
+      var x = item.id.replace("bug-", "");
+      r += "\n### 버그 #" + (i + 1) + "\n";
+      r += "- 발생 화면: " + val("bug" + x + "-screen", "미입력") + "\n";
+      r += "- 심각도: " + val("bug" + x + "-severity", "미입력") + "\n";
+      r += "- 재현 빈도: " + val("bug" + x + "-freq", "미입력") + "\n";
+      r += "- 설명: " + val("bug" + x + "-desc", "미입력") + "\n";
+      r += "- 재현 방법: " + val("bug" + x + "-repro", "미입력") + "\n";
+    }
+    return r || "\n버그 없음\n";
+  }
+
+  function downloadMD() {
+    var md = "# Project Hazmat Rush 외부 QA 결과\n\n";
+    md += "## 1. 게임 정보\n\n";
+    md += "* **게임 이름:** Project Hazmat Rush\n";
+    md += "* **게임 설명:** 방호복을 입고 오염원에 맞는 중화 도구로 대응하는 2D 횡스크롤 게임\n";
+    md += "* **승리 조건:** 스테이지 오염원 전부 중화 후 클리어\n";
+    md += "* **패배 조건:** 방호복 HP 0 또는 시간 초과\n";
+    md += "* **빌드:** PC (.exe) v1.0\n\n";
+
+    md += "## 2. 주요 QA 10항목 결과\n\n";
+    md += "| 번호 | 확인 항목 | 결과 | 메모 |\n";
+    md += "|---|---|---|---|\n";
+    for (var q = 1; q <= 10; q++) {
+      var num = q < 10 ? "0" + q : String(q);
+      md += "| QA-" + num + " | " + tcTitles[q] + " | " + tc("tc" + q) + " | " + val("note" + q, "메모 없음") + " |\n";
+    }
+    md += "\n";
+
+    md += "## 3. 테스트 의견\n\n";
+    md += "### 좋았던 점\n" + val("good", "미입력") + "\n\n";
+    md += "### 이해하기 어려웠던 점\n" + val("confusing", "미입력") + "\n\n";
+    md += "### 불편했던 점\n" + val("bad", "미입력") + "\n\n";
+    md += "### 개선 의견\n" + val("idea", "미입력") + "\n\n";
+
+    md += "## 4. 버그 리포트\n";
+    md += collectBugs() + "\n";
+
+    md += "## 5. 최종 평가\n\n";
+    md += "* **전체 평가:** " + val("finalResult", "미선택") + "\n";
+    md += "* **한 줄 평가:** " + val("oneLine", "미입력") + "\n\n";
+    md += "*qa-formal-guide-2026-06-11.html 에서 자동 생성*\n";
+
+    var blob = new Blob([md], { type: "text/markdown;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement("a");
+    var d = new Date();
+    var dateStr = d.getFullYear() + String(d.getMonth() + 1).padStart(2, "0") + String(d.getDate()).padStart(2, "0");
+    link.href = url;
+    link.download = "QA_Project_Hazmat_Rush_Formal_" + dateStr + ".md";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+</script>
+</body>
+</html>

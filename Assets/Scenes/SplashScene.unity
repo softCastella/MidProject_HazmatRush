@@ -689,11 +689,13 @@ MonoBehaviour:
   logoCanvasGroup: {fileID: 370826536}
   logoTransform: {fileID: 1989683983}
   shineImage: {fileID: 2140458380}
+  fadeOverlay: {fileID: 0}
   nextSceneName: TitleScene
   totalDuration: 2
   fadeDuration: 0.65
   splashSfxDelay: 0.22
   fadeOutDuration: 1.5
+  fadeToBlackDuration: 0.35
   scaleDuration: 1.2
   shineDelay: 0.9
   shineDuration: 0.25
