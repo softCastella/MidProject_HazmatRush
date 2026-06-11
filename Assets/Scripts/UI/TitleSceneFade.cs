@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class TitleSceneFade : MonoBehaviour
 {
     [Header("씬 이탈 페이드아웃 (타이틀 → 인트로)")]
-    [Tooltip("비우면 Canvas 위에 흰 FadeOverlay를 만듭니다.")]
+    [Tooltip("비우면 Canvas 위에 검은 FadeOverlay를 만듭니다.")]
     public Image fadeOverlay;
     public float fadeOutDuration = 0.25f;
 
@@ -33,7 +33,7 @@ public class TitleSceneFade : MonoBehaviour
 
         Camera cam = Camera.main;
         if (cam != null)
-            cam.backgroundColor = Color.white;
+            cam.backgroundColor = Color.black;
 
         mgr.pendingStageIndex = 0;
         mgr.nextSceneName = mgr.gameSceneName;
@@ -105,7 +105,7 @@ public class TitleSceneFade : MonoBehaviour
         rt.offsetMax = Vector2.zero;
 
         fadeOverlay = go.AddComponent<Image>();
-        fadeOverlay.color = new Color(1f, 1f, 1f, 0f);
+        fadeOverlay.color = new Color(0f, 0f, 0f, 0f);
         fadeOverlay.raycastTarget = false;
     }
 

@@ -35,8 +35,8 @@ public class AutoScrollIntro : MonoBehaviour
         if (fadeInFromTitle)
         {
             if (cam != null)
-                cam.backgroundColor = Color.white;
-            SetOverlayColor(1f, 1f, 1f, 1f);
+                cam.backgroundColor = Color.black;
+            SetOverlayColor(0f, 0f, 0f, 1f);
         }
         else
         {
@@ -72,7 +72,7 @@ public class AutoScrollIntro : MonoBehaviour
 
         if (fadeOverlay != null && fadeInDuration > 0f)
         {
-            SetOverlayColor(1f, 1f, 1f, 1f);
+            SetOverlayColor(0f, 0f, 0f, 1f);
 
             float time = 0f;
             while (time < fadeInDuration)

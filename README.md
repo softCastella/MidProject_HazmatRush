@@ -12,7 +12,7 @@
 | **회복 아이템 정의** | `Assets/Data/recovery_items.json` |
 | **AI·협업 규칙** | [AGENTS.md](AGENTS.md) |
 | **버그·수정 기록** | [Bug 폴더](Assets/Docs/Bug/) |
-| **회의·합의** | [회의록 폴더](Assets/Docs/회의록/) — 최근: [0610 일일](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md) |
+| **회의·합의** | [회의록 폴더](Assets/Docs/회의록/) — 최근: [0611 일일](Assets/Docs/회의록/2026-06-11-오후1430-0611-일일-오후2100-2차-합의.md) |
 
 ---
 
@@ -76,12 +76,13 @@
 AppScene
   └ runInBackground · SceneLoadManager/AudioManager 생성 → SplashScene
 SplashScene
-  └ 로고 페이드인(0.65s)·확대 → splashSFX → 로고 페이드아웃(1.5s) → TitleScene (타이틀 선로드, 별도 검은 암전 없음)
+  └ 로고 페이드인(0.65s, 흰 배경)·확대 → splashSFX → 로고 페이드아웃(1.5s) → 검정 암전(0.35s) → TitleScene (타이틀 선로드)
 TitleScene
-  └ 시작 → 흰 화면 암전(0.25s) + 인트로 선로드 → IntroStoryScene
+  └ 시작 → 검정 암전(0.25s) + 인트로 선로드 → IntroStoryScene
   └ 이어하기 → LoadingScene (인트로 생략)
+  └ 우하단 `v{Application.version}` (Player Settings Version)
 IntroStoryScene
-  └ (타이틀에서 온 경우) 흰 화면 SmoothStep 페이드인(0.8s) → 스크롤
+  └ (타이틀에서 온 경우) 검정 화면 SmoothStep 페이드인(0.8s) → 스크롤
   └ 종료 → 검은 암전(0.5s) → LoadingScene
 LoadingScene
   └ stage_data + 오염원 배치 확정 (`PollutantSpawnPlan`) — 회복 아이템은 로딩 시 배치하지 않음
@@ -93,7 +94,7 @@ GameScene
 
 > **BGM:** 타이틀·게임 씬만 BGM 재생(페이드 인/아웃). 스플래시·인트로·로딩에서는 BGM 없음(`StopBGM`). **게임 BGM**은 `StageManager.LoadStage` → `PlayStageBgm(bgmIndex)` — 씬 로드 시 0번 강제 재생 없음 ([0610 합의](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md)).
 
-> **씬 페이드:** `TitleSceneFade`(타이틀→인트로 흰 암전), `AutoScrollIntro`(인트로 진입 페이드인·종료 검은 암전). 상세: [Bug 2026-06-06](Assets/Docs/Bug/2026-06-06-시각미상-씬전환-스플래시-인트로-fixes.md).
+> **씬 페이드:** 스플래시 로고만 **흰 배경** · 그 외 씬 전환 **검정** (`SplashController` → `TitleSceneFade` → `AutoScrollIntro` → `LoadingController` · 맵 `PollutantManager`). 상세: [0611 합의](Assets/Docs/회의록/2026-06-11-오후1430-0611-일일-오후2100-2차-합의.md) · [0611 Bug](Assets/Docs/Bug/2026-06-11-오후1430-0611-일일-오후2100-2차-fixes.md) · [0606 이력](Assets/Docs/Bug/2026-06-06-시각미상-씬전환-스플래시-인트로-fixes.md).
 
 ### App 진입 (`AppScene` · PR1)
 
@@ -193,15 +194,22 @@ GameScene
 
 ### 스플래시 (`SplashController.cs`)
 
-- App 또는 Splash 진입 — 로고 **페이드인(0.65s)** · 확대 → 샤인 → 페이드아웃(1.5s) → `TitleScene`
-- 타이틀 `LoadSceneAsync` **선로드** — 로고 사라진 뒤 흰 화면 대기 최소화
+- App 또는 Splash 진입 — 로고 **페이드인(0.65s, 흰 배경)** · 확대 → 샤인 → 페이드아웃(1.5s)
+- 타이틀 `LoadSceneAsync` **선로드** — 로고 alpha ≤ 0.02 시 페이드아웃 조기 종료
+- **타이틀 전환:** 검정 `FadeOverlay` **`fadeToBlackDuration`**(기본 0.35s) 후 `TitleScene` 활성화
 - SFX: `AudioManager.PlaySplashSfx()` — 페이드인 시작 후 `splashSfxDelay`(0.22s) 재생
 
 ### 타이틀·인트로 페이드 (`TitleSceneFade.cs`, `AutoScrollIntro.cs`)
 
-- **타이틀 → 인트로:** 흰 `FadeOverlay` 0.25초 + 인트로 비동기 로드 (`SceneLoadUI.StartButton`)
-- **인트로 진입:** `fadeInFromTitle` 시 흰 화면 0.8초 SmoothStep 페이드인 후 스크롤
-- **인트로 → 로딩:** 검은 암전 0.5초 (기존)
+- **타이틀 → 인트로:** 검정 `FadeOverlay` **0.25s** + 인트로 비동기 로드 (`SceneLoadUI.StartButton`)
+- **인트로 진입:** `fadeInFromTitle` 시 **검정** 화면 **0.8s** SmoothStep 페이드인 후 스크롤
+- **인트로 → 로딩:** 검정 암전 **0.5s** (기존)
+
+### 타이틀 버전 표시 (`VersionText.cs`)
+
+- `TitleScene` · `TItle_HUD_Canvas/VersionTxt` **우하단**
+- `Application.version` → TMP `"v" + Application.version` (Player Settings **Version**, 현재 `1.0`)
+- 게임·로딩·일시정지에는 미표시 (1차)
 
 ### 오디오 (`AudioManager.cs`, DontDestroyOnLoad)
 
@@ -285,7 +293,7 @@ Assets/
 ├── Scripts/
 │   ├── Core/          AppBootstrap, GameManager, SceneLoadManager, AudioManager, …
 │   ├── GamePlay/      Player, Pollutant, PollutantManager, Item, …
-│   └── UI/            GuideTxt, WarningTxt, ProtectionHpBarUI, …
+│   └── UI/            GuideTxt, WarningTxt, VersionText, SplashController, …
 ├── Shaders/           SpriteOutline, UIImageOutline
 ├── Materials/         Pollutant*Outline, ProtectionHpBar5_7Outline
 ├── Prefabs/Game/      Player, PollutantA~D
@@ -321,8 +329,10 @@ Assets/
 | **Player** Animator | `Clear` 트리거 → `Player_Clear` (Loop) |
 | **AudioManager** | `splashClip`, `squeakyValveClip`, 볼륨·페이드 설정 |
 | **ItemSelectManager** | `itemPrefabs` 5종 |
+| **SplashController** | `fadeToBlackDuration`, `logoCanvasGroup` |
+| **TitleSceneFade** | `fadeOutDuration` (타이틀→인트로 검정) |
+| **TitleScene / VersionTxt** | 빌드 버전 표시 |
 | **RecoveryItemManager** | `protectionItemPrefab` / `timeItemPrefab`, `dropYOffset`·`dropJumpHeight`·`dropLandOffsetX`, `testAlwaysDrop` 빌드 전 OFF |
-
 ---
 
 ## 실행 방법
@@ -336,13 +346,13 @@ Assets/
 
 **App · 전체 플로우**
 
-- [ ] `AppScene` Play → 스플래시 페이드인(0.65s)·SFX → 타이틀 BGM
+- [ ] `AppScene` Play → 스플래시 페이드인(0.65s, 흰)·SFX → 검정(0.35s) → 타이틀 BGM · 우하단 `v1.0`
 - [ ] 이어하기 시 Intro 생략 → 로딩 → 게임
 - [ ] Alt+Tab 후에도 앱 동작 (`runInBackground`)
 
 **게임플레이** (`App` 또는 `GameScene` 직접 Play)
 
-- [ ] 스플래시 SFX·타이틀 BGM 페이드 인
+- [ ] Start → 검정 암전 → 인트로 검정 페이드인 (흰 전환 없음)
 - [ ] 로딩 씬 K/I 안내 문구 표시
 - [ ] 가이드 후 좌우 이동, 경고 → 오염원 등장 → 첫 오염원 후 -403 해제·맵 안 이동
 - [ ] 고속 이동 중 접촉 HP·방호복 **끊김 없음**
@@ -369,13 +379,14 @@ Assets/
 
 ### 완료
 
+- **2026-06-11 일일** (타이틀 버전 · 페이드 검정 · 외부 QA Formal `qa-B.html`) — [회의록](Assets/Docs/회의록/2026-06-11-오후1430-0611-일일-오후2100-2차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-11-오후1430-0611-일일-오후2100-2차-fixes.md)
 - **2026-06-10 일일** (스테이지 BGM · 가이드/경고 팝업 · 방호복 UI 아웃라인 · 가스 사망 HP바 · 맵 회복 스폰 폐기) — [회의록](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후2030-2차-fixes.md)
 - **2026-06-09 일일** (경고·맵·이동·접촉·App·스플래시·방호복 HUD) — [회의록](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1700-2차-합의.md)
 - 씬 흐름·`stage_data.json`·로딩 프리스폰·맵 구간 (`mapPollutants`)
 - 접촉 판정·정답만 오염원 HP·가스 HP 초기화·밸브 애니/SFX
 - Z/X 방향, 아이템 선택 유지(맵 중), 틀린 아이템 시 VFX 미재생
 - 스플래시·BGM 씬별 페이드
-- **씬 전환** — 스플래시 선로드, 타이틀→인트로 흰 페이드, 인트로 SmoothStep 진입
+- **씬 전환** — 스플래시 선로드, **검정** 페이드 통일(로고만 흰), 타이틀 버전 표시
 - **K/I** HUD 가이드, 로딩 안내
 - 회복 아이템 JSON·맵/인벤 프리팹·스택 인벤·`InvItemView` UI·`dim` 선택 ([Bug](Assets/Docs/Bug/2026-06-06-시각미상-회복인벤-UI-fixes.md))
 - 회복 아이템 **오염원 정화 드랍·아크 연출**·`dropYOffset`·아크 디버그 로그 ([Bug](Assets/Docs/Bug/2026-06-08-시각미상-회복아이템-아크드랍-fixes.md)) — **유일한 획득 경로** (맵 포인트 `RecoveryItemSpawner` 폐기)
@@ -401,7 +412,9 @@ Assets/
 | [README.md](README.md) | 프로젝트 개요 (이 파일) |
 | [AGENTS.md](AGENTS.md) | AI·협업·코딩 규칙 |
 | [문서 하네스](Assets/Docs/문서-이름-규칙.md) | Bug/회의록 작성·당일 취합·5필드 파일명 |
-| [0610 일일 회의록](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md) | **최근** — BGM·팝업·아웃라인·가스 사망 |
+| [0611 일일 회의록](Assets/Docs/회의록/2026-06-11-오후1430-0611-일일-오후2100-2차-합의.md) | **최근** — 버전 · 페이드 · 외부 QA Formal · PC 빌드 배포 |
+| [0611 일일 Bug](Assets/Docs/Bug/2026-06-11-오후1430-0611-일일-오후2100-2차-fixes.md) | VersionText · 페이드 · QA `_Data` 문구 · `testAlwaysDrop` |
+| [0610 일일 회의록](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md) | BGM·팝업·아웃라인·가스 사망 |
 | [0610 일일 Bug](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후2030-2차-fixes.md) | 위 합의 대응 fixes · **§5 밸브·§8 사망 패널** |
 | [0609 일일 회의록](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1700-2차-합의.md) | 방호복 HUD · 오염원 HP바 · 접촉 |
 | [회복 아이템 아크 드랍 fixes](Assets/Docs/Bug/2026-06-08-시각미상-회복아이템-아크드랍-fixes.md) | 아크 수치·Y 보정·디버그 로그 |
@@ -422,6 +435,7 @@ Assets/
 
 | 날짜 | 주요 내용 |
 |------|-----------|
+| 2026-06-11 | 타이틀 버전 · 페이드 검정 · 외부 QA `qa-B.html` · PC 빌드 배포 규칙 — [회의록](Assets/Docs/회의록/2026-06-11-오후1430-0611-일일-오후2100-2차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-11-오후1430-0611-일일-오후2100-2차-fixes.md) |
 | 2026-06-10 | 스테이지 BGM·가이드/경고 팝업·방호복 UI 아웃라인·가스 사망 HP바 — [회의록](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후2030-2차-fixes.md) (밸브·사망 패널 2차) |
 | 2026-06-09 | 경고·맵·이동·접촉·App·스플래시·방호복 HUD — [회의록](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1700-2차-합의.md) |
 | 2026-06-08 | 회복 아이템 아크 드랍 수치·`dropYOffset`·디버그 로그 — [Bug](Assets/Docs/Bug/2026-06-08-시각미상-회복아이템-아크드랍-fixes.md) · [회의록](Assets/Docs/회의록/2026-06-08-시각미상-회복아이템-드랍-연출-합의.md) |

@@ -11,8 +11,8 @@ using UnityEngine.SceneManagement;
 public static class ProjectStaticAnalyzer
 {
     private const string RulesPath = "Assets/Data/static_rules.json";
-    private const string SpecHtmlPath = "Assets/Docs/project-static-analysis.html";
-    private const string ReportHtmlPath = "Assets/Docs/static-analysis-report.html";
+    private const string SpecHtmlPath = "Assets/Docs/분析/project-static-analysis.html";
+    private const string ReportHtmlPath = "Assets/Docs/분析/static-analysis-report.html";
 
     [MenuItem("MidProject/Static Analysis/Run All")]
     public static void RunAll()

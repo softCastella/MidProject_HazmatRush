@@ -9,6 +9,8 @@ public class SplashController : MonoBehaviour
     [SerializeField] private CanvasGroup logoCanvasGroup;
     [SerializeField] private RectTransform logoTransform;
     [SerializeField] private Image shineImage;
+    [Tooltip("비우면 Canvas 위에 검은 FadeOverlay를 만듭니다.")]
+    [SerializeField] private Image fadeOverlay;
 
     [Header("Scene")]
     [SerializeField] private string nextSceneName = "TitleScene";
@@ -19,6 +21,7 @@ public class SplashController : MonoBehaviour
     [Tooltip("페이드인 시작 후 SFX 재생까지 대기(초). 페이드인과 같이 들리게 맞춤")]
     [SerializeField] private float splashSfxDelay = 0.22f;
     [SerializeField] private float fadeOutDuration = 1.5f;
+    [SerializeField] private float fadeToBlackDuration = 0.35f;
     [SerializeField] private float scaleDuration = 1.2f;
     [SerializeField] private float shineDelay = 0.9f;
     [SerializeField] private float shineDuration = 0.25f;
@@ -70,6 +73,12 @@ public class SplashController : MonoBehaviour
             while (loadOp.progress < 0.9f)
                 yield return null;
         }
+
+        EnsureFadeOverlay();
+        if (fadeToBlackDuration > 0f && fadeOverlay != null)
+            yield return FadeOverlayTo(1f, fadeToBlackDuration);
+        else if (fadeOverlay != null)
+            SetOverlayAlpha(1f);
 
         loadOp.allowSceneActivation = true;
     }
@@ -199,5 +208,62 @@ public class SplashController : MonoBehaviour
 
         c.a = 0f;
         shineImage.color = c;
+    }
+
+    private void EnsureFadeOverlay()
+    {
+        if (fadeOverlay != null)
+            return;
+
+        Canvas canvas = null;
+        if (logoCanvasGroup != null)
+            canvas = logoCanvasGroup.GetComponentInParent<Canvas>();
+        if (canvas == null)
+            canvas = FindAnyObjectByType<Canvas>();
+        if (canvas == null)
+            return;
+
+        GameObject go = new GameObject("FadeOverlay");
+        go.transform.SetParent(canvas.transform, false);
+        go.transform.SetAsLastSibling();
+
+        RectTransform rt = go.AddComponent<RectTransform>();
+        rt.anchorMin = Vector2.zero;
+        rt.anchorMax = Vector2.one;
+        rt.offsetMin = Vector2.zero;
+        rt.offsetMax = Vector2.zero;
+
+        fadeOverlay = go.AddComponent<Image>();
+        fadeOverlay.color = new Color(0f, 0f, 0f, 0f);
+        fadeOverlay.raycastTarget = false;
+    }
+
+    private IEnumerator FadeOverlayTo(float targetAlpha, float duration)
+    {
+        if (fadeOverlay == null)
+            yield break;
+
+        float startAlpha = fadeOverlay.color.a;
+        float time = 0f;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            SetOverlayAlpha(Mathf.Lerp(startAlpha, targetAlpha, time / duration));
+            yield return null;
+        }
+
+        SetOverlayAlpha(targetAlpha);
+    }
+
+    private void SetOverlayAlpha(float alpha)
+    {
+        if (fadeOverlay == null)
+            return;
+
+        Color color = fadeOverlay.color;
+        color.a = Mathf.Clamp01(alpha);
+        fadeOverlay.color = color;
+        fadeOverlay.raycastTarget = color.a > 0.01f;
     }
 }
