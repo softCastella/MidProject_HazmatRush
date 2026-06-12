@@ -306,9 +306,17 @@ public class GameManager : MonoBehaviour
 
         if (stageManager != null)
             stageManager.RestartCurrentStage();
-        ResetStagePlay(true);
+        ResetStagePlay(false);
         ResumeAfterResult();
-        Debug.Log("[GameManager] 현재 스테이지 재시작");
+
+        RecoveryItemInventory inventory = FindAnyObjectByType<RecoveryItemInventory>();
+        if (recoveryInventoryUI != null && inventory != null)
+        {
+            recoveryInventoryUI.SetAllDim(false);
+            recoveryInventoryUI.Refresh(inventory);
+        }
+
+        Debug.Log("[GameManager] 현재 스테이지 재시작 (회복 인벤 유지)");
     }
 
     public void GoToNextStage()
