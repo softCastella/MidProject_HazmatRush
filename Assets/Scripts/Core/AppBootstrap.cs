@@ -4,6 +4,15 @@ public class AppBootstrap : MonoBehaviour
 {
     [SerializeField] private string firstSceneName = "SplashScene";
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    static void ForceWindowedOnPcBuild()
+    {
+#if UNITY_STANDALONE_WIN && !UNITY_EDITOR
+        if (Screen.fullScreenMode != FullScreenMode.Windowed)
+            Screen.SetResolution(1920, 1080, FullScreenMode.Windowed);
+#endif
+    }
+
     void Awake()
     {
         Application.runInBackground = true;

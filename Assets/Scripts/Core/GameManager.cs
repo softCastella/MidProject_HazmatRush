@@ -209,6 +209,15 @@ public class GameManager : MonoBehaviour
         Debug.Log("[GameManager] 재개");
     }
 
+    public void QuitGame()
+    {
+        isPaused = false;
+        if (pauseSet != null)
+            pauseSet.SetActive(false);
+
+        SceneLoadUI.QuitApplication();
+    }
+
     // 중화모드에서 틀린 아이템으로 접촉했을 때 호출.
     public bool TriggerWrongItemPenalty()
     {

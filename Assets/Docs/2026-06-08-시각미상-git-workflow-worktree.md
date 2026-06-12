@@ -159,7 +159,7 @@ git push origin --delete 260609_회복스폰
 ## 6. Unity 주의
 
 - **커밋 대상:** `Assets/`, `ProjectSettings/`, `Packages/` 등
-- **커밋 금지:** `Library/`, `Temp/`, `Logs/`, `UserSettings/` (개인 설정은 선택)
+- **커밋 금지:** `Library/`, `Temp/`, `Logs/`, `UserSettings/` (개인 설정은 선_택)
 - worktree 추가 후 **첫 Open은 Import 시간** 걸림 — 정상
 - `.cs` 추가·삭제 시 `.meta` 함께 커밋
 - 씬·프리팹 충돌 나면 **한 worktree에서만** 해결 후 커밋

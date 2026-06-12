@@ -12,7 +12,8 @@
 | **회복 아이템 정의** | `Assets/Data/recovery_items.json` |
 | **AI·협업 규칙** | [AGENTS.md](AGENTS.md) |
 | **버그·수정 기록** | [Bug 폴더](Assets/Docs/Bug/) |
-| **회의·합의** | [회의록 폴더](Assets/Docs/회의록/) — 최근: [0611 일일 4차](Assets/Docs/회의록/2026-06-11-오후1430-0611-일일-오후2100-2차-합의.md) |
+| **회의·합의** | [회의록 폴더](Assets/Docs/회의록/) — 최근: [0612 일일 1차](Assets/Docs/회의록/2026-06-12-오후1700-0612-일일-오후1700-1차-합의.md) |
+| **외부 QA 피드백** | [QA_Feedback/HazmatRush/](Assets/Docs/QA_Feedback/HazmatRush/) (PC v1.0 · 7건) |
 
 ---
 
@@ -62,6 +63,7 @@
 | `C` / `V` | 회복 아이템 선택 (왼쪽 / 오른쪽) |
 | `Space` | 회복 아이템 사용 |
 | `ESC` | 일시정지 / 재개 |
+| **타이틀 · 일시정지 `종료하기`** | 앱 종료 (에디터: Play 종료 · 빌드: `Application.Quit`) |
 | `F1` | (디버그) 강제 클리어 |
 | `F2` | (디버그) 강제 게임 오버 |
 
@@ -99,6 +101,7 @@ GameScene
 ### App 진입 (`AppScene` · PR1)
 
 - Build index **0**. `AppBootstrap` — `Application.runInBackground = true`, `SceneLoadManager`로 `SplashScene` 싱글 로드.
+- **PC 빌드 창 모드:** `ForceWindowedOnPcBuild` (Win Standalone · 1920×1080 창) + Player Settings Windowed·리사이즈 가능 ([0612 Bug](Assets/Docs/Bug/2026-06-12-오후1700-0612-일일-오후1700-1차-fixes.md) §3).
 - `SceneLoadManager`·`AudioManager`는 App에서 생성 후 `DontDestroyOnLoad` (Splash 로드 시 App 씬 오브젝트는 unload, 매니저만 유지).
 - **서버·Additive 로딩은 미적용** (프론트 계획만). 상세: [회의록 0609 일일](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1400-1차-합의.md) §App.
 - **Play 루트 2가지:** (1) `AppScene` — 빌드·전체 플로우·백그라운드 실행 (2) `GameScene` 등 직접 Play — 개발용 · 해당 씬 매니저 사용. 중복 매니저는 **의도적 유지**(PR2 보류).
@@ -287,9 +290,12 @@ GameScene
 
 | 모듈 | 역할 |
 |------|------|
-| `AppBootstrap` | App 진입 · `runInBackground` · 첫 씬(`SplashScene`) 로드 |
-| `GameManager` | 클리어·게임오버·일시정지·디버그 키 · 사망 시 `HidePollutantHpBar` |
+| `AppBootstrap` | App 진입 · `runInBackground` · PC 창 모드 · 첫 씬(`SplashScene`) 로드 |
+| `GameManager` | 클리어·게임오버·일시정지·`QuitGame` · 디버그 키 · 사망 시 `HidePollutantHpBar` |
 | `SceneLoadManager` | 씬 전환, `pendingStageIndex` |
+| `SceneLoadUI` | 타이틀 시작/이어하기/타이틀 복귀 · `QuitApplication` |
+| `CameraAspectFit` | 게임 카메라 cover (창 리사이즈 여백 방지) |
+| `CanvasBackgroundCover` | 메뉴 씬 전체 화면 배경 cover |
 | `LoadingController` / `LoadingGuideTxt` | 페이드·플랜 준비·조작 안내 |
 | `Background` | 스크롤, 오염원 활성/구간 미완료 시 정지 |
 | `WorldSpaceUIFollower` | 오염원 HP 바 (캔버스 직속, 접촉 시만 표시) |
@@ -408,6 +414,8 @@ Assets/
 - [ ] 회복 아이템 픽업 → 인벤 아이콘·이름·Count 표시
 - [ ] 같은 회복 아이템 재획득 → Count만 증가
 - [ ] `C`/`V` 회복 선택, `Space` 사용
+- [ ] 타이틀·일시정지 **종료하기** → Play 종료 / exe 닫힘
+- [ ] Windows 빌드 — 창 모드·exe 아이콘·`Hazmat Rush_Data` 동봉
 
 ---
 
@@ -415,6 +423,7 @@ Assets/
 
 ### 완료
 
+- **2026-06-12 일일** (빌드 직전 · 종료 버튼 · PC 창 모드·리사이즈 HUD · 외부 QA 1차 7건 취합) — [회의록](Assets/Docs/회의록/2026-06-12-오후1700-0612-일일-오후1700-1차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-12-오후1700-0612-일일-오후1700-1차-fixes.md)
 - **2026-06-11 일일** (타이틀 버전 · 페이드 검정 · 외부 QA Formal `qa-B.html`) — [회의록](Assets/Docs/회의록/2026-06-11-오후1430-0611-일일-오후2100-2차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-11-오후1430-0611-일일-오후2100-2차-fixes.md)
 - **2026-06-10 일일** (스테이지 BGM · 가이드/경고 팝업 · 방호복 UI 아웃라인 · 가스 사망 HP바 · 맵 회복 스폰 폐기) — [회의록](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후2030-2차-fixes.md)
 - **2026-06-09 일일** (경고·맵·이동·접촉·App·스플래시·방호복 HUD) — [회의록](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1700-2차-합의.md)
@@ -432,6 +441,8 @@ Assets/
 
 ### 미구현·보류
 
+- **시계 HUD 중앙 배치** — 외부 QA 피드백 (Item Guide 겹침) · 목표 UI 아래로 이동 예정 ([0612 합의](Assets/Docs/회의록/2026-06-12-오후1700-0612-일일-오후1700-1차-합의.md))
+- **커스텀 커서 인게임 표시** — Player Settings 연결만 유지, 추가 작업 보류
 - **가스(D) 사망 시 밸브↔Die 애니 루프** — HP바는 숨김 처리됨, 애니 반복은 미해결 ([0610 Bug §5](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후1830-1차-fixes.md))
 - App **PR2** 중복 매니저 제거 · **PR3** Additive 로딩 · **서버** 연동 (계획만)
 - 좌우 연타 가속 체감 (`Background.SmoothDamp`) — 분석만, 수정 보류
@@ -448,7 +459,10 @@ Assets/
 | [README.md](README.md) | 프로젝트 개요 (이 파일) |
 | [AGENTS.md](AGENTS.md) | AI·협업·코딩 규칙 |
 | [문서 하네스](Assets/Docs/문서-이름-규칙.md) | Bug/회의록 작성·당일 취합·5필드 파일명 |
-| [0611 일일 회의록](Assets/Docs/회의록/2026-06-11-오후1430-0611-일일-오후2100-2차-합의.md) | **최근** — 버전 · 페이드 · 외부 QA Formal · PC 빌드 배포 |
+| [0612 일일 회의록](Assets/Docs/회의록/2026-06-12-오후1700-0612-일일-오후1700-1차-합의.md) | **최근** — 빌드 직전 · 종료 · 창 모드 · QA 1차 · 시계 UI |
+| [0612 일일 Bug](Assets/Docs/Bug/2026-06-12-오후1700-0612-일일-오후1700-1차-fixes.md) | Popup · 재시작 인벤 · 창 모드 · 리사이즈 · QuitGame |
+| [외부 QA 피드백 (7건)](Assets/Docs/QA_Feedback/HazmatRush/) | PC v1.0 Formal 응답 원본 |
+| [0611 일일 회의록](Assets/Docs/회의록/2026-06-11-오후1430-0611-일일-오후2100-2차-합의.md) | 버전 · 페이드 · 외부 QA Formal · PC 빌드 배포 |
 | [0611 일일 Bug](Assets/Docs/Bug/2026-06-11-오후1430-0611-일일-오후2100-2차-fixes.md) | VersionText · 페이드 · QA `_Data` 문구 · `testAlwaysDrop` |
 | [0610 일일 회의록](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md) | BGM·팝업·아웃라인·가스 사망 |
 | [0610 일일 Bug](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후2030-2차-fixes.md) | 위 합의 대응 fixes · **§5 밸브·§8 사망 패널** |
@@ -471,6 +485,7 @@ Assets/
 
 | 날짜 | 주요 내용 |
 |------|-----------|
+| 2026-06-12 | 종료 버튼 · PC 창 모드·리사이즈 HUD · 외부 QA 1차 7건 · 시계 UI 중앙(예정) — [회의록](Assets/Docs/회의록/2026-06-12-오후1700-0612-일일-오후1700-1차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-12-오후1700-0612-일일-오후1700-1차-fixes.md) |
 | 2026-06-11 | 타이틀 버전 · 페이드 검정 · 외부 QA `qa-B.html` · PC 빌드 배포 규칙 — [회의록](Assets/Docs/회의록/2026-06-11-오후1430-0611-일일-오후2100-2차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-11-오후1430-0611-일일-오후2100-2차-fixes.md) |
 | 2026-06-10 | 스테이지 BGM·가이드/경고 팝업·방호복 UI 아웃라인·가스 사망 HP바 — [회의록](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후2030-2차-fixes.md) (밸브·사망 패널 2차) |
 | 2026-06-09 | 경고·맵·이동·접촉·App·스플래시·방호복 HUD — [회의록](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1700-2차-합의.md) |
