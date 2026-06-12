@@ -239,7 +239,7 @@ public class RecoveryItemInventory : MonoBehaviour
         itemDefs[0] = new RecoveryItemRow();
         itemDefs[0].id = 1;
         itemDefs[0].effect = "protection";
-        itemDefs[0].value = 10f;
+        itemDefs[0].value = 15f;
         itemDefs[0].displayName = "방호복 회복제";
 
         itemDefs[1] = new RecoveryItemRow();

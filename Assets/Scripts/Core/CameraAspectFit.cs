@@ -1,11 +1,17 @@
 using UnityEngine;
 
+[DefaultExecutionOrder(100)]
 [RequireComponent(typeof(Camera))]
 public class CameraAspectFit : MonoBehaviour
 {
     [SerializeField] private float designOrthographicSize = 512f;
     [SerializeField] private float designAspectWidth = 1920f;
     [SerializeField] private float designAspectHeight = 1080f;
+
+    [Header("월드 배경 cover")]
+    [Tooltip("비우면 씬의 Background 컴포넌트를 찾습니다.")]
+    [SerializeField] private Transform coverBackground;
+    [SerializeField] private Vector2 coverDesignSize = new Vector2(1920f, 1080f);
 
     private Camera cam;
     private int lastWidth;
@@ -14,6 +20,11 @@ public class CameraAspectFit : MonoBehaviour
     void Awake()
     {
         cam = GetComponent<Camera>();
+        Apply();
+    }
+
+    void Start()
+    {
         Apply();
     }
 
@@ -36,10 +47,33 @@ public class CameraAspectFit : MonoBehaviour
         float designAspect = designAspectWidth / designAspectHeight;
         float windowAspect = (float)Screen.width / Screen.height;
 
-        // 화면을 꽉 채우도록(cover). 넓은 창은 ortho 유지, 좁은 창만 ortho 확대
         if (windowAspect >= designAspect)
             cam.orthographicSize = designOrthographicSize;
         else
             cam.orthographicSize = designOrthographicSize * designAspect / windowAspect;
+
+        ApplyCoverBackground(windowAspect);
+    }
+
+    private void ApplyCoverBackground(float windowAspect)
+    {
+        if (coverBackground == null)
+        {
+            Background bg = FindAnyObjectByType<Background>();
+            if (bg != null)
+                coverBackground = bg.transform;
+        }
+
+        if (coverBackground == null || coverDesignSize.x <= 0f || coverDesignSize.y <= 0f)
+            return;
+
+        float visibleW = cam.orthographicSize * 2f * windowAspect;
+        float visibleH = cam.orthographicSize * 2f;
+        float mult = Mathf.Max(visibleW / coverDesignSize.x, visibleH / coverDesignSize.y);
+
+        coverBackground.localScale = new Vector3(
+            coverDesignSize.x * mult,
+            coverDesignSize.y * mult,
+            1f);
     }
 }

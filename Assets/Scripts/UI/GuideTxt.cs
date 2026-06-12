@@ -30,6 +30,7 @@ public class GuideTxt : MonoBehaviour
 
     private CanvasGroup canvasGroup;
     private bool isMessageVisible;
+    private Color defaultGuideColor = Color.white;
 
     public bool IsMessageVisible => isMessageVisible;
 
@@ -43,6 +44,9 @@ public class GuideTxt : MonoBehaviour
 
         if (guideText == null)
             guideText = GetComponentInChildren<TMP_Text>(true);
+
+        if (guideText != null)
+            defaultGuideColor = guideText.color;
 
         ResolvePopupRoots();
         ApplyPopup(PopupMode.Hidden);
@@ -174,7 +178,10 @@ public class GuideTxt : MonoBehaviour
             guideText = GetComponentInChildren<TMP_Text>(true);
 
         if (guideText != null)
+        {
             guideText.text = message;
+            guideText.color = defaultGuideColor;
+        }
     }
 
     public void ShowGuideText(string message, float duration = -1f, float delay = 0f)
@@ -207,12 +214,23 @@ public class GuideTxt : MonoBehaviour
 
     public void ShowGuideImmediate(string message)
     {
+        ShowGuideImmediate(message, defaultGuideColor);
+    }
+
+    public void ShowGuideImmediate(string message, Color textColor)
+    {
         StopAllCoroutines();
         if (canvasGroup == null)
             canvasGroup = GetComponent<CanvasGroup>();
         gameObject.SetActive(true);
         isMessageVisible = true;
-        SetGuideText(message);
+        if (guideText == null)
+            guideText = GetComponentInChildren<TMP_Text>(true);
+        if (guideText != null)
+        {
+            guideText.text = message;
+            guideText.color = textColor;
+        }
         ApplyPopup(GetPopupMode(message, true));
         if (canvasGroup != null)
         {
@@ -228,6 +246,8 @@ public class GuideTxt : MonoBehaviour
         isMessageVisible = false;
         if (canvasGroup != null)
             canvasGroup.alpha = 0f;
+        if (guideText != null)
+            guideText.color = defaultGuideColor;
         ApplyPopup(PopupMode.Hidden);
     }
 
