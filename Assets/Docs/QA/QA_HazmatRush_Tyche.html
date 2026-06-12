@@ -20,8 +20,9 @@
     .title p{color:rgba(255,255,255,.94);font-size:16px;font-weight:700;}
     .title .meta-line{font-size:14px;font-weight:600;color:#b8ebe0;margin-top:6px;}
     .hazmat-badge{font-size:48px;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.25);border-radius:24px;padding:16px 20px;}
-    .btn{border:none;background:#111827;color:white;padding:13px 18px;border-radius:14px;font-size:15px;font-weight:900;cursor:pointer;margin-top:16px;}
+    .btn{border:none;background:#111827;color:white;padding:13px 18px;border-radius:14px;font-size:15px;font-weight:900;cursor:pointer;}
     .btn:active{transform:scale(0.97);}
+    .save-actions{display:flex;justify-content:flex-end;margin:8px 0 20px;}
     section{background:var(--paper);border:2px solid var(--line);border-radius:22px;padding:26px;margin-bottom:20px;box-shadow:0 10px 24px rgba(26,74,66,.06);}
     h2{font-size:25px;color:var(--green-dark);margin-bottom:16px;letter-spacing:-0.03em;}
     h3{font-size:20px;margin:20px 0 10px;color:#0f172a;}
@@ -119,23 +120,16 @@
 
 <header class="header">
   <div class="title">
-    <h1>☣️ Project Hazmat Rush<br/>외부 QA 안내서</h1>
-    <p>전문 지식이 없어도 따라 할 수 있는 게임 테스트 문서</p>
-    <p class="meta-line">PC 빌드 (.exe) · v1.0 · 2026-06-11</p>
-    <button class="btn" onclick="downloadMD()">QA 결과 .md 저장하기</button>
+    <h1>☣️ Hazmat Rush<br/>QA 문서</h1>
+    <p class="meta-line">Unity 6000.4.8f1 · v1.0 · PC 빌드 (.exe)· 2026-06-12</p>
   </div>
   <div class="hazmat-badge">🦺☣️</div>
 </header>
 
-<div class="prog-wrap">
-  <div class="prog-label"><span>테스트 진행 현황</span><span id="progText">0 / 10 완료</span></div>
-  <div class="prog-inner" id="progBar" style="width:0%"></div>
-</div>
-
 <!-- 1. 게임 개요 -->
 <section>
   <h2>1. 게임 개요</h2>
-  <p class="big-text">Project Hazmat Rush는 방호복을 입은 캐릭터가 좌우로 이동하며, 맵에 나타나는 오염원을 맞는 중화 도구로 제거하는 2D 횡스크롤 게임입니다.</p>
+  <p class="big-text">Hazmat Rush는 방호복을 입은 캐릭터가 좌우로 이동하며, 맵에 나타나는 오염원을 맞는 중화 도구로 제거하는 2D 횡스크롤 게임입니다.</p>
   <div class="card-grid">
     <div class="info-card"><strong>게임 이름</strong><span>Project Hazmat Rush (해즈멧 러시)</span></div>
     <div class="info-card"><strong>게임 방식</strong><span>맵을 걸으며 오염원에 접촉하고, Z/X로 고른 도구로 중화합니다.</span></div>
@@ -214,7 +208,7 @@
 
   <div class="test-card">
     <div class="test-title">QA-01. 게임 실행 확인</div>
-    <div class="what-to-do"><strong>확인 방법</strong><p>배포받은 실행 파일(<code>Project Hazmat Rush.exe</code> 등)을 더블클릭하고, 첫 화면(스플래시 또는 타이틀)이 정상적으로 표시되는지 확인합니다.</p></div>
+    <div class="what-to-do"><strong>확인 방법</strong><p>배포받은 실행 파일(<code>Hazmat Rush.exe</code>)을 더블클릭하고, 첫 화면(스플래시 또는 타이틀)이 정상적으로 표시되는지 확인합니다.</p></div>
     <div class="good-box"><strong>정상 기준</strong><p>게임이 종료되지 않고 첫 화면이 표시되며, 타이틀에서 시작 버튼을 클릭할 수 있습니다.</p></div>
     <div class="bad-box"><strong>문제 기준</strong><p>게임이 실행되지 않거나, 화면이 멈추거나, 시작 버튼이 반응하지 않습니다.</p></div>
     <div class="result-area"><select id="tc1" onchange="updateSelectColor(this);updateProg()"><option value="미테스트">결과 선택</option><option value="정상">정상</option><option value="문제 있음">문제 있음</option><option value="판단 어려움">판단 어려움</option></select><textarea id="note1" placeholder="메모: 실행 상태, 첫 화면 구성, 버튼 반응 등을 적어 주세요."></textarea></div>
@@ -329,6 +323,15 @@
     <tr><th>한 줄 평가</th><td><input id="oneLine" type="text" placeholder="예: 핵심 플레이는 정상이지만, 초반 안내가 조금 더 보강되면 좋겠습니다."/></td></tr>
   </table>
 </section>
+
+<div class="prog-wrap">
+  <div class="prog-label"><span>테스트 진행 현황</span><span id="progText">0 / 10 완료</span></div>
+  <div class="prog-inner" id="progBar" style="width:0%"></div>
+</div>
+
+<div class="save-actions">
+  <button class="btn" type="button" onclick="downloadMD()">QA 결과 .md 저장하기</button>
+</div>
 
 <div class="footer">
   Project Hazmat Rush 외부 QA 안내서 · 결과는 .md 파일로 저장할 수 있습니다.<br/>

@@ -682,6 +682,14 @@ public class PollutantManager : MonoBehaviour
     private IEnumerator ShowPopupAfterFadeIn(string message, float fadeInDuration)
     {
         yield return new WaitForSeconds(fadeInDuration * 0.8f);
+        if (popupUI == null)
+            yield break;
+
+        if (!popupUI.gameObject.activeInHierarchy)
+            popupUI.gameObject.SetActive(true);
+
+        yield return null;
+
         if (popupUI != null)
             popupUI.Show(message, popupShowDuration);
     }

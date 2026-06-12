@@ -29,7 +29,9 @@ public class PopupUI : MonoBehaviour
                 canvasGroup = popupPanel.AddComponent<CanvasGroup>();
 
             canvasGroup.alpha = 0f;
-            popupPanel.SetActive(false);
+            // popupPanel이 본인(Popup)이면 SetActive(false) 시 MonoBehaviour 비활성 → Show에서 코루틴 불가
+            if (popupPanel != gameObject)
+                popupPanel.SetActive(false);
         }
     }
 
@@ -38,14 +40,18 @@ public class PopupUI : MonoBehaviour
         if (popupPanel == null || popupText == null)
             return;
 
-        if (!gameObject.activeInHierarchy)
-            gameObject.SetActive(true);
-
         popupText.text = message;
-        StopAllCoroutines();
-
         float showTime = duration > 0f ? duration : showDuration;
         float fadeTime = fade >= 0f ? fade : fadeDuration;
+
+        if (!gameObject.activeInHierarchy)
+        {
+            gameObject.SetActive(true);
+            Debug.LogWarning("[PopupUI] Popup이 비활성 상태였습니다. 활성화 후 한 프레임 뒤 Show를 다시 호출하세요.");
+            return;
+        }
+
+        StopAllCoroutines();
         StartCoroutine(ShowRoutine(showTime, fadeTime));
     }
 
@@ -53,7 +59,7 @@ public class PopupUI : MonoBehaviour
     {
         StopAllCoroutines();
         isShowing = false;
-        if (popupPanel != null)
+        if (popupPanel != null && popupPanel != gameObject)
             popupPanel.SetActive(false);
         if (canvasGroup != null)
             canvasGroup.alpha = 0f;
@@ -63,13 +69,15 @@ public class PopupUI : MonoBehaviour
     {
         yield return WaitForPriorityHudMessages();
 
-        popupPanel.SetActive(true);
+        if (popupPanel != gameObject)
+            popupPanel.SetActive(true);
         isShowing = true;
 
         yield return StartCoroutine(FadeTo(1f, fadeTime));
         yield return new WaitForSeconds(showTime);
         yield return StartCoroutine(FadeTo(0f, fadeTime));
-        popupPanel.SetActive(false);
+        if (popupPanel != gameObject)
+            popupPanel.SetActive(false);
         isShowing = false;
     }
 
