@@ -50,3 +50,23 @@ MonoBehaviour:
         m_CopyPDBFiles: 0
         m_WindowsDevicePortalAddress: 
         m_WindowsDevicePortalUsername: 
+--- !u!114 &4155821075499714232
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 15012, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: BuildAutomationSettings
+  m_EditorClassIdentifier: UnityEditor.dll::UnityEditor.Build.Profile.BuildAutomationSettings
+  m_OperatingSystemValue: sequoia
+  m_OperatingSystemFamily: mac
+  m_XcodeVersion: default
+  m_AndroidSdkVersion: android_sdk_35
+  m_UnityArchitecture: AppleSilicon
+  m_MachineTypeId: orka_standard_v1
+  m_CredentialsId: 
+  m_BuildTarget: 19

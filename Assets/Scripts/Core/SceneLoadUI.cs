@@ -66,4 +66,23 @@ public class SceneLoadUI : MonoBehaviour
         }
         SceneLoadManager.Instance.TitleButton();
     }
+
+    public void QuitButton()
+    {
+        QuitApplication();
+    }
+
+    public static void QuitApplication()
+    {
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlayButtonSfx();
+
+        Time.timeScale = 1f;
+        Debug.Log("[SceneLoadUI] 게임 종료");
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
 }
