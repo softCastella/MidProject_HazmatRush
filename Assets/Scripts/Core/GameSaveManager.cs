@@ -5,21 +5,39 @@ using UnityEngine;
 
 public static class GameSaveManager
 {
-    private const string SaveFolderName = "HazmatRush_Save";
+    private const string EditorSaveFolderName = "HazmatRush_Save";
+    private const string BuildSaveFolderName = "Save";
     private const string SaveFileName = "gamesave.json";
 
-    public static string SaveDirectoryPath =>
-        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), SaveFolderName);
+    public static string SaveDirectoryPath
+    {
+        get
+        {
+#if UNITY_EDITOR
+            return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), EditorSaveFolderName);
+#else
+            string gameRoot = Path.GetDirectoryName(Application.dataPath);
+            if (string.IsNullOrEmpty(gameRoot))
+                gameRoot = Application.persistentDataPath;
+            return Path.Combine(gameRoot, BuildSaveFolderName);
+#endif
+        }
+    }
 
     public static string SaveFilePath => Path.Combine(SaveDirectoryPath, SaveFileName);
+
+    public static void EnsureSaveDirectory()
+    {
+        if (!Directory.Exists(SaveDirectoryPath))
+            Directory.CreateDirectory(SaveDirectoryPath);
+    }
 
     public static void Save(GameSaveData data)
     {
         if (data == null)
             return;
 
-        if (!Directory.Exists(SaveDirectoryPath))
-            Directory.CreateDirectory(SaveDirectoryPath);
+        EnsureSaveDirectory();
 
         string json = JsonConvert.SerializeObject(data);
         File.WriteAllText(SaveFilePath, json);

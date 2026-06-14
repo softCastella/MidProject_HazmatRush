@@ -7,13 +7,15 @@
 |------|------|
 | **엔진** | Unity `6000.4.8f1` |
 | **언어** | C# |
-| **씬** | `AppScene` → `SplashScene` → `TitleScene` → `IntroStoryScene` → `LoadingScene` → `GameScene` (이어하기는 Intro 생략) |
+| **씬** | `AppScene` → `SplashScene` → `TitleScene` → (`IntroStoryScene`) → `LoadingScene` → `GameScene` · 튜토리얼 `5_TutorialScene` (타이틀 진입) · 이어하기는 Intro 생략 |
+| **빌드 해상도** | **1280×720** (16:9) · Windowed · `resizableWindow` (비 16:9 리사이즈 시 HUD 깨질 수 있음) |
+| **저장 (빌드)** | `[exe 폴더]/Save/gamesave.json` · 에디터 Play: `Documents/HazmatRush_Save/` |
+| **회의·합의** | [회의록 폴더](Assets/Docs/회의록/) — 최근: [0614 일일 2차](Assets/Docs/회의록/2026-06-14-시각미상-0614-일일-오후2100-2차-합의.md) |
+| **외부 QA 피드백** | [QA_Feedback/HazmatRush/](Assets/Docs/QA_Feedback/HazmatRush/) (PC v1.0 · 7건) |
 | **스테이지 데이터** | `Assets/Data/stage_data.json` (`mapPollutants` 포함) |
 | **회복 아이템 정의** | `Assets/Data/recovery_items.json` |
 | **AI·협업 규칙** | [AGENTS.md](AGENTS.md) |
-| **버그·수정 기록** | [Bug 폴더](Assets/Docs/Bug/) |
-| **회의·합의** | [회의록 폴더](Assets/Docs/회의록/) — 최근: [0612 일일 1차](Assets/Docs/회의록/2026-06-12-오후1700-0612-일일-오후1700-1차-합의.md) |
-| **외부 QA 피드백** | [QA_Feedback/HazmatRush/](Assets/Docs/QA_Feedback/HazmatRush/) (PC v1.0 · 7건) |
+| **버그·수정 기록** | [Bug 폴더](Assets/Docs/Bug/) — 최근: [0614 일일 2차](Assets/Docs/Bug/2026-06-14-시각미상-0614-일일-오후2100-2차-fixes.md) |
 
 ---
 
@@ -78,11 +80,11 @@
 AppScene
   └ runInBackground · SceneLoadManager/AudioManager 생성 → SplashScene
 SplashScene
-  └ 로고 페이드인(0.65s, 흰 배경)·확대 → splashSFX → 로고 페이드아웃(1.5s) → 검정 암전(0.35s) → TitleScene (타이틀 선로드)
+  └ 로고 페이드인(0.65s, **카메라 흰 배경**) · 확대 → splashSFX → 로고 페이드아웃(1.5s) → 검정 암전(0.35s) → TitleScene (타이틀 선로드)
 TitleScene
   └ 시작 → 검정 암전(0.25s) + 인트로 선로드 → IntroStoryScene
-  └ 이어하기 → LoadingScene (인트로 생략)
-  └ 우하단 `v{Application.version}` (Player Settings Version)
+  └ 이어하기 → LoadingScene (인트로 생략 · `Save/gamesave.json` 있을 때만 버튼 표시)
+  └ 우하단 `v{Application.version}` · **Default Cursor** (Player Settings)
 IntroStoryScene
   └ (타이틀에서 온 경우) 검정 화면 SmoothStep 페이드인(0.8s) → 스크롤
   └ 종료 → 검은 암전(0.5s) → LoadingScene
@@ -101,7 +103,7 @@ GameScene
 ### App 진입 (`AppScene` · PR1)
 
 - Build index **0**. `AppBootstrap` — `Application.runInBackground = true`, `SceneLoadManager`로 `SplashScene` 싱글 로드.
-- **PC 빌드 창 모드:** `ForceWindowedOnPcBuild` (Win Standalone · 1920×1080 창) + Player Settings Windowed·리사이즈 가능 ([0612 Bug](Assets/Docs/Bug/2026-06-12-오후1700-0612-일일-오후1700-1차-fixes.md) §3).
+- **PC 빌드 창 모드:** Player Settings **1280×720** Windowed · `resizableWindow` ([0612](Assets/Docs/Bug/2026-06-12-오후1700-0612-일일-오후1700-1차-fixes.md) · [0614 UI](Assets/Docs/Bug/2026-06-14-시각미상-0614-일일-오후2100-2차-fixes.md) §3)
 - `SceneLoadManager`·`AudioManager`는 App에서 생성 후 `DontDestroyOnLoad` (Splash 로드 시 App 씬 오브젝트는 unload, 매니저만 유지).
 - **서버·Additive 로딩은 미적용** (프론트 계획만). 상세: [회의록 0609 일일](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1400-1차-합의.md) §App.
 - **Play 루트 2가지:** (1) `AppScene` — 빌드·전체 플로우·백그라운드 실행 (2) `GameScene` 등 직접 Play — 개발용 · 해당 씬 매니저 사용. 중복 매니저는 **의도적 유지**(PR2 보류).
@@ -131,7 +133,7 @@ GameScene
         └ 마지막 오염원 → Player_Clear 2초 → ClearSet (별점 + 조건별 텍스트)
 ```
 
-사망 시: `Player_Die` **2초** → GameOverSet + 게임오버 SFX.
+사망 시: Die 애니 + **`dieSplattSFX`** → `dieAnimDelay`(2초) → GameOverSet + **game-overSFX**.
 
 ---
 
@@ -149,7 +151,7 @@ GameScene
 - **중화 VFX:** 접촉 중이고 **추천 아이템과 일치**할 때만 (틀린 도구면 OFF)
 - 가스 밸브 연출: `SetValveAnimActive` — `Player_Valve` + 밸브 SFX
 - **클리어:** `PlayClearAnim()` — `Clear` 트리거 → `Player_Clear`(Loop)
-- **사망:** Die 애니 → 페이드 (`dieAnimDelay` 후 패널은 `GameManager`에서 처리)
+- **사망:** Die 애니 + `AudioManager.PlayDieSplattSfx()` → 페이드 (`dieAnimDelay` 후 패널은 `GameManager`에서 처리)
 - 맵 전환: `PrepareMapAdvanceWalk()` → `mapAdvanceRightX`(기본 769)
 
 ### 오염원 (`Pollutant.cs`)
@@ -189,6 +191,15 @@ GameScene
 - **첫** 경고 후: `OnWarningShown()` → 중화제 기본, Z/X 순환 (Scanner 제외)
 - **이후** 경고: 이미 고른 중화 도구 **유지**
 - 스테이지 재시작만 `ResetToDefault()` → Scanner
+
+### 타이머·카운트다운 SFX (`Timer.cs`)
+
+- `StageManager.LoadStage` → `SetStartTime()` 후 **`StartCountdown()`** (가이드 종료 전에는 정지)
+- **경고 SFX:** HUD 표시 **≤ 16초**이고 **≥ 1초**일 때 `countdownSFX.ogg` **1회** 재생 (루프 아님)
+- **빨간 숫자:** 같은 임계값(16초 이하, **0 포함**)
+- **오염 경고 중:** `PollutantManager` → `PauseCountdown()` / 경고 종료 → `ResumeCountdown()` (SFX 재시작 없음)
+- 게임오버·패널티·회복(임계값 초과) 시 `StopCountdown()` + SFX 정지
+- 상세: [0614 합의](Assets/Docs/회의록/2026-06-14-시각미상-0614-일일-오후2100-2차-합의.md) · [0614 Bug §1~§2](Assets/Docs/Bug/2026-06-14-시각미상-0614-일일-오후2100-2차-fixes.md)
 
 ### 결과 연출·오대응 패널티 (`GameManager.cs`)
 
@@ -236,9 +247,10 @@ GameScene
 | `bgmVolume` / `bgmFadeDuration` | 타이틀·게임 BGM + 페이드 인/아웃 |
 | `neutralizationSfxVolume` | A~C 중화 루프 |
 | `valveSfxVolume` | 가스 밸브 루프 |
-| `sfxVolume` | 버튼·클리어·게임오버·스플래시 |
+| `sfxVolume` | 버튼·클리어·게임오버·스플래시·**사망 splatt** |
 | `stageBgmClips` | 스테이지별 탐사 BGM (`StageManager` / `bgmIndex`) |
 | `splashClip` | 스플래시 로고 SFX |
+| `dieSplattClip` | Die 애니 시작 시 1회 (`PlayDieSplattSfx`) — 게임오버 패널 SFX와 별도 |
 
 **씬별 BGM:** `TitleScene`만 자동 재생. `GameScene`은 **`StageManager.LoadStage`가 `bgmIndex`로 재생** (`OnSceneLoaded`에서 0번 강제 금지).  
 **싱글톤 클립:** 중복 `AudioManager` 파괴 시 `stageBgmClips` 병합 (`CopyStageBgmClipsIfNeeded`).  
@@ -286,19 +298,29 @@ GameScene
 - `protectionHp` → `Bg` (`5_7`) — `MidProject/UI/ImageOutline` + `ProtectionHpBar5_7Outline.mat`
 - 오염원 접촉 HP바(`pollutantHpSlider`)와 **별개**
 
+### 저장·이어하기 (`GameSaveManager.cs`)
+
+- **빌드:** `[exe 폴더]/Save/gamesave.json` — exe 옆 `Save/` (Documents 미사용)
+- **에디터 Play:** `%USERPROFILE%/Documents/HazmatRush_Save/gamesave.json`
+- 타이틀 **시작** 시 `SceneLoadManager.StartButton()` → `EnsureSaveDirectory()` (빌드 Save 폴더 생성)
+- **이어하기** 버튼: 저장 파일 있을 때만 표시 (`SceneLoadUI`)
+- 상세: [0614 Bug §4](Assets/Docs/Bug/2026-06-14-시각미상-0614-일일-오후2100-2차-fixes.md)
+
 ### 기타
 
 | 모듈 | 역할 |
 |------|------|
-| `AppBootstrap` | App 진입 · `runInBackground` · PC 창 모드 · 첫 씬(`SplashScene`) 로드 |
+| `AppBootstrap` | App 진입 · `runInBackground` · 첫 씬(`SplashScene`) 로드 |
 | `GameManager` | 클리어·게임오버·일시정지·`QuitGame` · 디버그 키 · 사망 시 `HidePollutantHpBar` |
-| `SceneLoadManager` | 씬 전환, `pendingStageIndex` |
+| `GameSaveManager` | 저장/로드 · 빌드 exe-local `Save/` |
+| `SceneLoadManager` | 씬 전환, `pendingStageIndex` · 시작 시 Save 폴더 보장 |
 | `SceneLoadUI` | 타이틀 시작/이어하기/타이틀 복귀 · `QuitApplication` |
-| `CameraAspectFit` | 게임 카메라 cover (창 리사이즈 여백 방지) |
-| `CanvasBackgroundCover` | 메뉴 씬 전체 화면 배경 cover |
+| `CameraAspectFit` | 게임 배경 **contain** (잘림 방지) · ortho size 고정 |
+| `CanvasBackgroundCover` | HUD 캔버스 **cover** (1280×720 등 비 16:9 리사이즈 보정) · 카메라 배경색 강제 변경 **없음** (스플래시 흰 배경 유지) |
 | `LoadingController` / `LoadingGuideTxt` | 페이드·플랜 준비·조작 안내 |
 | `Background` | 스크롤, 오염원 활성/구간 미완료 시 정지 |
 | `WorldSpaceUIFollower` | 오염원 HP 바 (캔버스 직속, 접촉 시만 표시) |
+| `Timer` | 제한 시간 HUD · 카운트다운 SFX · 경고 중 pause/resume |
 
 ---
 
@@ -306,7 +328,7 @@ GameScene
 
 | 스테이지 | 오염원 타입 | total | 제한 시간 |
 |----------|------------|-------|-----------|
-| 1-1 | B \| D | 2 | 120초 |
+| 1-1 | D | 2 | 120초 |
 | 1-2 | A \| B | 3 | 100초 |
 | 1-3 | A \| B \| C \| D | 4 | 80초 |
 
@@ -324,11 +346,12 @@ Assets/
 │   ├── TitleScene.unity
 │   ├── IntroStoryScene.unity
 │   ├── LoadingScene.unity
+│   ├── 5_TutorialScene.unity   ← 튜토리얼 (타이틀 TutorialButton)
 │   └── GameScene.unity
 ├── Scripts/
-│   ├── Core/          AppBootstrap, GameManager, SceneLoadManager, AudioManager, …
+│   ├── Core/          AppBootstrap, GameManager, GameSaveManager, SceneLoadManager, AudioManager, …
 │   ├── GamePlay/      Player, Pollutant, PollutantManager, Item, …
-│   └── UI/            GuideTxt, WarningTxt, VersionText, SplashController, …
+│   └── UI/            GuideTxt, WarningTxt, Timer, VersionText, SplashController, CanvasBackgroundCover, …
 ├── Shaders/           SpriteOutline, UIImageOutline
 ├── Materials/         Pollutant*Outline, ProtectionHpBar5_7Outline
 ├── Prefabs/Game/      Player, PollutantA~D
@@ -363,7 +386,9 @@ Assets/
 | **GameManager** | `clearAnimDelay`, `dieAnimDelay`, `clearSet`, `gameOverSet` |
 | **HUD_Canvas** | `HelpGuideToggle` — 패널 참조 |
 | **Player** Animator | `Clear` 트리거 → `Player_Clear` (Loop) |
-| **AudioManager** | `splashClip`, `squeakyValveClip`, 볼륨·페이드 설정 |
+| **AudioManager** | `splashClip`, `dieSplattClip`, `squeakyValveClip`, 볼륨·페이드 설정 |
+| **Timer** (HUD) | `countdownSFX`, `warningSfxStartSeconds`(16), `warningTextColor`(빨강) |
+| **HUD_Canvas** | `CanvasBackgroundCover` (1280 빌드 UI 보정) |
 | **ItemSelectManager** | `itemPrefabs` 5종 |
 | **SplashController** | `fadeToBlackDuration`, `logoCanvasGroup` |
 | **TitleSceneFade** | `fadeOutDuration` (타이틀→인트로 검정) |
@@ -388,7 +413,8 @@ Assets/
 
 **App · 전체 플로우**
 
-- [ ] `AppScene` Play → 스플래시 페이드인(0.65s, 흰)·SFX → 검정(0.35s) → 타이틀 BGM · 우하단 `v1.0`
+- [ ] `AppScene` Play → 스플래시 페이드인(0.65s, **흰 배경**)·SFX → 검정(0.35s) → 타이틀 BGM · 우하단 `v1.0`
+- [ ] 이어하기 — 저장 없으면 버튼 숨김 · 빌드는 exe 옆 `Save/gamesave.json`
 - [ ] 이어하기 시 Intro 생략 → 로딩 → 게임
 - [ ] Alt+Tab 후에도 앱 동작 (`runInBackground`)
 
@@ -406,7 +432,8 @@ Assets/
 - [ ] 가이드: 짧은 문구 `bg0` / Z·X 안내 `bg1` (겹침 없음)
 - [ ] 스테이지 전환 시 BGM `bgmIndex` 변경
 - [ ] 클리어: Clear 애니 2초 → 패널
-- [ ] 사망: Die 애니 2초 → 페이드 → 1초 여백 → 게임오버 패널 · 오염원 HP바 숨김
+- [ ] **타이머:** 16초 이하 빨간 숫자 + countdown SFX 1회 · 오염 경고 중 pause/resume
+- [ ] 사망: Die 애니 + **dieSplattSFX** → 2초 → 게임오버 패널 + game-overSFX · 오염원 HP바 숨김
 - [x] 가스 사망 시 밸브↔Die 애니 루프 없음 — [0610 Bug §5](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후2030-2차-fixes.md)
 - [x] 사망 Die → 페이드 → 1초 → 게임오버 패널 — [0610 Bug §8](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후2030-2차-fixes.md)
 - [ ] 클리어 별 **왼쪽부터** N개
@@ -415,7 +442,7 @@ Assets/
 - [ ] 같은 회복 아이템 재획득 → Count만 증가
 - [ ] `C`/`V` 회복 선택, `Space` 사용
 - [ ] 타이틀·일시정지 **종료하기** → Play 종료 / exe 닫힘
-- [ ] Windows 빌드 — 창 모드·exe 아이콘·`Hazmat Rush_Data` 동봉
+- [ ] Windows 빌드 — **1280×720** 창 모드 · exe 아이콘 · `Hazmat Rush_Data` 동봉 · HUD 하단 UI 위치
 
 ---
 
@@ -423,6 +450,7 @@ Assets/
 
 ### 완료
 
+- **2026-06-14 일일** (타이머 countdown SFX · dieSplatt · 1280×720 UI · 빌드 Save 경로 · 스플래시 흰 배경) — [회의록](Assets/Docs/회의록/2026-06-14-시각미상-0614-일일-오후2100-2차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-14-시각미상-0614-일일-오후2100-2차-fixes.md)
 - **2026-06-12 일일** (빌드 직전 · 종료 버튼 · PC 창 모드·리사이즈 HUD · 외부 QA 1차 7건 취합) — [회의록](Assets/Docs/회의록/2026-06-12-오후1700-0612-일일-오후1700-1차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-12-오후1700-0612-일일-오후1700-1차-fixes.md)
 - **2026-06-11 일일** (타이틀 버전 · 페이드 검정 · 외부 QA Formal `qa-B.html`) — [회의록](Assets/Docs/회의록/2026-06-11-오후1430-0611-일일-오후2100-2차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-11-오후1430-0611-일일-오후2100-2차-fixes.md)
 - **2026-06-10 일일** (스테이지 BGM · 가이드/경고 팝업 · 방호복 UI 아웃라인 · 가스 사망 HP바 · 맵 회복 스폰 폐기) — [회의록](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후2030-2차-fixes.md)
@@ -441,8 +469,11 @@ Assets/
 
 ### 미구현·보류
 
+- **창 크기 16:9 고정 / 해상도 프리셋 UI** (1920·1600·1280) — 논의만, 미구현
+- **`AppBootstrap.ForceWindowedOnPcBuild`** vs Player Settings 1280×720 — 정렬 필요 시 확인
+- **5_TutorialScene** Play·타이틀 TutorialButton — 🟡 미검증
 - **시계 HUD 중앙 배치** — 외부 QA 피드백 (Item Guide 겹침) · 목표 UI 아래로 이동 예정 ([0612 합의](Assets/Docs/회의록/2026-06-12-오후1700-0612-일일-오후1700-1차-합의.md))
-- **커스텀 커서 인게임 표시** — Player Settings 연결만 유지, 추가 작업 보류
+- **커스텀 커서** — Player Settings Default Cursor만 사용 (추가 작업 없음)
 - **가스(D) 사망 시 밸브↔Die 애니 루프** — HP바는 숨김 처리됨, 애니 반복은 미해결 ([0610 Bug §5](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후1830-1차-fixes.md))
 - App **PR2** 중복 매니저 제거 · **PR3** Additive 로딩 · **서버** 연동 (계획만)
 - 좌우 연타 가속 체감 (`Background.SmoothDamp`) — 분석만, 수정 보류
@@ -459,7 +490,9 @@ Assets/
 | [README.md](README.md) | 프로젝트 개요 (이 파일) |
 | [AGENTS.md](AGENTS.md) | AI·협업·코딩 규칙 |
 | [문서 하네스](Assets/Docs/문서-이름-규칙.md) | Bug/회의록 작성·당일 취합·5필드 파일명 |
-| [0612 일일 회의록](Assets/Docs/회의록/2026-06-12-오후1700-0612-일일-오후1700-1차-합의.md) | **최근** — 빌드 직전 · 종료 · 창 모드 · QA 1차 · 시계 UI |
+| [0614 일일 회의록](Assets/Docs/회의록/2026-06-14-시각미상-0614-일일-오후2100-2차-합의.md) | **최근** — 타이머 SFX · dieSplatt · 1280 UI · Save 경로 |
+| [0614 일일 Bug](Assets/Docs/Bug/2026-06-14-시각미상-0614-일일-오후2100-2차-fixes.md) | Timer · Audio · CanvasBackgroundCover · GameSaveManager |
+| [0612 일일 회의록](Assets/Docs/회의록/2026-06-12-오후1700-0612-일일-오후1700-1차-합의.md) | 빌드 직전 · 종료 · 창 모드 · QA 1차 · 시계 UI |
 | [0612 일일 Bug](Assets/Docs/Bug/2026-06-12-오후1700-0612-일일-오후1700-1차-fixes.md) | Popup · 재시작 인벤 · 창 모드 · 리사이즈 · QuitGame |
 | [외부 QA 피드백 (7건)](Assets/Docs/QA_Feedback/HazmatRush/) | PC v1.0 Formal 응답 원본 |
 | [0611 일일 회의록](Assets/Docs/회의록/2026-06-11-오후1430-0611-일일-오후2100-2차-합의.md) | 버전 · 페이드 · 외부 QA Formal · PC 빌드 배포 |
@@ -485,6 +518,7 @@ Assets/
 
 | 날짜 | 주요 내용 |
 |------|-----------|
+| 2026-06-14 | 타이머 countdown SFX(16s) · dieSplatt · 1280×720 HUD · 빌드 Save 경로 · 스플래시 흰 배경 — [회의록](Assets/Docs/회의록/2026-06-14-시각미상-0614-일일-오후2100-2차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-14-시각미상-0614-일일-오후2100-2차-fixes.md) |
 | 2026-06-12 | 종료 버튼 · PC 창 모드·리사이즈 HUD · 외부 QA 1차 7건 · 시계 UI 중앙(예정) — [회의록](Assets/Docs/회의록/2026-06-12-오후1700-0612-일일-오후1700-1차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-12-오후1700-0612-일일-오후1700-1차-fixes.md) |
 | 2026-06-11 | 타이틀 버전 · 페이드 검정 · 외부 QA `qa-B.html` · PC 빌드 배포 규칙 — [회의록](Assets/Docs/회의록/2026-06-11-오후1430-0611-일일-오후2100-2차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-11-오후1430-0611-일일-오후2100-2차-fixes.md) |
 | 2026-06-10 | 스테이지 BGM·가이드/경고 팝업·방호복 UI 아웃라인·가스 사망 HP바 — [회의록](Assets/Docs/회의록/2026-06-10-오후1430-0610-일일-오후1830-1차-합의.md) · [Bug](Assets/Docs/Bug/2026-06-10-오후1430-0610-일일-오후2030-2차-fixes.md) (밸브·사망 패널 2차) |
@@ -503,6 +537,7 @@ Assets/
 - 타입: `Item.ItemType`, `Pollutant.PollutantType`만 사용
 - `AudioManager`·`SceneLoadManager` — `DontDestroyOnLoad` (`AppScene` 또는 각 씬에서 최초 생성)
 - **Play 권장:** 빌드·QA는 `AppScene` · gameplay만 보면 `GameScene` 직접 Play 가능
+- **빌드 저장 테스트:** exe 폴더의 `Save/gamesave.json` 삭제 후 이어하기 버튼 숨김 확인 (Documents 아님)
 - 가이드 패널: 부모만 비활성, 자식은 활성 유지
 - `Library/`, `Temp/`, `Logs/` — Git·수정 대상 아님
 

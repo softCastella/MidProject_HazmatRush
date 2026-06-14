@@ -238,7 +238,7 @@ public class GameManager : MonoBehaviour
         if (recoveryInventoryUI != null)
             recoveryInventoryUI.SetAllDim(true);
         if (guideTxt != null)
-            guideTxt.ShowGuideImmediate(wrongItemPenaltyMessage);
+            guideTxt.ShowGuideImmediate(wrongItemPenaltyMessage, Color.red);
 
         Debug.Log("[GameManager] 오대응 패널티 시작 - 키·타이머 정지, 방호복 감소 유지");
 

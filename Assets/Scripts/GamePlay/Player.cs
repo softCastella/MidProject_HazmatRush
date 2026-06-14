@@ -635,6 +635,9 @@ public class Player : MonoBehaviour
         SetState(PlayerState.Die);
         SetValveAnimActive(false);
 
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlayDieSplattSfx();
+
         if (GameManager.Instance != null && !GameManager.Instance.IsGameOverPending)
             GameManager.Instance.BeginPlayerDeathSequence();
 

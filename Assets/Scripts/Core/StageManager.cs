@@ -113,7 +113,10 @@ public class StageManager : MonoBehaviour
 
         Timer timer = FindAnyObjectByType<Timer>();
         if (timer != null)
+        {
             timer.SetStartTime(data.timeLimitSeconds);
+            timer.StartCountdown();
+        }
 
         Background background = FindAnyObjectByType<Background>();
         if (background != null)

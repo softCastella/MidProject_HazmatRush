@@ -4,7 +4,7 @@
         "type": "protection",
         "displayName": "방호복회복",
         "effect": "protection",
-        "value": 10,
+        "value": 15,
         "invPrefab": "invProtectRecovPrefab",
         "mapPrefab": "mapProtectRecovPrefab"
     },
