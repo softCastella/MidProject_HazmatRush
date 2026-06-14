@@ -315,7 +315,7 @@ GameScene
 | `GameSaveManager` | 저장/로드 · 빌드 exe-local `Save/` |
 | `SceneLoadManager` | 씬 전환, `pendingStageIndex` · 시작 시 Save 폴더 보장 |
 | `SceneLoadUI` | 타이틀 시작/이어하기/타이틀 복귀 · `QuitApplication` |
-| `CameraAspectFit` | 게임 배경 **contain** (잘림 방지) · ortho size 고정 |
+| `CameraAspectFit` | 게임 배경 **cover** (풀창 좌우 검정 방지) · ortho size 고정 · HUD는 `CanvasBackgroundCover` 별도 |
 | `CanvasBackgroundCover` | HUD 캔버스 **cover** (1280×720 등 비 16:9 리사이즈 보정) · 카메라 배경색 강제 변경 **없음** (스플래시 흰 배경 유지) |
 | `LoadingController` / `LoadingGuideTxt` | 페이드·플랜 준비·조작 안내 |
 | `Background` | 스크롤, 오염원 활성/구간 미완료 시 정지 |
