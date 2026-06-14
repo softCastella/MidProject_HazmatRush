@@ -20,6 +20,8 @@ public class AudioManager : MonoBehaviour
     public AudioClip buttonClickClip;
     public AudioClip clearClip;
     public AudioClip gameOverClip;
+    [Tooltip("플레이어 사망 Die 애니 (dieSplattSFX)")]
+    public AudioClip dieSplattClip;
     public AudioClip neutralizationClip;
     [Tooltip("가스 밸브 잠금 (squeakyValveSFX)")]
     public AudioClip squeakyValveClip;
@@ -67,7 +69,7 @@ public class AudioManager : MonoBehaviour
         }
         else if (Instance != this)
         {
-            Instance.CopyClipsIfEmpty(titleBGM, gameBGM, buttonClickClip, clearClip, gameOverClip, neutralizationClip, squeakyValveClip, splashClip, stageBgmClips);
+            Instance.CopyClipsIfEmpty(titleBGM, gameBGM, buttonClickClip, clearClip, gameOverClip, dieSplattClip, neutralizationClip, squeakyValveClip, splashClip, stageBgmClips);
             Destroy(gameObject);
         }
     }
@@ -155,6 +157,11 @@ public class AudioManager : MonoBehaviour
     public void PlayGameOverSfx()
     {
         PlaySfx(gameOverClip, sfxVolume);
+    }
+
+    public void PlayDieSplattSfx()
+    {
+        PlaySfx(dieSplattClip, sfxVolume);
     }
 
     public void PlaySplashSfx()
@@ -336,7 +343,7 @@ public class AudioManager : MonoBehaviour
         bgmFadeRoutine = null;
     }
 
-    void CopyClipsIfEmpty(AudioClip title, AudioClip game, AudioClip buttonClick, AudioClip clear, AudioClip gameOver, AudioClip neutralization, AudioClip valve, AudioClip splash, AudioClip[] stageBgms)
+    void CopyClipsIfEmpty(AudioClip title, AudioClip game, AudioClip buttonClick, AudioClip clear, AudioClip gameOver, AudioClip dieSplatt, AudioClip neutralization, AudioClip valve, AudioClip splash, AudioClip[] stageBgms)
     {
         if (titleBGM == null && title != null)
             titleBGM = title;
@@ -348,6 +355,8 @@ public class AudioManager : MonoBehaviour
             clearClip = clear;
         if (gameOverClip == null && gameOver != null)
             gameOverClip = gameOver;
+        if (dieSplattClip == null && dieSplatt != null)
+            dieSplattClip = dieSplatt;
         if (neutralizationClip == null && neutralization != null)
             neutralizationClip = neutralization;
         if (squeakyValveClip == null && valve != null)

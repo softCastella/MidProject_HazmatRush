@@ -8,7 +8,7 @@ public class CameraAspectFit : MonoBehaviour
     [SerializeField] private float designAspectWidth = 1920f;
     [SerializeField] private float designAspectHeight = 1080f;
 
-    [Header("월드 배경 cover")]
+    [Header("월드 배경 fit")]
     [Tooltip("비우면 씬의 Background 컴포넌트를 찾습니다.")]
     [SerializeField] private Transform coverBackground;
     [SerializeField] private Vector2 coverDesignSize = new Vector2(1920f, 1080f);
@@ -44,18 +44,13 @@ public class CameraAspectFit : MonoBehaviour
         lastWidth = Screen.width;
         lastHeight = Screen.height;
 
-        float designAspect = designAspectWidth / designAspectHeight;
+        cam.orthographicSize = designOrthographicSize;
+
         float windowAspect = (float)Screen.width / Screen.height;
-
-        if (windowAspect >= designAspect)
-            cam.orthographicSize = designOrthographicSize;
-        else
-            cam.orthographicSize = designOrthographicSize * designAspect / windowAspect;
-
-        ApplyCoverBackground(windowAspect);
+        ApplyBackgroundFit(windowAspect);
     }
 
-    private void ApplyCoverBackground(float windowAspect)
+    private void ApplyBackgroundFit(float windowAspect)
     {
         if (coverBackground == null)
         {
@@ -69,7 +64,7 @@ public class CameraAspectFit : MonoBehaviour
 
         float visibleW = cam.orthographicSize * 2f * windowAspect;
         float visibleH = cam.orthographicSize * 2f;
-        float mult = Mathf.Max(visibleW / coverDesignSize.x, visibleH / coverDesignSize.y);
+        float mult = Mathf.Min(visibleW / coverDesignSize.x, visibleH / coverDesignSize.y);
 
         coverBackground.localScale = new Vector3(
             coverDesignSize.x * mult,

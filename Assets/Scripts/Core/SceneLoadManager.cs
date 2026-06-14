@@ -34,6 +34,8 @@ public class SceneLoadManager : MonoBehaviour
 
     public void StartButton()
     {
+        GameSaveManager.EnsureSaveDirectory();
+
         pendingStageIndex = 0;
         nextSceneName = gameSceneName;
 

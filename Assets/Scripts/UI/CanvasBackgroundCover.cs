@@ -1,19 +1,23 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 [DefaultExecutionOrder(100)]
 [RequireComponent(typeof(RectTransform))]
+[RequireComponent(typeof(CanvasScaler))]
 public class CanvasBackgroundCover : MonoBehaviour
 {
     [SerializeField] private float designWidth = 1920f;
     [SerializeField] private float designHeight = 1080f;
 
     private RectTransform canvasRect;
+    private CanvasScaler canvasScaler;
     private int lastWidth;
     private int lastHeight;
 
     void Awake()
     {
         canvasRect = GetComponent<RectTransform>();
+        canvasScaler = GetComponent<CanvasScaler>();
         Apply();
     }
 
@@ -41,18 +45,66 @@ public class CanvasBackgroundCover : MonoBehaviour
         if (Screen.width <= 0 || Screen.height <= 0)
             return;
 
-        // Canvas Scaler(Match Width) 기준 논리 크기 — rect가 0인 첫 프레임에도 동작
-        float windowAspect = (float)Screen.width / Screen.height;
-        float parentW = designWidth;
-        float parentH = designWidth / windowAspect;
-        float designAspect = designWidth / designHeight;
+        ApplyDynamicReferenceResolution();
 
-        Camera cam = Camera.main;
-        if (cam != null)
-            cam.backgroundColor = Color.black;
+        float parentW;
+        float parentH;
+        GetCanvasLogicalSize(out parentW, out parentH);
+
+        float windowAspect = (float)Screen.width / Screen.height;
+        float designAspect = designWidth / designHeight;
 
         CoverIfFound(parentW, parentH, designAspect, windowAspect, FindChild(canvasRect, "Bg"));
         CoverIfFound(parentW, parentH, designAspect, windowAspect, FindChild(canvasRect, "TitleImage"));
+    }
+
+    private void ApplyDynamicReferenceResolution()
+    {
+        if (canvasScaler == null || canvasScaler.uiScaleMode != CanvasScaler.ScaleMode.ScaleWithScreenSize)
+            return;
+
+        canvasScaler.matchWidthOrHeight = 0f;
+
+        float screenAspect = (float)Screen.width / Screen.height;
+        float designAspect = designWidth / designHeight;
+
+        // 세로가 긴 화면: 가로 기준 스케일 + reference 높이만 늘려 하단 UI가 화면 밑에 붙음
+        if (screenAspect < designAspect)
+            canvasScaler.referenceResolution = new Vector2(designWidth, designWidth / screenAspect);
+        else
+            canvasScaler.referenceResolution = new Vector2(designWidth, designHeight);
+    }
+
+    private void GetCanvasLogicalSize(out float parentW, out float parentH)
+    {
+        parentW = designWidth;
+        parentH = designHeight;
+
+        if (canvasScaler != null && canvasScaler.uiScaleMode == CanvasScaler.ScaleMode.ScaleWithScreenSize)
+        {
+            Vector2 refRes = canvasScaler.referenceResolution;
+            float scaleW = Screen.width / refRes.x;
+            float scaleH = Screen.height / refRes.y;
+            float scale = Mathf.Lerp(scaleW, scaleH, canvasScaler.matchWidthOrHeight);
+            if (scale > 0f)
+            {
+                parentW = Screen.width / scale;
+                parentH = Screen.height / scale;
+                return;
+            }
+        }
+
+        Rect rect = canvasRect.rect;
+        if (rect.width > 1f && rect.height > 1f)
+        {
+            parentW = rect.width;
+            parentH = rect.height;
+            return;
+        }
+
+        float windowAspect = (float)Screen.width / Screen.height;
+        parentH = designHeight;
+        parentW = parentH * windowAspect;
     }
 
     private static RectTransform FindChild(RectTransform root, string childName)

@@ -515,7 +515,7 @@ public class PollutantManager : MonoBehaviour
         }
 
         if (timer != null)
-            timer.StopCountdown();
+            timer.PauseCountdown();
 
         if (player != null)
             player.canMove = false;
@@ -556,7 +556,7 @@ public class PollutantManager : MonoBehaviour
                 if (player != null)
                     player.canMove = true;
                 if (timer != null)
-                    timer.isRunning = true;
+                    timer.ResumeCountdown();
             }
             awaitingSpawn = false;
             yield break;
@@ -601,7 +601,7 @@ public class PollutantManager : MonoBehaviour
             if (player != null)
                 player.canMove = true;
             if (timer != null)
-                timer.isRunning = true;
+                timer.ResumeCountdown();
         }
 
         moveTime = 0f;
