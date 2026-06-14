@@ -64,7 +64,8 @@ public class CameraAspectFit : MonoBehaviour
 
         float visibleW = cam.orthographicSize * 2f * windowAspect;
         float visibleH = cam.orthographicSize * 2f;
-        float mult = Mathf.Min(visibleW / coverDesignSize.x, visibleH / coverDesignSize.y);
+        // cover: 화면 전체 채움(가로·세로 잘릴 수 있음). contain(Min)은 16:9보다 넓은 풀창에서 좌우 검정 여백.
+        float mult = Mathf.Max(visibleW / coverDesignSize.x, visibleH / coverDesignSize.y);
 
         coverBackground.localScale = new Vector3(
             coverDesignSize.x * mult,
