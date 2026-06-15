@@ -552,8 +552,8 @@ Assets/
 
 | 구분 | 요약 |
 |------|------|
-| 폰트 | Galmuri · TMP LiberationSans · Layer Lab Tilt Warp (OFL) |
-| VFX | Cartoon FX Remaster FREE (JMO) — 중화·가스 연기 |
+| 폰트 | Galmuri11 눈누 |
+| VFX | Cartoon FX Remaster FREE (JMO) — 중화·가스 연기 unity asset store |
 | BGM | SUNO 생성 (타이틀·스테이지) |
-| SFX | freesound.org · BoostSound(YouTube) · 팀 녹음/편집 |
-| UI | Layer Lab 버튼 팩 · 팀 제작 HUD 스프라이트 시트 |
+| SFX | freesound.org · BoostSound(YouTube) · Pixabay  |
+| UI | Layer Lab 버튼 팩 · 팀 제작 HUD 스프라이트 시트 unity asset sotre |
