@@ -540,7 +540,7 @@ GameObject:
   m_Component:
   - component: {fileID: 90278092}
   m_Layer: 5
-  m_Name: KeyGuidePannel
+  m_Name: KeyGuidePanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9869,7 +9869,7 @@ GameObject:
   - component: {fileID: 1259755409}
   - component: {fileID: 1259755408}
   m_Layer: 5
-  m_Name: Pannel
+  m_Name: Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12120,7 +12120,7 @@ GameObject:
   - component: {fileID: 1642791199}
   - component: {fileID: 1642791198}
   m_Layer: 5
-  m_Name: Pannel (1)
+  m_Name: Panel (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12857,7 +12857,7 @@ GameObject:
   - component: {fileID: 1749281863}
   - component: {fileID: 1749281862}
   m_Layer: 5
-  m_Name: Pannel (1)
+  m_Name: Panel (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14945,7 +14945,7 @@ GameObject:
   - component: {fileID: 2004574510}
   - component: {fileID: 2004574509}
   m_Layer: 5
-  m_Name: Pannel
+  m_Name: Panel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -49,9 +49,11 @@ public class HelpGuideToggle : MonoBehaviour
     private void ResolvePanels()
     {
         if (keyGuidePanel == null)
+            keyGuidePanel = FindPanel("KeyGuidePanel");
+        if (keyGuidePanel == null)
             keyGuidePanel = FindPanel("KeyGuidePannel");
         if (itemGuidePanel == null)
-            itemGuidePanel = FindPanel("ItemGuidePannel");
+            itemGuidePanel = FindPanel("ItemGuide");
         if (itemGuidePanel == null)
             itemGuidePanel = FindPanel("ItemGuide");
     }

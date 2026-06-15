@@ -1,0 +1,1959 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>중간 팀프로젝트 사전 기획서 제출</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #08090A;
+      --surface: #101113;
+      --surface-2: #16171A;
+      --surface-hover: #1C1D20;
+      --border: rgba(255, 255, 255, 0.07);
+      --border-strong: rgba(255, 255, 255, 0.12);
+      --text: #F7F8F8;
+      --text-secondary: #8A8F98;
+      --text-tertiary: #62666D;
+      --accent: #5E6AD2;
+      --accent-hover: #7B85E0;
+      --accent-soft: rgba(94, 106, 210, 0.12);
+      --accent-border: rgba(94, 106, 210, 0.28);
+      --warn: #E2A03F;
+      --warn-soft: rgba(226, 160, 63, 0.10);
+      --warn-border: rgba(226, 160, 63, 0.28);
+      --danger: #EB5757;
+      --danger-soft: rgba(235, 87, 87, 0.10);
+      --danger-border: rgba(235, 87, 87, 0.28);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Inter", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      letter-spacing: -0.005em;
+    }
+
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 56px 28px 96px;
+    }
+
+    /* ===== Toolbar ===== */
+    .toolbar {
+      position: sticky;
+      top: 16px;
+      z-index: 20;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding: 8px;
+      background: rgba(8, 9, 10, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 13px;
+      border-radius: 6px;
+      border: 1px solid var(--border-strong);
+      background: var(--surface);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.1s, border-color 0.1s, color 0.1s;
+    }
+
+    .btn:hover {
+      background: var(--surface-hover);
+      border-color: var(--text-tertiary);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+      color: #fff;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--text-secondary);
+    }
+
+    .btn-ghost:hover {
+      background: var(--surface);
+      color: var(--text);
+    }
+
+    /* ===== Hero ===== */
+    .hero {
+      padding: 0 0 32px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 32px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid var(--accent-border);
+      border-radius: 999px;
+      padding: 4px 10px;
+      margin-bottom: 18px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+
+    .hero h1 {
+      margin: 0 0 14px;
+      font-size: 32px;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+    }
+
+    .header-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .header-field {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 8px;
+      padding: 10px 14px;
+    }
+
+    .header-field .label {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+
+    .header-field .input {
+      font-size: 15px;
+      font-weight: 500;
+      min-height: 22px;
+    }
+
+    .submit-date {
+      margin-top: 10px;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    /* ===== Section ===== */
+    .section {
+      padding: 28px 0 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .section:last-of-type { border-bottom: none; }
+
+    .section h2 {
+      margin: 0 0 6px;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .section-desc {
+      color: var(--text-secondary);
+      margin: 0 0 18px;
+      font-size: 13.5px;
+    }
+
+    .section h3 {
+      margin: 24px 0 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* ===== Editable fields ===== */
+    [contenteditable="true"] {
+      outline: none;
+      border-radius: 4px;
+      padding: 2px 4px;
+      margin: -2px -4px;
+      transition: background 0.1s, box-shadow 0.1s;
+      min-width: 20px;
+      cursor: text;
+      white-space: pre-wrap;
+    }
+
+    [contenteditable="true"]:hover {
+      background: var(--surface-hover);
+    }
+
+    [contenteditable="true"]:focus {
+      background: var(--surface-hover);
+      box-shadow: inset 0 0 0 1px var(--accent-border);
+    }
+
+    [contenteditable="true"]:empty::before {
+      content: attr(data-placeholder);
+      color: var(--text-tertiary);
+      pointer-events: none;
+    }
+
+    .multiline {
+      display: block;
+      min-height: 22px;
+    }
+
+    /* ===== Tables ===== */
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 12px 0;
+      font-size: 13.5px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--surface);
+    }
+
+    th, td {
+      padding: 10px 14px;
+      vertical-align: top;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+
+    th {
+      background: var(--surface-2);
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .def-table th {
+      width: 160px;
+      background: var(--surface-2);
+      color: var(--text-secondary);
+      text-transform: none;
+      letter-spacing: 0;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    td.mono {
+      font-variant-numeric: tabular-nums;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 1px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      border: 1px solid var(--border-strong);
+      color: var(--text-secondary);
+      background: var(--surface-2);
+      font-variant-numeric: tabular-nums;
+      margin-right: 2px;
+    }
+
+    .pill.day { color: var(--text-tertiary); }
+
+    /* Row delete column */
+    .col-del { width: 36px; text-align: center; padding: 6px; }
+    .row-del {
+      background: transparent;
+      border: 1px solid var(--border-strong);
+      color: var(--text-tertiary);
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      cursor: pointer;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      line-height: 1;
+    }
+    .row-del:hover {
+      color: var(--danger);
+      border-color: var(--danger-border);
+      background: var(--danger-soft);
+    }
+
+    .table-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: -4px;
+      margin-bottom: 8px;
+    }
+
+    /* ===== Callouts ===== */
+    .callout {
+      display: flex;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      margin: 14px 0;
+      font-size: 13.5px;
+    }
+
+    .callout-icon {
+      flex-shrink: 0;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      margin-top: 5px;
+    }
+
+    .warning { border-color: var(--warn-border); background: var(--warn-soft); }
+    .warning .callout-icon { background: var(--warn); }
+
+    .small {
+      color: var(--text-tertiary);
+      font-size: 12px;
+      margin-top: 32px;
+    }
+
+    /* ===== Diagram ===== */
+    .diagram-card {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 8px;
+      margin: 14px 0;
+      overflow: hidden;
+    }
+
+    .diagram-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface-2);
+    }
+
+    .diagram-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .diagram-hint {
+      font-size: 11.5px;
+      color: var(--text-tertiary);
+    }
+
+    .diagram-body {
+      padding: 0;
+      min-height: 520px;
+      height: 520px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .diagram-body img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .diagram-empty,
+    .diagram-error {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-tertiary);
+      font-size: 13px;
+      text-align: center;
+      padding: 12px;
+      pointer-events: none;
+    }
+
+    /* ===== Role badge ===== */
+    .role-badge {
+      display: inline-flex;
+      align-items: center;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--accent);
+      color: #fff;
+      margin-right: 6px;
+      vertical-align: middle;
+      user-select: none;
+    }
+    #roles-body tr:not(:first-child) .role-badge {
+      display: none;
+    }
+    #roles-body tr:first-child td:first-child {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    #roles-body tr:first-child td:first-child .role-badge {
+      margin-right: 0;
+    }
+
+    /* ===== Export mode ===== */
+    body.exporting .no-export { display: none !important; }
+    body.exporting [contenteditable]:empty::before { content: ""; }
+    body.exporting [contenteditable="true"] {
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+    body.exporting .row-del { display: none; }
+    body.exporting .col-del { display: none; }
+
+    /* ===== Toast ===== */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--surface);
+      border: 1px solid var(--accent-border);
+      color: var(--text);
+      padding: 12px 18px;
+      border-radius: 10px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+      font-size: 13px;
+      opacity: 0;
+      transition: opacity 0.2s, transform 0.2s;
+      z-index: 100;
+      pointer-events: none;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 780px) {
+      .page { padding: 36px 18px 64px; }
+      .hero h1 { font-size: 26px; }
+      .header-fields { grid-template-columns: 1fr; }
+      .def-table th { width: 110px; }
+      table { font-size: 12.5px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page" id="capture-root">
+    <!-- ===== Toolbar (excluded from export) ===== -->
+    <div class="toolbar no-export">
+      <button class="btn btn-ghost" onclick="loadJSON()">JSON 불러오기</button>
+      <button class="btn btn-ghost" onclick="saveJSON()">저장</button>
+      <button class="btn btn-ghost" onclick="window.print()">인쇄</button>
+      <button class="btn btn-ghost" onclick="resetForm()">초기화</button>
+      <button class="btn btn-ghost" onclick="exportDOCX()">Word로 저장</button>
+      <button class="btn btn-primary" onclick="exportPDF()">
+        <span>PDF로 내보내기</span>
+      </button>
+    </div>
+
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <span class="eyebrow">Student Submission</span>
+      <h1>중간 팀프로젝트 사전 기획서</h1>
+      <div class="submit-date">제출일 · 2026-06-15 (일)</div>
+
+      <div class="header-fields">
+        <div class="header-field">
+          <div class="label">팀명</div>
+          <div class="input" contenteditable="true" id="team-name" data-placeholder="예: 1팀"></div>
+        </div>
+        <div class="header-field">
+          <div class="label">프로젝트명</div>
+          <div class="input" contenteditable="true" id="project-name" data-placeholder="예: 던전 디펜스 프로토타입"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 00. Environment ===== -->
+    <section class="section">
+      <h2>00 · 프로젝트 환경</h2>
+      <p class="section-desc">팀 전체가 같은 환경에서 작업하기 위한 합의 사항. 5/27 작업 시작 전까지 팀원 PC 환경이 일치해야 합니다.</p>
+
+      <table class="def-table">
+        <tbody>
+          <tr>
+            <th>Unity 버전</th>
+            <td><span contenteditable="true" data-key="env-unity" data-placeholder="예: Unity 6000.4.1f1 (LTS)"></span></td>
+          </tr>
+          <tr>
+            <th>Git Repository</th>
+            <td><span contenteditable="true" data-key="env-git" data-placeholder="예: github.com/team/project · main 보호, feature/* 브랜치 PR 머지"></span></td>
+          </tr>
+          <tr>
+            <th>협업 도구</th>
+            <td><span contenteditable="true" data-key="env-tools" data-placeholder="예: Discord (진행 공유), Notion (이슈 보드)"></span></td>
+          </tr>
+          <tr>
+            <th>참고 게임</th>
+            <td><span contenteditable="true" data-key="env-refs" data-placeholder="예: Vampire Survivors, Brotato, PvZ"></span></td>
+          </tr>
+          <tr>
+            <th>사용 에셋 출처</th>
+            <td><span class="multiline" contenteditable="true" data-key="env-assets" data-placeholder="예: Unity Asset Store 무료 에셋, Kenney.nl 도트, 자체 제작 SFX&#10;(출처 명시 필수)"></span></td>
+          </tr>
+          <tr>
+            <th>조작법</th>
+            <td><span class="multiline" contenteditable="true" data-key="env-controls" data-placeholder="예: WASD 이동, 마우스 좌클릭 발사, ESC 일시정지, R 재시작"></span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ===== 01. Scope ===== -->
+    <section class="section">
+      <h2>01 · 최종 목표 범위</h2>
+      <p class="section-desc">이번 프로젝트에서 어디까지 만들 것인지 명확히 작성합니다.</p>
+
+      <table class="def-table">
+        <tbody>
+          <tr>
+            <th>게임 제목</th>
+            <td><span contenteditable="true" data-key="scope-title" data-placeholder="예: 던전 디펜스 프로토타입"></span></td>
+          </tr>
+          <tr>
+            <th>게임 장르</th>
+            <td><span contenteditable="true" data-key="scope-genre" data-placeholder="예: 2D 탑다운 + 슈팅"></span></td>
+          </tr>
+          <tr>
+            <th>대상 플랫폼</th>
+            <td><span contenteditable="true" data-key="scope-platform" data-placeholder="예: PC (Windows Standalone), 1920×1080"></span></td>
+          </tr>
+          <tr>
+            <th>한 줄 설명</th>
+            <td><span contenteditable="true" data-key="scope-oneliner" data-placeholder="게임을 한 줄로 표현"></span></td>
+          </tr>
+          <tr>
+            <th>최종 목표</th>
+            <td><span class="multiline" contenteditable="true" data-key="scope-goal" data-placeholder="발표 시 어디까지 보여줄 것인지"></span></td>
+          </tr>
+          <tr>
+            <th>반드시 구현할 기능</th>
+            <td><span class="multiline" contenteditable="true" data-key="scope-musthave" data-placeholder="줄바꿈으로 항목 구분 — 예:&#10;타이틀 화면&#10;플레이어 이동&#10;성공/실패 조건"></span></td>
+          </tr>
+          <tr>
+            <th>가능하면 추가할 기능</th>
+            <td><span class="multiline" contenteditable="true" data-key="scope-nice" data-placeholder="여유가 있으면 넣을 기능"></span></td>
+          </tr>
+          <tr>
+            <th>구현하지 않을 기능</th>
+            <td><span class="multiline" contenteditable="true" data-key="scope-outscope" data-placeholder="이번 프로젝트 범위에서 제외할 기능"></span></td>
+          </tr>
+          <tr>
+            <th>최종 발표 플레이 흐름</th>
+            <td><span class="multiline" contenteditable="true" data-key="scope-playflow" data-placeholder="예: 타이틀 → 게임 시작 → 필드 이동 → 전투 → 결과 화면"></span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>예상 리스크 / 우려 기능</h3>
+      <table class="def-table">
+        <tbody>
+          <tr>
+            <th>가장 구현하기 어려울 것 같은 기능</th>
+            <td><span class="multiline" contenteditable="true" data-key="risk-feature" data-placeholder="예: 씬 간 데이터 전달 (점수·HP 유지) — 팀원마다 구조를 다르게 짜면 머지 충돌 위험"></span></td>
+          </tr>
+          <tr>
+            <th>해결 방법 아이디어 또는 대안</th>
+            <td><span class="multiline" contenteditable="true" data-key="risk-solution" data-placeholder="예: 팀장이 GameManager 뼈대를 먼저 작성하고 팀원이 참조하도록 합의 · 대안으로 씬 전환 없이 GameScene 단일 씬으로 범위 축소"></span></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ===== 02. Scenes ===== -->
+    <section class="section">
+      <h2>02 · 씬 구성 및 플레이 시나리오</h2>
+      <p class="section-desc">어떤 씬이 있고, 플레이어가 어떤 순서로 게임을 진행하는지 작성합니다.</p>
+
+      <h3>씬 목록</h3>
+      <table id="scenes-table">
+        <thead>
+          <tr>
+            <th style="width:180px;">씬 이름</th>
+            <th>역할</th>
+            <th class="col-del no-export"></th>
+          </tr>
+        </thead>
+        <tbody id="scenes-body">
+          <!-- rows added by JS -->
+        </tbody>
+      </table>
+      <div class="table-actions no-export">
+        <button class="btn" onclick="addSceneRow()">+ 행 추가</button>
+      </div>
+
+      <h3>씬 이동 순서 (코어 루프)</h3>
+      <p class="section-desc" style="margin-top:-4px;">반복되는 흐름(예: ResultScene → GameScene 재시도, ResultScene → TitleScene 복귀)이 있다면 행을 추가해서 표현합니다. 기본 5행은 예시이며, 팀 컨셉(무한 루프형·스테이지 기반 등)에 맞게 자유롭게 수정하세요.</p>
+      <table id="transitions-table">
+        <thead>
+          <tr>
+            <th style="width:160px;">현재 씬</th>
+            <th>트리거 / 조건</th>
+            <th style="width:160px;">다음 씬</th>
+            <th class="col-del no-export"></th>
+          </tr>
+        </thead>
+        <tbody id="transitions-body">
+          <!-- rows added by JS -->
+        </tbody>
+      </table>
+      <div class="table-actions no-export">
+        <button class="btn" onclick="addTransitionRow()">+ 행 추가</button>
+      </div>
+
+      <div class="diagram-card">
+        <div class="diagram-header">
+          <div class="diagram-title">코어 루프 다이어그램</div>
+          <div class="diagram-hint no-export">표가 바뀌면 자동 갱신됩니다</div>
+        </div>
+        <div class="diagram-body" id="diagram-container">
+          <div class="diagram-empty">다이어그램을 렌더링하는 중…</div>
+        </div>
+      </div>
+
+      <h3>플레이 시나리오</h3>
+      <div contenteditable="true" data-key="scenario" data-placeholder="플레이어가 어떤 순서로 게임을 경험하는지 설명" style="padding:10px 14px; background:var(--surface); border:1px solid var(--border); border-radius:8px; margin: 6px 0; min-height: 60px;"></div>
+
+      <h3>성공 조건 / 실패 조건</h3>
+      <table class="def-table">
+        <tbody>
+          <tr>
+            <th>성공 조건</th>
+            <td><span class="multiline" contenteditable="true" data-key="win-cond" data-placeholder="어떤 상태가 되면 클리어인가"></span></td>
+          </tr>
+          <tr>
+            <th>실패 조건</th>
+            <td><span class="multiline" contenteditable="true" data-key="lose-cond" data-placeholder="어떤 상태가 되면 실패인가"></span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>사운드 계획</h3>
+      <p class="section-desc" style="margin-top:-4px;">어느 씬·상황에서 어떤 사운드가 재생될지 정리합니다. 사운드를 사용하지 않을 경우 해당 행을 삭제하거나 "없음"으로 작성하세요.</p>
+      <table id="sounds-table">
+        <thead>
+          <tr>
+            <th style="width:160px;">씬 / 상황</th>
+            <th style="width:90px;">BGM · SFX</th>
+            <th>재생 조건 및 파일명</th>
+            <th class="col-del no-export"></th>
+          </tr>
+        </thead>
+        <tbody id="sounds-body">
+          <!-- rows added by JS -->
+        </tbody>
+      </table>
+      <div class="table-actions no-export">
+        <button class="btn" onclick="addSoundRow()">+ 행 추가</button>
+      </div>
+
+      <h3>연출 계획</h3>
+      <p class="section-desc" style="margin-top:-4px;">씬 전환, 히트 이펙트, UI 애니메이션 등 시각적 연출을 정리합니다. 연출이 없으면 해당 행을 삭제하세요.</p>
+      <table id="effects-table">
+        <thead>
+          <tr>
+            <th style="width:160px;">씬 / 상황</th>
+            <th style="width:140px;">연출 종류</th>
+            <th>내용</th>
+            <th class="col-del no-export"></th>
+          </tr>
+        </thead>
+        <tbody id="effects-body">
+          <!-- rows added by JS -->
+        </tbody>
+      </table>
+      <div class="table-actions no-export">
+        <button class="btn" onclick="addEffectRow()">+ 행 추가</button>
+      </div>
+    </section>
+
+    <!-- ===== 03. Roles ===== -->
+    <section class="section">
+      <h2>03 · 역할 분담</h2>
+      <p class="section-desc">각 팀원이 무엇을 맡고, 어디까지 구현해야 하는지 작성합니다. "도와준다"가 아니라 "무엇을 완성한다"로 작성합니다. <strong style="color:var(--text);">표의 첫 행이 팀장입니다</strong> (자동 배지 표시 · 일정 관리·머지 책임·발표 총괄). 1인 분량이 너무 작으면 후속 작업(밸런싱·이펙트·테스트)을 묶어서 할당하세요.</p>
+
+      <table id="roles-table">
+        <thead>
+          <tr>
+            <th style="width:88px;">이름</th>
+            <th style="width:140px;">담당 파트</th>
+            <th>구현할 기능</th>
+            <th>완료 기준</th>
+            <th>산출물</th>
+            <th class="col-del no-export"></th>
+          </tr>
+        </thead>
+        <tbody id="roles-body">
+          <!-- rows added by JS -->
+        </tbody>
+      </table>
+      <div class="table-actions no-export">
+        <button class="btn" onclick="addRoleRow()">+ 행 추가</button>
+      </div>
+    </section>
+
+    <!-- ===== 04. Schedule ===== -->
+    <section class="section">
+      <h2>04 · 일정</h2>
+      <p class="section-desc">2026-05-27부터 2026-06-16까지 무엇을 언제까지 할지 작성합니다. 날짜는 고정, 내용은 자유롭게 수정 가능합니다.</p>
+
+      <div class="callout warning">
+        <span class="callout-icon"></span>
+        <span>6월 8일 이후에는 새 기능 추가를 중단하고, 병합, 오류 수정, UI 정리, 발표 준비에 집중합니다.</span>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th style="width:160px;">날짜</th>
+            <th>작업 내용</th>
+            <th>목표 산출물</th>
+          </tr>
+        </thead>
+        <tbody id="schedule-body">
+          <!-- rows added by JS -->
+        </tbody>
+      </table>
+    </section>
+
+    <p class="small">중간 팀프로젝트 사전 기획서 · 제출일 2026-05-26</p>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="https://unpkg.com/cytoscape@3.30.4/dist/cytoscape.min.js"></script>
+  <script src="https://unpkg.com/dagre@0.8.5/dist/dagre.min.js"></script>
+  <script src="https://unpkg.com/cytoscape-dagre@2.5.0/cytoscape-dagre.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script id="bundled-plan-json" type="application/json">
+{
+  "version": 1,
+  "savedAt": "2026-06-15T12:00:00.000Z",
+  "fields": {
+    "teamName": "진영(개인)",
+    "projectName": "Hazmat Rush",
+    "env-unity": "Unity 6000.4.8f1 (URP 17.4.0)",
+    "env-git": "Git (origin/master · YYMMDD_기능 브랜치 + PR) · worktree 병행\n상세: Assets/Docs/2026-06-08-시각미상-git-workflow-worktree.md",
+    "env-tools": "Trello (진행·버그), Cursor (AI 협업), Unity Editor, 카페 게시물",
+    "env-refs": "Purify (Steam) — 오염 탐지·중화 횡스크롤 레퍼런스",
+    "env-assets": "통합 목록: Assets/Docs/CREDITS.md\nUI — Layer Lab GUI-BasicButtonPack, itch.io, 팀 제작(HudIconSheet_*)\n사운드 — SUNO (Title/Game BGM), YouTube BoostSound, freesound.org\nVFX — Cartoon FX Remaster FREE (JMO · CFXR Electrified 3)\n폰트 — Galmuri, TextMesh Pro (LiberationSans OFL)",
+    "env-controls": "이동: A/D, ←/→\n중화 아이템: Z(이전), X(다음)\n회복 인벤: C/V 선택, Space 사용\n가이드: K(키 가이드), I(아이템 가이드)\n일시정지: ESC · 타이틀/일시정지 종료하기: Application.Quit\n디버그: F1 강제 클리어, F2 강제 게임오버, F3/F4 세이브 확인",
+    "scope-title": "Hazmat Rush (해즈멧러쉬)",
+    "scope-genre": "2D 횡스크롤 오염 대응 게임",
+    "scope-platform": "PC (Windows Standalone), 1280×720 창 모드, 리사이즈 가능 (Player Settings)",
+    "scope-oneliner": "화학 공장 사고 현장에서 방호복을 유지하며 오염원 유형에 맞는 도구로 중화하는 게임",
+    "scope-goal": "발표 시 AppScene부터 전체 플로우(스플래시→타이틀→인트로→로딩→게임) 시연 · 스테이지 1-1~1-3 플레이 · 클리어/게임오버·별점·회복 인벤·가스(D) 밸브 연출까지 확인",
+    "scope-musthave": "[씬·플로우 — 완료]\nAppScene → SplashScene → TitleScene → IntroStoryScene → LoadingScene → GameScene\n이어하기(인트로 생략), 세이브/로드(gamesave.json)\n\n[게임씬 — 완료]\n배경 UV 스크롤 · 플레이어 이동(FixedUpdate) · 1차 구간(-785~-403) 후 맵 해제\n오염원 경고→등장→팝업 · A~C/D 타입별 접촉·중화 · 정답만 오염원 HP·VFX\n방호복·오염원 HP 실시간 감소 · 접촉 해제 시 오염원 HP 초기화\nZ/X 아이템 선택 유지 · 틀린 아이템 2초 패널티\n맵 구간(mapPollutants) · 스테이지 3종(stage_data.json)\n타임어택 · 클리어/사망 Die·Clear 애니 2초 후 결과 HUD 패널\n일시정지(ESC) · K/I HUD 가이드\n\n[회복 시스템 — 완료]\n오염원 정화 시 회복 아이템 확률 드랍(아크 연출) · C/V/Space 인벤",
+    "scope-nice": "[대부분 완료]\n멀티 스테이지(3스테이지) · 로딩 프리스폰 · 스테이지별 BGM/배경\n중화 VFX(CFXR) · 밸브 SFX · 스플래시·씬 페이드(검정 통일)\n오염원 등장 화살표(A~C) · 방호복 HUD 아웃라인 · 타이틀 버전 표시\nPC 창 모드·종료 버튼 · 외부 QA 1차 7건 취합 · CREDITS.md\n\n[남은 polish]\n시계 HUD 중앙 배치(Item Guide 겹침 해소)\n회복 인벤 6종+ Scroll 실검증\n가스(D) 사망 시 밸브↔Die 애니 루프 잔여 이슈",
+    "scope-outscope": "서버 연동 · Additive 씬 로딩 · App PR2 중복 매니저 제거 · 맵 포인트 회복 스폰(폐기 확정) · 커스텀 커서 인게임 표시(보류) · 별도 ResultScene(결과는 GameScene HUD 패널)",
+    "scope-playflow": "AppScene → Splash(페이드인 0.65s) → Title(BGM) → [시작] Intro(스크롤) → Loading(스폰 확정·조작 안내) → GameScene\n[이어하기] Title → Loading → GameScene\nGameScene 내: 가이드 → 이동·경고 → 오염원 등장·접촉·중화 → 맵/스테이지 전환 → ClearSet/GameOverSet(HUD 패널, 별도 씬 아님)",
+    "risk-feature": "플레이어·오염원 접촉 판정(고속 이동 시 Stay 누락), 정답/오답에 따른 VFX·HP 분기, D(가스)와 A~C 경로 이원화 시 회귀 버그",
+    "risk-solution": "회의록 §4 표준 모델 고정(OnTriggerStay 단일 데미지 경로) · LateUpdate bounds 보정 · Pollutant/Player 수정 전 Bug·회의록 체크리스트 검증 · AI 수정 시 midproject-core 규칙 적용",
+    "scenario": "[GameScene 플레이 시나리오]\n1. 시작 가이드(GuideTxt) 종료 → 이동·타이머·배경 스크롤 활성화\n2. 1차 구간(-785~-403) 우측 이동 · 탐사 모드(Scanner 고정)\n3. 누적 이동 시간 후 [경고] WarningTxt(1.2s 고정→깜빡임 3회)\n4. Z/X 안내(Stage 1-1) 또는 대기 후 오염원 페이드인 · PopupUI(추천 도구) · A~C 화살표 바운스(1-2+)\n5. 첫 오염원 후 -403 해제 → 맵 내 이동 · 아이템 Z/X 전환(선택 유지)\n6. 접촉: 판정 로그 → 방호복 감소 → 정답일 때만 오염원 HP 감소\n   · A~C 정답: 중화 VFX+SFX · D+가스밸브: 밸브 애니+SFX(VFX 없음)\n   · 오답: 2초 패널티(dim+GuideTxt) · 접촉 해제 시 오염원 HP 초기화\n7. 오염원 제거 시 회복 아이템 아크 드랍 → C/V/Space 사용\n8. 구간 예정 오염원 전부 처리 후 x=769까지 이동 → 맵 페이드·리셋 반복\n9. 스테이지 클리어: Player_Clear 2초 → ClearSet(별 3개) / 실패: Die 2초 → GameOverSet",
+    "win-cond": "스테이지 제한 시간 내 totalPollutant만큼 오염원 전부 중화 · 방호복 curProtection ≥ 1\n별 조건(좌→우): 전부 중화 / 방호복 50% 이상 / 틀린 아이템 0회",
+    "lose-cond": "방호복 HP 0 (ProtectionDepleted) 또는 제한 시간 초과(TimeOver)"
+  },
+  "scenes": [
+    {
+      "name": "AppScene",
+      "role": "진입점 · runInBackground · PC 1280×720 창 모드 · SceneLoadManager/AudioManager DontDestroyOnLoad 생성 후 SplashScene 로드"
+    },
+    {
+      "name": "SplashScene",
+      "role": "로고 페이드인(0.65s, 흰 배경)·확대·샤인 → 페이드아웃 → 검정 암전(0.35s) → TitleScene 선로드 · splashSFX"
+    },
+    {
+      "name": "TitleScene",
+      "role": "타이틀 BGM · 시작/이어하기 버튼 · 우하단 v{Application.version} · 종료하기"
+    },
+    {
+      "name": "IntroStoryScene",
+      "role": "타이틀에서만 진입 · 검정 페이드인(0.8s) 후 TapeScroll 스토리 · 종료 시 LoadingScene"
+    },
+    {
+      "name": "LoadingScene",
+      "role": "PollutantSpawnPlan.Prepare(오염원 배치 확정) · 프리팹 워밍업 · LoadingGuideTxt 조작 안내 순환 · GameScene 비동기 로드"
+    },
+    {
+      "name": "GameScene",
+      "role": "핵심 플레이 · Player/PollutantManager/StageManager/GameManager · HUD(방호복·타이머·아이템·회복인벤·가이드·경고·팝업·화살표) · Background 스크롤 · 결과/일시정지는 별도 씬이 아닌 HUD 패널"
+    },
+    {
+      "name": "PauseSet (HUD)",
+      "role": "ESC 일시정지 · BGM 1/3 볼륨 · 재개/타이틀/종료하기"
+    },
+    {
+      "name": "ClearSet (HUD)",
+      "role": "클리어 애니 2초 후 표시 · 별점(ClearPanelUI) · 다음 스테이지/타이틀"
+    },
+    {
+      "name": "GameOverSet (HUD)",
+      "role": "Die 애니 2초→페이드→1초 후 표시 · 재시작/타이틀 · 게임오버 SFX"
+    }
+  ],
+  "transitions": [
+    { "from": "AppScene", "trigger": "Start 시 자동", "to": "SplashScene" },
+    { "from": "SplashScene", "trigger": "로고 연출", "to": "TitleScene" },
+    { "from": "TitleScene", "trigger": "시작 버튼", "to": "IntroStoryScene" },
+    { "from": "TitleScene", "trigger": "이어하기 버튼 (세이브 로드)", "to": "LoadingScene" },
+    { "from": "IntroStoryScene", "trigger": "스토리 스크롤", "to": "LoadingScene" },
+    { "from": "LoadingScene", "trigger": "로딩·스폰 플랜 완료", "to": "GameScene" },
+    { "from": "GameScene", "trigger": "클리어 조건 달성 (Clear 애니 2초 후)", "to": "ClearSet" },
+    { "from": "GameScene", "trigger": "방호복 0 또는 시간 초과 (Die 애니 2초 후)", "to": "GameOverSet" },
+    { "from": "ClearSet", "trigger": "다음 스테이지 버튼", "to": "GameScene" },
+    { "from": "ClearSet", "trigger": "타이틀로 버튼", "to": "TitleScene" },
+    { "from": "GameOverSet", "trigger": "다시 시작 버튼", "to": "GameScene" },
+    { "from": "GameOverSet", "trigger": "타이틀로 버튼", "to": "TitleScene" },
+    { "from": "GameScene", "trigger": "ESC 키", "to": "PauseSet" },
+    { "from": "PauseSet", "trigger": "재개 / ESC", "to": "GameScene" },
+    { "from": "PauseSet", "trigger": "타이틀로 버튼", "to": "TitleScene" }
+  ],
+  "sounds": [
+    { "scene": "SplashScene", "type": "SFX", "desc": "로고 페이드인 0.22s 후 splashClip 재생 (AudioManager.PlaySplashSfx)" },
+    { "scene": "TitleScene", "type": "BGM", "desc": "씬 진입 시 타이틀 BGM 페이드 인 · 종료 시 StopBGM" },
+    { "scene": "TitleScene", "type": "SFX", "desc": "시작/이어하기 버튼 — selectionSFX" },
+    { "scene": "GameScene", "type": "BGM", "desc": "StageManager.LoadStage → PlayStageBgm(bgmIndex) · 스테이지별 stageBgmClips" },
+    { "scene": "GameScene · A~C 정답 접촉", "type": "SFX", "desc": "중화 루프 neutralizationSfx (정답 A~C만)" },
+    { "scene": "GameScene · D 가스밸브", "type": "SFX", "desc": "밸브 루프 squeakyValveClip (중화 VFX 없음)" },
+    { "scene": "GameScene · 타이머 16초 이하", "type": "SFX", "desc": "countdownSFX 1회 (Timer.cs)" },
+    { "scene": "PauseSet", "type": "BGM", "desc": "게임 BGM 볼륨 약 1/3으로 dim" },
+    { "scene": "ClearSet / GameOverSet", "type": "SFX", "desc": "clearSFX / game-overSFX · dieSplattSFX (사망 1회)" }
+  ],
+  "effects": [
+    { "scene": "씬 전환 공통", "type": "페이드", "desc": "스플래시 흰 배경 로고 페이드\n그 외 검정 FadeOverlay 통일 (타이틀→인트로 0.25s, 인트로→로딩 0.5s 등)" },
+    { "scene": "GameScene · Background", "type": "UV 스크롤", "desc": "플레이어 입력 시 반대 방향 텍스처 오프셋 · 오염원 활성/구간 미완료 시 정지 · bgLockedSpeedMultiplier(1.7) 가속" },
+    { "scene": "GameScene · 오염원", "type": "등장/제거", "desc": "경고(1.2s+깜빡임) → 페이드인 · HP 0 시 페이드아웃 · A~C PollutantArrow 바운스 3회(1-2+, D·1-1 제외)" },
+    { "scene": "GameScene · 중화", "type": "VFX / 패널티", "desc": "정답 A~C: CFXR Electrified 3 중화 VFX\n오답: 2초 아이템창 dim + GuideTxt\nD: Player_Valve 애니" },
+    { "scene": "GameScene · 회복 드랍", "type": "아크 연출", "desc": "오염원 정화 시 mapProtectRecov/mapTimeRecov 프리팹 포물선 드랍" },
+    { "scene": "GameScene · 플레이어", "type": "애니메이션", "desc": "Idle/Move State · Die 2초 → 페이드 → GameOverSet · Clear 트리거 → Player_Clear 2초 후 패널" },
+    { "scene": "GameScene · 맵 전환", "type": "페이드·리셋", "desc": "x=769 도달 후 페이드 · 플레이어·배경 시작 위치 리셋 · 다음 mapPollutants 구간" }
+  ],
+  "roles": [
+    {
+      "name": "최진영",
+      "part": "기획·문서",
+      "features": "게임 범위 정의, 사전 기획서(JSON/HTML), QA·회의록·Bug, CREDITS, 발표 자료",
+      "criteria": "기획서 JSON/HTML 제출 · README/CREDITS와 실제 산출물 일치",
+      "output": "Assets/Docs/기획서/, CREDITS.md, README.md"
+    },
+    {
+      "name": "최진영",
+      "part": "Core / 씬 플로우",
+      "features": "AppBootstrap, SceneLoadManager, SceneLoadUI, LoadingController, SplashController, TitleSceneFade, AutoScrollIntro, GameSaveManager",
+      "criteria": "AppScene Play 시 스플래시→타이틀→인트로→로딩→게임 전체 연결 · 이어하기 동작",
+      "output": "AppScene~GameScene, SceneLoadManager.cs, LoadingController.cs"
+    },
+    {
+      "name": "최진영",
+      "part": "게임플레이 · Player",
+      "features": "이동(FixedUpdate), 구간 제한·해제, 방호복 HP, 중화 VFX, 밸브/Clear/Die 애니, 회복 아이템 사용",
+      "criteria": "가이드 후 이동 · 접촉 중 방호복 감소 · 정답 VFX · 클리어/사망 연출 2초",
+      "output": "Player.cs, ProtectionHpBarUI.cs"
+    },
+    {
+      "name": "최진영",
+      "part": "오염원 · 스폰",
+      "features": "Pollutant 접촉 모델, PollutantManager 경고·등장·맵구간, PollutantSpawnPlan 프리로드, stage_data.json",
+      "criteria": "경고→등장→접촉 판정 · 정답만 HP 감소 · 접촉 해제 HP 초기화 · mapPollutants 구간 전환",
+      "output": "Pollutant.cs, PollutantManager.cs, PollutantSpawnPlan.cs, stage_data.json"
+    },
+    {
+      "name": "최진영",
+      "part": "아이템 · HUD",
+      "features": "Item/ItemSelectManager Z/X, ItemManager dim, GuideTxt/WarningTxt/PopupUI, PollutantArrowUI, HelpGuideToggle K/I",
+      "criteria": "Z/X 방향 · 첫 경고 후 중화제 기본 · 선택 유지 · HUD 우선순위(경고>가이드>팝업)",
+      "output": "ItemSelectManager.cs, GuideTxt.cs, WarningTxt.cs, PopupUI.cs, PollutantArrowUI.cs"
+    },
+    {
+      "name": "최진영",
+      "part": "결과 · 매니저",
+      "features": "GameManager 클리어/게임오버/일시정지/오대응 패널티, StageManager, StageScoreTracker, ClearPanelUI, Timer",
+      "criteria": "ESC 일시정지 · 틀린 아이템 2초 패널티 · 별 3개 좌→우 · F1/F2 디버그",
+      "output": "GameManager.cs, StageManager.cs, ClearPanelUI.cs, Timer.cs"
+    },
+    {
+      "name": "최진영",
+      "part": "회복 인벤",
+      "features": "recovery_items.json, RecoveryItemInventory, RecoveryItemManager 드랍·아크, RecoveryItemInventoryUI InvItemView",
+      "criteria": "정화 후 드랍 · C/V/Space · 스택 count · dim 선택 표시",
+      "output": "RecoveryItemInventory.cs, RecoveryItemManager.cs, RecoveryItemInventoryUI.cs"
+    },
+    {
+      "name": "최진영",
+      "part": "오디오 · 배경",
+      "features": "AudioManager BGM/SFX 싱글톤, Background 스크롤, CameraAspectFit, CanvasBackgroundCover",
+      "criteria": "타이틀·게임 BGM 페이드 · 중화/밸브 루프 분리 · 배경 스크롤 자연스러움",
+      "output": "AudioManager.cs, Background.cs"
+    },
+    {
+      "name": "최진영",
+      "part": "디자인 · 발표",
+      "features": "UI 에셋·폰트·아이콘, PPT·시연 스크립트, PC 빌드(1280×720·exe)",
+      "criteria": "1280×720 가독성 · 발표 6/16 시연 · 빌드 정상 실행",
+      "output": "Assets/UI/, PT_Docs/, Windows 빌드"
+    }
+  ],
+  "schedule": {
+    "2026-05-11": { "work": "컨셉 레퍼런스 확정 (Steam: Purify)", "output": "카페 게시물 n.929" },
+    "2026-05-13": { "work": "개발 범위 확정", "output": "카페 게시물 n.966" },
+    "2026-05-14": { "work": "배경 이미지 선정, UV 무한 스크롤 방식 결정", "output": "Background.cs" },
+    "2026-05-16": { "work": "마인드맵·AI 기획서 초안", "output": "Hazmat Rush.docx" },
+    "2026-05-19": { "work": "핵심 씬 코어 루프 시안", "output": "카페 n.1000" },
+    "2026-05-22": { "work": "플레이어 1차 이동·배경 연동, Unity·Git 초기 세팅", "output": "Player.cs, Background.cs" },
+    "2026-05-23": { "work": "오염원 등장·타이머", "output": "PollutantManager, Timer" },
+    "2026-05-24": { "work": "HUD·아이템·접촉 후 방호복 감소", "output": "HUD_Canvas, ItemContainer" },
+    "2026-05-25": { "work": "TitleScene, SceneLoadManager, 사전기획서 초안", "output": "TitleScene, SceneLoadManager.cs" },
+    "2026-05-26": { "work": "PPT 초안", "output": "PPT" },
+    "2026-05-27": { "work": "[프로젝트 시작일] 가이드~팝업 타이밍 조정", "output": "GuideTxt, PopupUI" },
+    "2026-05-28": { "work": "중화모드(방호복·아이템·오염원 관계)", "output": "Item.cs, Pollutant.cs, Player.cs" },
+    "2026-05-29": { "work": "BGM·Result/Pause HUD·1차 범위 완성", "output": "AudioManager, Result_HUD, Pause_HUD" },
+    "2026-05-30": { "work": "HP바 UI·월드 오프셋·버그 수정", "output": "WorldSpaceUIFollower" },
+    "2026-05-31": { "work": "아이템 선택 로직·SFX·멀티스테이지 범위 확장", "output": "ItemSelectManager, stage_data.json" },
+    "2026-06-01": { "work": "강사님 1차 검수 반영·패널티·멀티스테이지·로딩·세이브·Player_Die", "output": "GameManager, LoadingScene, StageManager" },
+    "2026-06-02": { "work": "스테이지별 배경·BGM·UI 개선", "output": "stage_data.json, AudioManager" },
+    "2026-06-03": { "work": "UI·이펙트 서칭", "output": "CFXR VFX" },
+    "2026-06-04": { "work": "폰트·시스템 UI 교체·접촉 판정 안정화", "output": "gameplay-fixes 문서" },
+    "2026-06-05": { "work": "클리어/사망 2초 연출·VFX·아이템 유지 수정", "output": "클리어·VFX-fixes 문서" },
+    "2026-06-06": { "work": "회복 인벤 1차·씬 전환 페이드", "output": "RecoveryItemInventory, SplashController" },
+    "2026-06-07": { "work": "", "output": "" },
+    "2026-06-08": { "work": "회복 아이템 아크 드랍·Git worktree 문서", "output": "RecoveryItemManager, workflow 문서" },
+    "2026-06-09": { "work": "경고·맵·접촉·App·방호복 HUD 일일 작업", "output": "0609 회의록·Bug" },
+    "2026-06-10": { "work": "스테이지 BGM·가이드/경고 팝업·가스 사망 HP바", "output": "0610 회의록·Bug" },
+    "2026-06-11": { "work": "타이틀 버전·페이드 검정·화살표 UI·속도 튜닝", "output": "0611 회의록·Bug, PollutantArrowUI" },
+    "2026-06-12": { "work": "종료 버튼·PC 창 모드·리사이즈 HUD·외부 QA 1차 7건", "output": "0612 회의록·Bug, 기획서 JSON 06-12" },
+    "2026-06-13": { "work": "사전기획서 현행화·통합 테스트·PPT 캡처·빌드 재검증", "output": "기획서 JSON 06-13, PC 빌드 후보" },
+    "2026-06-14": { "work": "타이머 SFX·1280 UI·Save 경로·문서·PPT 마무리", "output": "0614 회의록·Bug, 기획서 JSON 06-14" },
+    "2026-06-15": { "work": "P5 정리(CREDITS·미사용 에셋·네이밍) · 기획서 HTML↔JSON 연동 · 발표 리허설", "output": "CREDITS.md, mid_team_project_submission.html" },
+    "2026-06-16": { "work": "[최종 발표·제출] 시연 및 빌드·기획서 PDF 제출", "output": "발표 완료, exe·사전기획서 PDF" }
+  }
+}
+
+</script>
+  <script>
+    // ===== Cytoscape setup =====
+    let cy = null;
+    let cytoscapeReady = false;
+
+    function initCytoscape() {
+      if (cytoscapeReady) return true;
+      if (typeof cytoscape === "undefined") return false;
+      if (typeof cytoscapeDagre !== "undefined") {
+        try { cytoscape.use(cytoscapeDagre); } catch (e) {}
+      }
+      cytoscapeReady = true;
+      return true;
+    }
+
+    function cyStyles() {
+      return [
+        {
+          selector: "node",
+          style: {
+            "background-color": "#16171A",
+            "border-color": "#5E6AD2",
+            "border-width": 1.5,
+            "shape": "round-rectangle",
+            "label": "data(label)",
+            "color": "#F7F8F8",
+            "font-family": 'Inter, "Noto Sans KR", -apple-system, sans-serif',
+            "font-size": 13,
+            "font-weight": 500,
+            "text-valign": "center",
+            "text-halign": "center",
+            "width": "label",
+            "height": "label",
+            "padding": "14px",
+          },
+        },
+        {
+          selector: "edge",
+          style: {
+            "curve-style": "bezier",
+            "control-point-step-size": 50,
+            "target-arrow-shape": "triangle",
+            "arrow-scale": 1.1,
+            "line-color": "#5F6168",
+            "target-arrow-color": "#8A8F98",
+            "width": 1.5,
+            "label": "data(label)",
+            "font-family": 'Inter, "Noto Sans KR", sans-serif',
+            "font-size": 11,
+            "color": "#C7CACD",
+            "text-background-color": "#101113",
+            "text-background-opacity": 1,
+            "text-background-padding": 4,
+            "text-background-shape": "roundrectangle",
+            "text-border-width": 1,
+            "text-border-color": "#1C1D20",
+            "text-border-opacity": 1,
+            "text-rotation": "autorotate",
+          },
+        },
+      ];
+    }
+
+    // ===== Schedule data =====
+    // [date, day, work_default, work_placeholder, output_default, output_placeholder]
+    const SCHEDULE = [
+      ["2026-05-11", "월", "", "예: Unity 프로젝트 생성, 폴더 구조 세팅, Git Repo 초기 커밋", "", "예: 기본 프로젝트"],
+      ["2026-05-13", "수", "", "예: Unity 프로젝트 생성, 폴더 구조 세팅, Git Repo 초기 커밋", "", "예: 기본 프로젝트"],
+      ["2026-05-14", "목", "", "예: Unity 프로젝트 생성, 폴더 구조 세팅, Git Repo 초기 커밋", "", "예: 기본 프로젝트"],
+      ["2026-05-16", "토", "", "예: Unity 프로젝트 생성, 폴더 구조 세팅, Git Repo 초기 커밋", "", "예: 기본 프로젝트"],
+      ["2026-05-19", "화", "", "예: Unity 프로젝트 생성, 폴더 구조 세팅, Git Repo 초기 커밋", "", "예: 기본 프로젝트"],
+      ["2026-05-22", "금", "", "예: Unity 프로젝트 생성, 폴더 구조 세팅, Git Repo 초기 커밋", "", "예: 기본 프로젝트"],
+      ["2026-05-23", "토", "", "예: Unity 프로젝트 생성, 폴더 구조 세팅, Git Repo 초기 커밋", "", "예: 기본 프로젝트"],
+      ["2026-05-24", "일", "", "예: Unity 프로젝트 생성, 폴더 구조 세팅, Git Repo 초기 커밋", "", "예: 기본 프로젝트"],
+      ["2026-05-25", "월", "", "예: Unity 프로젝트 생성, 폴더 구조 세팅, Git Repo 초기 커밋", "", "예: 기본 프로젝트"],
+      ["2026-05-26", "화", "", "예: Unity 프로젝트 생성, 폴더 구조 세팅, Git Repo 초기 커밋", "", "예: 기본 프로젝트"],
+      ["2026-05-27", "수", "", "예: Unity 프로젝트 생성, 폴더 구조 세팅, Git Repo 초기 커밋", "", "예: 기본 프로젝트"],
+      ["2026-05-28", "목", "", "예: 씬 구성, 공통 오브젝트 생성", "", "예: Title/Game/ResultScene"],
+      ["2026-05-29", "금", "", "예: 각자 로컬에서 담당 기능 단독 작동", "", "예: 각 파트 개별 씬에서 독립 테스트"],
+      ["2026-05-30", "토", "", "예: 각자 로컬에서 담당 기능 단독 작동", "", "예: 각 파트 개별 씬에서 독립 테스트"],
+      ["2026-05-31", "일", "", "예: 각자 로컬에서 담당 기능 단독 작동", "", "예: 각 파트 개별 씬에서 독립 테스트"],
+      ["2026-06-01", "월", "", "예: 플레이어·적·기본 UI를 GameScene에 통합", "", "예: GameScene에서 1회 플레이 가능"],
+      ["2026-06-02", "화", "", "예: 슈팅·디펜스·퍼즐 기능 통합", "", "예: 각 기능 GameScene 내 작동"],
+      ["2026-06-03", "수", "", "예: 1차 통합 검증", "", "예: 기능간 충돌 해결"],
+      ["2026-06-04", "목", "", "예: 성공/실패 조건 연결", "", "예: 클리어/실패 흐름 완성"],
+      ["2026-06-05", "금", "중간 점검", "각 담당 기능 GameScene에서 시연 가능 확인", "", "시연 체크리스트, 미달 기능 축소 결정"],
+      ["2026-06-06", "토", "중간 점검", "각 담당 기능 GameScene에서 시연 가능 확인", "", "시연 체크리스트, 미달 기능 축소 결정"],
+      ["2026-06-07", "일", "중간 점검", "각 담당 기능 GameScene에서 시연 가능 확인", "", "시연 체크리스트, 미달 기능 축소 결정"],
+      ["2026-06-08", "월", "최종 구현 범위 고정", "범위 동결, 이후 기능 추가 금지", "새 기능 추가 중단", "동결된 기능 목록"],
+      ["2026-06-09", "화", "", "예: UI 정리 (HP, 점수, 안내문)", "", "예: 화면 가독성 개선"],
+      ["2026-06-10", "수", "", "예: 밸런스 조정 (난이도 튜닝)", "", "예: 플레이 시간 조정"],
+      ["2026-06-11", "목", "", "예: 리소스/효과음 정리", "", "예: 발표용 화면 개선"],
+      ["2026-06-12", "금", "최종 통합 + 빌드 검증", "실행 빌드(.exe) 정상 동작 확인", "", "최종 후보 빌드 파일"],
+      ["2026-06-13", "토", "최종 통합 + 빌드 검증", "실행 빌드(.exe) 정상 동작 확인", "", "최종 후보 빌드 파일"],
+      ["2026-06-14", "일", "최종 통합 + 빌드 검증", "실행 빌드(.exe) 정상 동작 확인", "", "최종 후보 빌드 파일"],
+      ["2026-06-15", "월", "발표 리허설", "시연 순서·발표자·주의사항 확인", "", "발표 자료, 시연 순서"],
+      ["2026-06-16", "화", "최종 발표", "발표 및 빌드 제출", "실행 빌드, 발표", "제출 완료"],
+    ];
+
+    function renderSchedule() {
+      const tbody = document.getElementById("schedule-body");
+      tbody.innerHTML = "";
+      for (const [date, day, work, workPh, output, outputPh] of SCHEDULE) {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td class="mono">${date} <span class="pill day">${day}</span></td>
+          <td><span contenteditable="true" data-placeholder="${work || workPh || "작업 내용"}"></span></td>
+          <td><span contenteditable="true" data-placeholder="${output || outputPh || "산출물"}"></span></td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    // ===== Scenes =====
+    const DEFAULT_SCENES = [
+      ["TitleScene", ""],
+      ["GameScene", ""],
+      ["ResultScene", ""],
+    ];
+
+    function makeSceneRow(name = "", role = "") {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><span contenteditable="true" data-placeholder="${name || '씬 이름'}"></span></td>
+        <td><span class="multiline" contenteditable="true" data-placeholder="${role || '이 씬에서 보여줄 것 — 예: 게임 제목, 시작 버튼, 조작법 안내'}"></span></td>
+        <td class="col-del no-export"><button class="row-del" onclick="this.closest('tr').remove()" title="행 삭제">−</button></td>
+      `;
+      return tr;
+    }
+
+    function addSceneRow() {
+      document.getElementById("scenes-body").appendChild(makeSceneRow());
+    }
+
+    function renderScenes() {
+      const tbody = document.getElementById("scenes-body");
+      tbody.innerHTML = "";
+      for (const [name, role] of DEFAULT_SCENES) {
+        tbody.appendChild(makeSceneRow(name, role));
+      }
+    }
+
+    // ===== Transitions (Core Loop) =====
+    const DEFAULT_TRANSITIONS = [
+      ["TitleScene", "\"시작\" 버튼 클릭", "GameScene"],
+      ["GameScene", "성공 조건 달성", "ResultScene"],
+      ["GameScene", "실패 조건 달성 (HP 0 등)", "ResultScene"],
+      ["ResultScene", "\"다시하기\" 클릭", "GameScene"],
+      ["ResultScene", "\"메인으로\" 클릭", "TitleScene"],
+    ];
+
+    function makeTransitionRow(from = "", trigger = "", to = "") {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><span contenteditable="true" data-placeholder="${from || '현재 씬'}"></span></td>
+        <td><span class="multiline" contenteditable="true" data-placeholder="${trigger || '버튼 클릭, 조건 달성 등'}"></span></td>
+        <td><span contenteditable="true" data-placeholder="${to || '다음 씬'}"></span></td>
+        <td class="col-del no-export"><button class="row-del" onclick="this.closest('tr').remove()" title="행 삭제">−</button></td>
+      `;
+      return tr;
+    }
+
+    function addTransitionRow() {
+      document.getElementById("transitions-body").appendChild(makeTransitionRow());
+    }
+
+    function renderTransitions() {
+      const tbody = document.getElementById("transitions-body");
+      tbody.innerHTML = "";
+      for (const [from, trigger, to] of DEFAULT_TRANSITIONS) {
+        tbody.appendChild(makeTransitionRow(from, trigger, to));
+      }
+    }
+
+    // ===== Diagram (Core Loop) =====
+    function nodeId(label) {
+      let h = 0;
+      for (let i = 0; i < label.length; i++) h = (h * 31 + label.charCodeAt(i)) | 0;
+      return "n_" + Math.abs(h).toString(36);
+    }
+
+    function buildElements() {
+      const rows = document.querySelectorAll("#transitions-body tr");
+      const elements = [];
+      const seenNodes = new Map();
+      let edgeCount = 0;
+
+      rows.forEach((row, i) => {
+        const cells = row.querySelectorAll("[contenteditable]");
+        if (cells.length < 3) return;
+        const from = cells[0].innerText.trim();
+        const trigger = cells[1].innerText.trim();
+        const to = cells[2].innerText.trim();
+        if (!from || !to) return;
+
+        const fromId = nodeId(from);
+        const toId = nodeId(to);
+
+        if (!seenNodes.has(fromId)) {
+          elements.push({ group: "nodes", data: { id: fromId, label: from } });
+          seenNodes.set(fromId, true);
+        }
+        if (!seenNodes.has(toId)) {
+          elements.push({ group: "nodes", data: { id: toId, label: to } });
+          seenNodes.set(toId, true);
+        }
+
+        elements.push({
+          group: "edges",
+          data: {
+            id: "e_" + i + "_" + (edgeCount++),
+            source: fromId,
+            target: toId,
+            label: trigger,
+          },
+        });
+      });
+
+      return elements;
+    }
+
+    async function renderCoreLoopDiagram() {
+      const container = document.getElementById("diagram-container");
+      if (!container || !initCytoscape()) return;
+
+      const elements = buildElements();
+      const hasEdges = elements.some((e) => e.group === "edges");
+
+      if (cy) { cy.destroy(); cy = null; }
+
+      if (!hasEdges) {
+        container.innerHTML = '<div class="diagram-empty">씬 이동을 한 줄 이상 입력하면 다이어그램이 표시됩니다.</div>';
+        return;
+      }
+
+      container.innerHTML = "";
+
+      try {
+        cy = cytoscape({
+          container,
+          elements,
+          style: cyStyles(),
+          layout: {
+            name: "dagre",
+            rankDir: "LR",
+            nodeSep: 50,
+            rankSep: 100,
+            edgeSep: 12,
+            animate: false,
+          },
+          wheelSensitivity: 0.2,
+          minZoom: 0.4,
+          maxZoom: 2,
+        });
+        cy.fit(undefined, 28);
+      } catch (e) {
+        console.error("Cytoscape render failed:", e);
+        container.innerHTML = '<div class="diagram-error">다이어그램을 그릴 수 없습니다. 씬 이름과 다음 씬을 확인해주세요.</div>';
+      }
+    }
+
+    let diagramTimer;
+    function scheduleDiagramRender() {
+      clearTimeout(diagramTimer);
+      diagramTimer = setTimeout(renderCoreLoopDiagram, 400);
+    }
+
+    // ===== Roles =====
+    const ROLE_PLACEHOLDERS = [
+      {
+        name: "예: 홍길동",
+        part: "예: 플레이어 이동",
+        features: "예: WASD 이동, 애니메이션 전환, 충돌 처리",
+        criteria: "예: GameScene에서 플레이어 이동·점프 가능",
+        output: "예: PlayerController.cs, PlayerAnimator",
+      },
+      {
+        name: "예: 임꺽정",
+        part: "예: 적 AI",
+        features: "예: 적 생성, 이동, 피격·사망 처리",
+        criteria: "예: 적이 플레이어를 향해 이동하고 HP 감소 후 제거",
+        output: "예: EnemySpawner.cs, EnemyHealth.cs",
+      },
+      {
+        name: "예: 김철수",
+        part: "예: UI / 게임 매니저",
+        features: "예: HP·점수 표시, 성공/실패 조건 연결, 씬 전환",
+        criteria: "예: 결과 화면까지 씬 전환 정상 동작",
+        output: "예: UIManager.cs, GameManager.cs",
+      },
+      {
+        name: "예: 이영희",
+        part: "예: 타이틀 / 결과 씬",
+        features: "예: 시작 버튼, 결과 화면 구성, 다시하기·메인으로 버튼",
+        criteria: "예: 타이틀에서 게임 시작, 결과에서 재시작·복귀 가능",
+        output: "예: TitleUI.cs, ResultScene.unity",
+      },
+    ];
+
+    function makeRoleRow(ph) {
+      const p = ph || { name: "이름", part: "담당 파트", features: "구현할 기능", criteria: "완료 기준", output: "산출물" };
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><span class="role-badge" contenteditable="false">팀장</span><span contenteditable="true" data-placeholder="${p.name}"></span></td>
+        <td><span contenteditable="true" data-placeholder="${p.part}"></span></td>
+        <td><span class="multiline" contenteditable="true" data-placeholder="${p.features}"></span></td>
+        <td><span class="multiline" contenteditable="true" data-placeholder="${p.criteria}"></span></td>
+        <td><span class="multiline" contenteditable="true" data-placeholder="${p.output}"></span></td>
+        <td class="col-del no-export"><button class="row-del" onclick="this.closest('tr').remove()" title="행 삭제">−</button></td>
+      `;
+      return tr;
+    }
+
+    function addRoleRow() {
+      document.getElementById("roles-body").appendChild(makeRoleRow());
+    }
+
+    function renderRoles(n = 4) {
+      const tbody = document.getElementById("roles-body");
+      tbody.innerHTML = "";
+      for (let i = 0; i < n; i++) tbody.appendChild(makeRoleRow(ROLE_PLACEHOLDERS[i] || null));
+    }
+
+    // ===== Sounds =====
+    const DEFAULT_SOUNDS = [
+      ["TitleScene", "BGM", ""],
+      ["GameScene", "BGM", ""],
+      ["플레이어 피격", "SFX", ""],
+      ["적 사망", "SFX", ""],
+      ["씬 전환", "SFX", ""],
+    ];
+
+    function makeSoundRow(scene = "", type = "", desc = "") {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><span contenteditable="true" data-placeholder="${scene || '씬 이름 또는 상황'}"></span></td>
+        <td><span contenteditable="true" data-placeholder="${type || 'BGM / SFX'}"></span></td>
+        <td><span class="multiline" contenteditable="true" data-placeholder="${desc || '재생 조건 및 파일명, 또는 없음'}"></span></td>
+        <td class="col-del no-export"><button class="row-del" onclick="this.closest('tr').remove()" title="행 삭제">−</button></td>
+      `;
+      return tr;
+    }
+
+    function addSoundRow() {
+      document.getElementById("sounds-body").appendChild(makeSoundRow());
+    }
+
+    function renderSounds() {
+      const tbody = document.getElementById("sounds-body");
+      tbody.innerHTML = "";
+      for (const [scene, type, desc] of DEFAULT_SOUNDS) {
+        tbody.appendChild(makeSoundRow(scene, type, desc));
+      }
+    }
+
+    // ===== Effects =====
+    const DEFAULT_EFFECTS = [
+      ["씬 전환", "페이드 인/아웃", ""],
+      ["플레이어 피격", "히트 이펙트", ""],
+      ["적 사망", "파티클 이펙트", ""],
+      ["클리어 / 실패", "UI 애니메이션", ""],
+    ];
+
+    function makeEffectRow(scene = "", type = "", desc = "") {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><span contenteditable="true" data-placeholder="${scene || '씬 이름 또는 상황'}"></span></td>
+        <td><span contenteditable="true" data-placeholder="${type || '연출 종류'}"></span></td>
+        <td><span class="multiline" contenteditable="true" data-placeholder="${desc || '어떻게 표현할지'}"></span></td>
+        <td class="col-del no-export"><button class="row-del" onclick="this.closest('tr').remove()" title="행 삭제">−</button></td>
+      `;
+      return tr;
+    }
+
+    function addEffectRow() {
+      document.getElementById("effects-body").appendChild(makeEffectRow());
+    }
+
+    function renderEffects() {
+      const tbody = document.getElementById("effects-body");
+      tbody.innerHTML = "";
+      for (const [scene, type, desc] of DEFAULT_EFFECTS) {
+        tbody.appendChild(makeEffectRow(scene, type, desc));
+      }
+    }
+
+    // ===== Reset =====
+    function resetForm() {
+      if (!confirm("입력한 내용을 모두 지우고 처음 상태로 되돌립니다. 진행할까요?")) return;
+      document.querySelectorAll("[contenteditable]").forEach((el) => {
+        el.textContent = "";
+      });
+      renderScenes();
+      renderTransitions();
+      renderRoles();
+      renderSchedule();
+      renderSounds();
+      renderEffects();
+      scheduleDiagramRender();
+    }
+
+    // ===== Toast =====
+    let toastTimer;
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove("show"), 2400);
+    }
+
+    // ===== Save / Load JSON =====
+    async function saveJSON() {
+      const get = (key) => {
+        const el = document.querySelector(`[data-key="${key}"]`);
+        return el ? el.innerText.trim() : "";
+      };
+      const getRows = (tbodyId, keys) => {
+        const rows = [];
+        document.querySelectorAll(`#${tbodyId} tr`).forEach(tr => {
+          const cells = [...tr.querySelectorAll("[contenteditable='true']")];
+          const row = {};
+          keys.forEach((k, i) => { row[k] = cells[i] ? cells[i].innerText.trim() : ""; });
+          rows.push(row);
+        });
+        return rows;
+      };
+
+      const data = {
+        version: 1,
+        savedAt: new Date().toISOString(),
+        fields: {
+          teamName:           document.getElementById("team-name")?.innerText.trim() || "",
+          projectName:        document.getElementById("project-name")?.innerText.trim() || "",
+          "env-unity":        get("env-unity"),
+          "env-git":          get("env-git"),
+          "env-tools":        get("env-tools"),
+          "env-refs":         get("env-refs"),
+          "env-assets":       get("env-assets"),
+          "env-controls":     get("env-controls"),
+          "scope-title":      get("scope-title"),
+          "scope-genre":      get("scope-genre"),
+          "scope-platform":   get("scope-platform"),
+          "scope-oneliner":   get("scope-oneliner"),
+          "scope-goal":       get("scope-goal"),
+          "scope-musthave":   get("scope-musthave"),
+          "scope-nice":       get("scope-nice"),
+          "scope-outscope":   get("scope-outscope"),
+          "scope-playflow":   get("scope-playflow"),
+          "risk-feature":     get("risk-feature"),
+          "risk-solution":    get("risk-solution"),
+          scenario:           get("scenario"),
+          "win-cond":         get("win-cond"),
+          "lose-cond":        get("lose-cond"),
+        },
+        scenes:      getRows("scenes-body",      ["name", "role"]),
+        transitions: getRows("transitions-body", ["from", "trigger", "to"]),
+        sounds:      getRows("sounds-body",      ["scene", "type", "desc"]),
+        effects:     getRows("effects-body",     ["scene", "type", "desc"]),
+        roles:       getRows("roles-body",       ["name", "part", "features", "criteria", "output"]),
+        schedule:    {},
+      };
+
+      document.querySelectorAll("#schedule-body tr").forEach(tr => {
+        const dateEl = tr.querySelector("td.mono");
+        const cells = [...tr.querySelectorAll("[contenteditable='true']")];
+        if (!dateEl || cells.length < 2) return;
+        const date = (dateEl.innerText.match(/\d{4}-\d{2}-\d{2}/) || [""])[0];
+        if (date) data.schedule[date] = { work: cells[0].innerText.trim(), output: cells[1].innerText.trim() };
+      });
+
+      const safe = (s) => s.replace(/[\\/:*?"<>|]/g, "_").replace(/\s+/g, "_") || "team";
+      const filename = `기획서_${safe(data.fields.teamName || "team")}_${new Date().toISOString().slice(0, 10)}.json`;
+      const json = JSON.stringify(data, null, 2);
+
+      if (window.showSaveFilePicker) {
+        try {
+          const handle = await window.showSaveFilePicker({
+            suggestedName: filename,
+            types: [{ description: "JSON 기획서", accept: { "application/json": [".json"] } }],
+          });
+          const writable = await handle.createWritable();
+          await writable.write(json);
+          await writable.close();
+          showToast(`저장 완료 · ${handle.name}`);
+        } catch (err) {
+          if (err.name !== "AbortError") {
+            console.error(err);
+            alert("저장 중 오류가 발생했습니다.");
+          }
+        }
+      } else {
+        const blob = new Blob([json], { type: "application/json" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        link.click();
+        showToast(`저장 완료 · ${filename}`);
+      }
+    }
+
+    function loadJSON() {
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".json,application/json";
+      input.onchange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          try {
+            applyJSON(JSON.parse(ev.target.result));
+          } catch (err) {
+            alert("JSON 파일을 읽는 중 오류가 발생했습니다.");
+          }
+        };
+        reader.readAsText(file);
+      };
+      input.click();
+    }
+
+    function applyJSON(data) {
+      if (!data || data.version !== 1) { alert("지원하지 않는 형식의 파일입니다."); return; }
+
+      const f = data.fields || {};
+      const setId  = (id, v)  => { const el = document.getElementById(id); if (el) el.innerText = v || ""; };
+      const setKey = (key, v) => { const el = document.querySelector(`[data-key="${key}"]`); if (el) el.innerText = v || ""; };
+
+      setId("team-name", f.teamName);
+      setId("project-name", f.projectName);
+      ["env-unity","env-git","env-tools","env-refs","env-assets","env-controls",
+       "scope-title","scope-genre","scope-platform","scope-oneliner","scope-goal",
+       "scope-musthave","scope-nice","scope-outscope","scope-playflow",
+       "risk-feature","risk-solution","scenario","win-cond","lose-cond"
+      ].forEach(key => setKey(key, f[key]));
+
+      const fillTable = (tbodyId, rows, makeRowFn, keys) => {
+        const tbody = document.getElementById(tbodyId);
+        if (!tbody || !rows) return;
+        tbody.innerHTML = "";
+        rows.forEach(r => {
+          const tr = makeRowFn();
+          const cells = [...tr.querySelectorAll("[contenteditable='true']")];
+          keys.forEach((k, i) => { if (cells[i]) cells[i].innerText = r[k] || ""; });
+          tbody.appendChild(tr);
+        });
+      };
+
+      fillTable("scenes-body",      data.scenes,      makeSceneRow,      ["name", "role"]);
+      fillTable("transitions-body", data.transitions, makeTransitionRow, ["from", "trigger", "to"]);
+      fillTable("sounds-body",      data.sounds,      makeSoundRow,      ["scene", "type", "desc"]);
+      fillTable("effects-body",     data.effects,     makeEffectRow,     ["scene", "type", "desc"]);
+      fillTable("roles-body",       data.roles,       makeRoleRow,       ["name", "part", "features", "criteria", "output"]);
+
+      renderSchedule();
+      if (data.schedule) {
+        document.querySelectorAll("#schedule-body tr").forEach(tr => {
+          const dateEl = tr.querySelector("td.mono");
+          const cells = [...tr.querySelectorAll("[contenteditable='true']")];
+          if (!dateEl || cells.length < 2) return;
+          const date = (dateEl.innerText.match(/\d{4}-\d{2}-\d{2}/) || [""])[0];
+          const saved = data.schedule[date];
+          if (saved) { cells[0].innerText = saved.work || ""; cells[1].innerText = saved.output || ""; }
+        });
+      }
+
+      scheduleDiagramRender();
+      showToast("불러오기 완료");
+    }
+
+    function tryAutoLoadBundledPlan() {
+      const embedded = document.getElementById("bundled-plan-json");
+      if (embedded && embedded.textContent.trim()) {
+        try {
+          applyJSON(JSON.parse(embedded.textContent));
+          return;
+        } catch (err) {
+          console.warn("embedded plan json parse failed", err);
+        }
+      }
+      fetch("기획서_진영(개인)_2026-06-14.json")
+        .then((res) => (res.ok ? res.json() : Promise.reject()))
+        .then((data) => applyJSON(data))
+        .catch(() => {});
+    }
+
+    // ===== Export to DOCX =====
+    async function exportDOCX() {
+      // html-docx-js: proper browser UMD build (works from file://)
+      // docx@8.x is CommonJS-only and cannot be loaded via <script> tag
+      if (!window.htmlDocx) {
+        showToast("라이브러리 로딩 중…");
+        const tryLoad = (src) => new Promise((res, rej) => {
+          const s = document.createElement("script");
+          s.src = src;
+          s.onload = res;
+          s.onerror = () => rej(new Error(src));
+          document.head.appendChild(s);
+        });
+        try {
+          await tryLoad("https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js");
+        } catch {
+          try {
+            await tryLoad("https://unpkg.com/html-docx-js@0.3.1/dist/html-docx.js");
+          } catch (e) {
+            console.error(e);
+            alert("라이브러리를 불러오지 못했습니다. 인터넷 연결을 확인해주세요.");
+            return;
+          }
+        }
+      }
+
+      // (window.htmlDocx is now available — no destructuring needed)
+
+      /* ── helpers ──────────────────────────────────────────────────── */
+      const get     = (key) => { const e = document.querySelector(`[data-key="${key}"]`); return e ? e.innerText.trim() : ""; };
+      const getId   = (id)  => { const e = document.getElementById(id); return e ? e.innerText.trim() : ""; };
+      const getRows = (tbodyId, keys) => {
+        const rows = [];
+        document.querySelectorAll(`#${tbodyId} tr`).forEach(tr => {
+          const cells = [...tr.querySelectorAll("[contenteditable='true']")];
+          const row = {};
+          keys.forEach((k, i) => { row[k] = cells[i] ? cells[i].innerText.trim() : ""; });
+          rows.push(row);
+        });
+        return rows;
+      };
+
+      // HTML-escape and newline→<br>
+      const esc = (t) => (t || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      const nl  = (t) => esc(t).replace(/\n/g, "<br/>");
+
+      /* ── collect form data ─────────────────────────────────────────── */
+      const teamNameRaw    = getId("team-name");
+      const projectNameRaw = getId("project-name");
+      const teamName    = teamNameRaw    || "(미입력)";
+      const projectName = projectNameRaw || "(미입력)";
+
+      const env = {
+        unity: get("env-unity"), git:      get("env-git"),
+        tools: get("env-tools"), refs:     get("env-refs"),
+        assets:get("env-assets"),controls: get("env-controls"),
+      };
+      const scope = {
+        title:   get("scope-title"),   genre:    get("scope-genre"),
+        platform:get("scope-platform"),oneliner: get("scope-oneliner"),
+        goal:    get("scope-goal"),    musthave: get("scope-musthave"),
+        nice:    get("scope-nice"),    outscope: get("scope-outscope"),
+        playflow:get("scope-playflow"),
+      };
+      const risk    = { feature: get("risk-feature"), solution: get("risk-solution") };
+      const scenario = get("scenario");
+      const winCond  = get("win-cond");
+      const loseCond = get("lose-cond");
+
+      const scenes      = getRows("scenes-body",      ["name","role"]);
+      const transitions = getRows("transitions-body", ["from","trigger","to"]);
+      const sounds      = getRows("sounds-body",      ["scene","type","desc"]);
+      const effects     = getRows("effects-body",     ["scene","type","desc"]);
+      const roles       = getRows("roles-body",       ["name","part","features","criteria","output"]);
+
+      const schedule = [];
+      document.querySelectorAll("#schedule-body tr").forEach(tr => {
+        const dateEl = tr.querySelector("td.mono");
+        const cells  = [...tr.querySelectorAll("[contenteditable='true']")];
+        if (!dateEl || cells.length < 2) return;
+        schedule.push({
+          date:   dateEl.innerText.split("\n")[0].trim(),
+          work:   cells[0].innerText.trim(),
+          output: cells[1].innerText.trim(),
+        });
+      });
+
+      /* ── HTML template helpers ─────────────────────────────────────── */
+      // def-table row: label (shaded left col) | value
+      const defRow  = (label, val) =>
+        `<tr><td class="lbl">${esc(label)}</td><td>${nl(val)}</td></tr>`;
+
+      // generic th row
+      const thRow   = (...cols) =>
+        `<tr>${cols.map(([c, w]) => `<th${w ? ` style="width:${w}"` : ""}>${esc(c)}</th>`).join("")}</tr>`;
+
+      /* ── build HTML document ───────────────────────────────────────── */
+      const html = `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body  { font-family:Arial,sans-serif; font-size:11pt; color:#111; }
+  h1    { font-size:18pt; font-weight:bold; color:#1E2361; margin:0 0 4pt; }
+  h2    { font-size:14pt; font-weight:bold; color:#1E2361; margin:20pt 0 6pt;
+          border-bottom:2px solid #1E2361; padding-bottom:2pt; }
+  h3    { font-size:12pt; font-weight:bold; color:#2D3580; margin:14pt 0 4pt; }
+  p     { margin:0 0 4pt; }
+  table { border-collapse:collapse; width:100%; margin-bottom:10pt; font-size:10pt; }
+  th    { background-color:#1E2361; color:#fff; padding:4pt 6pt;
+          text-align:left; font-weight:bold; }
+  td    { border:1px solid #C5C8D8; padding:4pt 6pt; vertical-align:top; }
+  td.lbl{ background-color:#EEF0FF; font-weight:bold; color:#1A1C3A;
+          width:110pt; white-space:nowrap; }
+  .note { color:#888; font-style:italic; font-size:9pt; }
+  .lead { font-weight:bold; color:#4C54A8; }
+  .mono { font-family:monospace; }
+</style>
+</head>
+<body>
+
+<h1>중간 팀프로젝트 사전 기획서</h1>
+<p style="font-size:11pt;color:#555;margin-top:4pt;">
+  <b>팀명:</b> ${esc(teamName)}&nbsp;&nbsp;&nbsp;
+  <b>프로젝트명:</b> ${esc(projectName)}
+</p>
+
+<h2>00 · 프로젝트 환경</h2>
+<table>
+  ${defRow("Unity 버전",   env.unity)}
+  ${defRow("Git / 브랜치", env.git)}
+  ${defRow("협업 도구",    env.tools)}
+  ${defRow("레퍼런스",     env.refs)}
+  ${defRow("에셋 출처",    env.assets)}
+  ${defRow("조작 방식",    env.controls)}
+</table>
+
+<h2>01 · 최종 목표 범위</h2>
+<table>
+  ${defRow("프로젝트 제목",    scope.title)}
+  ${defRow("장르",            scope.genre)}
+  ${defRow("플랫폼",          scope.platform)}
+  ${defRow("한 줄 요약",      scope.oneliner)}
+  ${defRow("발표 목표",       scope.goal)}
+  ${defRow("Must Have",       scope.musthave)}
+  ${defRow("Nice to Have",    scope.nice)}
+  ${defRow("Out of Scope",    scope.outscope)}
+  ${defRow("최종 플레이 흐름", scope.playflow)}
+</table>
+
+<h3>예상 리스크 / 우려 기능</h3>
+<table>
+  ${thRow(["우려 기능","35%"],["대응 방안",""])}
+  <tr><td>${nl(risk.feature)}</td><td>${nl(risk.solution)}</td></tr>
+</table>
+
+<h2>02 · 씬 구성 및 플레이 시나리오</h2>
+
+<h3>씬 목록</h3>
+<table>
+  ${thRow(["씬 이름","28%"],["역할 설명",""])}
+  ${scenes.map(r => `<tr><td>${esc(r.name)}</td><td>${nl(r.role)}</td></tr>`).join("\n  ")}
+</table>
+
+<h3>씬 이동 순서 (코어 루프)</h3>
+<table>
+  ${thRow(["출발 씬","25%"],["전환 조건 (Trigger)",""],["도착 씬","25%"])}
+  ${transitions.map(r =>
+    `<tr><td>${esc(r.from)}</td><td>${nl(r.trigger)}</td><td>${esc(r.to)}</td></tr>`
+  ).join("\n  ")}
+</table>
+<p class="note">※ 코어 루프 다이어그램은 PDF/HTML 버전을 참조하세요.</p>
+
+<h3>플레이 시나리오</h3>
+<p>${nl(scenario)}</p>
+
+<h3>성공 조건 / 실패 조건</h3>
+<table>
+  ${thRow(["성공 조건",""],["실패 조건",""])}
+  <tr><td>${nl(winCond)}</td><td>${nl(loseCond)}</td></tr>
+</table>
+
+<h3>사운드 계획</h3>
+<table>
+  ${thRow(["씬 / 상황","25%"],["BGM · SFX","15%"],["재생 조건 및 파일명",""])}
+  ${sounds.map(r =>
+    `<tr><td>${esc(r.scene)}</td><td>${esc(r.type)}</td><td>${nl(r.desc)}</td></tr>`
+  ).join("\n  ")}
+</table>
+
+<h3>연출 계획</h3>
+<table>
+  ${thRow(["씬 / 상황","25%"],["연출 종류","25%"],["내용",""])}
+  ${effects.map(r =>
+    `<tr><td>${esc(r.scene)}</td><td>${esc(r.type)}</td><td>${nl(r.desc)}</td></tr>`
+  ).join("\n  ")}
+</table>
+
+<h2>03 · 역할 분담</h2>
+<table>
+  ${thRow(["이름","11%"],["담당 파트","16%"],["구현 기능","22%"],["완료 기준","22%"],["산출물",""])}
+  ${roles.map((r, i) => `<tr>
+    <td${i === 0 ? ' class="lead"' : ""}>${i === 0 ? "[팀장] " : ""}${esc(r.name)}</td>
+    <td>${esc(r.part)}</td>
+    <td>${nl(r.features)}</td>
+    <td>${nl(r.criteria)}</td>
+    <td>${nl(r.output)}</td>
+  </tr>`).join("\n  ")}
+</table>
+
+<h2>04 · 일정</h2>
+<table>
+  ${thRow(["날짜","18%"],["작업 내용",""],["산출물","22%"])}
+  ${schedule.map(r =>
+    `<tr><td class="mono">${esc(r.date)}</td><td>${nl(r.work)}</td><td>${nl(r.output)}</td></tr>`
+  ).join("\n  ")}
+</table>
+</body>
+</html>`;
+
+      /* ── generate & save ──────────────────────────────────────────── */
+      try {
+        const blob = window.htmlDocx.asBlob(html, {
+          orientation: "portrait",
+          margins: { top: 1134, right: 1134, bottom: 1134, left: 1134 },
+        });
+
+        const safe = (s) => (s || "").replace(/[\\/:*?"<>|]/g, "_").replace(/\s+/g, "_") || "team";
+        const namePart = projectNameRaw
+          ? `${safe(teamNameRaw)}_${safe(projectNameRaw)}`
+          : safe(teamNameRaw);
+        const filename = `사전기획서_${namePart}_${new Date().toISOString().slice(0, 10)}.docx`;
+
+        if (window.showSaveFilePicker) {
+          try {
+            const handle = await window.showSaveFilePicker({
+              suggestedName: filename,
+              types: [{ description: "Word 문서", accept: { "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [".docx"] } }],
+            });
+            const writable = await handle.createWritable();
+            await writable.write(blob);
+            await writable.close();
+            showToast(`저장 완료 · ${handle.name}`);
+          } catch (err) {
+            if (err.name !== "AbortError") throw err;
+          }
+        } else {
+          const url = URL.createObjectURL(blob);
+          const a   = document.createElement("a");
+          a.href = url; a.download = filename; a.click();
+          setTimeout(() => URL.revokeObjectURL(url), 10000);
+          showToast(`저장 완료 · ${filename}`);
+        }
+      } catch (e) {
+        console.error(e);
+        alert("Word 문서 생성 중 오류가 발생했습니다. 콘솔을 확인해주세요.");
+      }
+    }
+
+    // ===== Export to PDF =====
+    async function exportPDF() {
+      const root = document.getElementById("capture-root");
+
+      if (document.fonts && document.fonts.ready) {
+        try { await document.fonts.ready; } catch (e) {}
+      }
+
+      await renderCoreLoopDiagram();
+
+      let diagramPngUrl = null;
+      if (cy) {
+        try {
+          diagramPngUrl = cy.png({ scale: 2, bg: "#101113", full: true, output: "base64uri" });
+        } catch (e) {
+          console.warn("Cytoscape PNG export failed", e);
+        }
+      }
+
+      document.body.classList.add("exporting");
+      await new Promise((r) => setTimeout(r, 80));
+
+      try {
+        const canvas = await html2canvas(root, {
+          backgroundColor: "#08090A",
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          windowWidth: root.scrollWidth,
+          windowHeight: root.scrollHeight,
+          onclone: (clonedDoc) => {
+            const clonedContainer = clonedDoc.getElementById("diagram-container");
+            if (!clonedContainer) return;
+            clonedContainer.innerHTML = "";
+            clonedContainer.style.height = "auto";
+            clonedContainer.style.minHeight = "0";
+            clonedContainer.style.padding = "18px";
+            if (diagramPngUrl) {
+              const img = clonedDoc.createElement("img");
+              img.src = diagramPngUrl;
+              img.style.maxWidth = "100%";
+              img.style.height = "auto";
+              img.style.display = "block";
+              img.style.margin = "0 auto";
+              clonedContainer.appendChild(img);
+            } else {
+              const empty = clonedDoc.createElement("div");
+              empty.className = "diagram-empty";
+              empty.style.position = "static";
+              empty.textContent = "(다이어그램 없음)";
+              clonedContainer.appendChild(empty);
+            }
+          },
+        });
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+        const pageW = 210;
+        const pageH = 297;
+        const imgW = pageW;
+        const imgH = (canvas.height * pageW) / canvas.width;
+        const imgData = canvas.toDataURL("image/jpeg", 0.92);
+
+        let remaining = imgH;
+        let offsetY = 0;
+        while (remaining > 0) {
+          pdf.addImage(imgData, "JPEG", 0, -offsetY, imgW, imgH);
+          remaining -= pageH;
+          offsetY += pageH;
+          if (remaining > 0) pdf.addPage();
+        }
+
+        const teamName = (document.getElementById("team-name").innerText || "team").trim();
+        const projectName = (document.getElementById("project-name").innerText || "").trim();
+        const safe = (s) => s.replace(/[\\/:*?"<>|]/g, "_").replace(/\s+/g, "_") || "team";
+        const namePart = projectName ? `${safe(teamName)}_${safe(projectName)}` : safe(teamName);
+        const filename = `사전기획서_${namePart}_${new Date().toISOString().slice(0, 10)}.pdf`;
+
+        pdf.save(filename);
+        showToast(`저장 완료 · ${filename}`);
+      } catch (e) {
+        console.error(e);
+        alert("PDF 생성 중 오류가 발생했습니다. 콘솔을 확인해주세요.");
+      } finally {
+        document.body.classList.remove("exporting");
+      }
+    }
+
+    // ===== Init =====
+    renderScenes();
+    renderTransitions();
+    renderRoles();
+    renderSchedule();
+    renderSounds();
+    renderEffects();
+    tryAutoLoadBundledPlan();
+
+    // 트랜지션 표 변경 → 다이어그램 자동 갱신
+    document.addEventListener("input", (e) => {
+      if (e.target.closest && e.target.closest("#transitions-body")) {
+        scheduleDiagramRender();
+      }
+    });
+    const transitionsBody = document.getElementById("transitions-body");
+    if (transitionsBody) {
+      new MutationObserver(scheduleDiagramRender).observe(transitionsBody, { childList: true });
+    }
+
+    // 첫 렌더 (Mermaid 로드 후)
+    if (typeof mermaid !== "undefined") {
+      renderCoreLoopDiagram();
+    } else {
+      window.addEventListener("load", renderCoreLoopDiagram);
+    }
+  </script>
+</body>
+</html>
