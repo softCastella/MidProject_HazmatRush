@@ -1,6 +1,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class Pollutant : MonoBehaviour
@@ -72,9 +73,11 @@ public class Pollutant : MonoBehaviour
     }
 
     //오염원 체력 및 데미지 설정
-    public float pollutanMaxHp;        //오염원 pollutanMaxHp
-    public float pollutanCurHp;    //오염원 pollutanCurHp
-    private float pollutanDps;    //오염원 pollutanDps
+    [FormerlySerializedAs("pollutanMaxHp")]
+    public float pollutantMaxHp;
+    [FormerlySerializedAs("pollutanCurHp")]
+    public float pollutantCurHp;
+    private float pollutantDps;
     public float edgeHitRatio = 0.7f; // 이미지 가장자리 영역만 맞히도록 거리 기준(충돌 판정 거리 비율)
     private float halfWidth = 0.5f;    //오염원 너비 절반
 
@@ -149,7 +152,7 @@ public class Pollutant : MonoBehaviour
     void Awake()
     {
         SetHpByType();
-        pollutanCurHp = pollutanMaxHp;
+        pollutantCurHp = pollutantMaxHp;
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer == null)
             spriteRenderer = GetComponentInChildren<SpriteRenderer>(true);
@@ -227,20 +230,20 @@ public class Pollutant : MonoBehaviour
         switch (type)
         {
             case PollutantType.TypeA: // 산성오염원
-                pollutanMaxHp = 40;
-                pollutanDps = 6;
+                pollutantMaxHp = 40;
+                pollutantDps = 6;
                 break;
             case PollutantType.TypeB: // 오일오염원
-                pollutanMaxHp = 20;
-                pollutanDps = 4;
+                pollutantMaxHp = 20;
+                pollutantDps = 4;
                 break;
             case PollutantType.TypeC: // 혼합오염원
-                pollutanMaxHp = 55;
-                pollutanDps = 9;
+                pollutantMaxHp = 55;
+                pollutantDps = 9;
                 break;
             case PollutantType.TypeD: // 가스 오염원
-                pollutanMaxHp = 24;
-                pollutanDps = 5;
+                pollutantMaxHp = 24;
+                pollutantDps = 5;
                 break;
         }
     }
@@ -403,8 +406,8 @@ public class Pollutant : MonoBehaviour
         wrongPenaltyUsedThisContact = false;
         StopNeutralizationSfxLocal();
 
-        pollutanCurHp = pollutanMaxHp;
-        // Debug.Log($"[Pollutant] 접촉 해제 -> HP 초기화: {pollutanCurHp:F2}/{pollutanMaxHp:F2}");
+        pollutantCurHp = pollutantMaxHp;
+        // Debug.Log($"[Pollutant] 접촉 해제 -> HP 초기화: {pollutantCurHp:F2}/{pollutantMaxHp:F2}");
 
         StageScoreTracker scoreTracker = FindAnyObjectByType<StageScoreTracker>();
         if (scoreTracker != null)
@@ -455,7 +458,7 @@ public class Pollutant : MonoBehaviour
         }
 
         // 2) 플레이어 방호복 HP: 접촉 중 계속 초당 감소
-        player.ApplyPollutantDamage(pollutanDps);
+        player.ApplyPollutantDamage(pollutantDps);
 
         if (!CanProcessPlayerContact(player))
         {
@@ -512,7 +515,7 @@ public class Pollutant : MonoBehaviour
         float itemDamage = itemDps * Time.fixedDeltaTime;
         if (itemDamage > 0f)
         {
-            pollutanCurHp = Mathf.Max(0, pollutanCurHp - itemDamage);
+            pollutantCurHp = Mathf.Max(0, pollutantCurHp - itemDamage);
             StartContactFlash(); // HP 감소 중일 때만 번쩍
         }
         else
@@ -522,7 +525,7 @@ public class Pollutant : MonoBehaviour
 
         UpdatePollutantHpBar();
 
-        if (pollutanCurHp <= 0f && !isFadingOut)
+        if (pollutantCurHp <= 0f && !isFadingOut)
         {
             StopContactFlash();
             StopNeutralizationSfxLocal();
@@ -960,11 +963,11 @@ public class Pollutant : MonoBehaviour
         if (pollutantSlider == null)
             return;
 
-        pollutantSlider.value = pollutanCurHp / pollutanMaxHp;
+        pollutantSlider.value = pollutantCurHp / pollutantMaxHp;
         if (pollutantHpText == null)
             pollutantHpText = pollutantSlider.GetComponentInChildren<TMP_Text>(true);
         if (pollutantHpText != null)
-            pollutantHpText.text = Mathf.FloorToInt(pollutanCurHp).ToString();
+            pollutantHpText.text = Mathf.FloorToInt(pollutantCurHp).ToString();
     }
 
 }

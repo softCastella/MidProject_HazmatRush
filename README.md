@@ -15,6 +15,8 @@
 | **스테이지 데이터** | `Assets/Data/stage_data.json` (`mapPollutants` 포함) |
 | **회복 아이템 정의** | `Assets/Data/recovery_items.json` |
 | **AI·협업 규칙** | [AGENTS.md](AGENTS.md) |
+| **에셋 출처·라이선스** | [CREDITS.md](Assets/Docs/CREDITS.md) |
+| **사전 기획서 (제출용)** | [Assets/Docs/기획서/](Assets/Docs/기획서/) — HTML 열면 JSON 자동 반영 · PDF 내보내기 |
 | **버그·수정 기록** | [Bug 폴더](Assets/Docs/Bug/) — 최근: [0614 일일 2차](Assets/Docs/Bug/2026-06-14-시각미상-0614-일일-오후2100-2차-fixes.md) |
 
 ---
@@ -490,6 +492,7 @@ Assets/
 | [README.md](README.md) | 프로젝트 개요 (이 파일) |
 | [AGENTS.md](AGENTS.md) | AI·협업·코딩 규칙 |
 | [문서 하네스](Assets/Docs/문서-이름-규칙.md) | Bug/회의록 작성·당일 취합·5필드 파일명 |
+| [CREDITS.md](Assets/Docs/CREDITS.md) | 에셋 출처·라이선스 · 미사용 패키지 정리 이력 |
 | [0614 일일 회의록](Assets/Docs/회의록/2026-06-14-시각미상-0614-일일-오후2100-2차-합의.md) | **최근** — 타이머 SFX · dieSplatt · 1280 UI · Save 경로 |
 | [0614 일일 Bug](Assets/Docs/Bug/2026-06-14-시각미상-0614-일일-오후2100-2차-fixes.md) | Timer · Audio · CanvasBackgroundCover · GameSaveManager |
 | [0612 일일 회의록](Assets/Docs/회의록/2026-06-12-오후1700-0612-일일-오후1700-1차-합의.md) | 빌드 직전 · 종료 · 창 모드 · QA 1차 · 시계 UI |
@@ -545,7 +548,12 @@ Assets/
 
 ## 폰트·미디어 저작권
 
-- **Galmuri Font** — © 2019–2023 Minseo Lee
-- **시작 버튼 SFX** — [BoostSound](https://www.youtube.com/watch?v=YNSbL-Cek1c)
-- **Title / Game BGM** — SUNO 생성
-- **그 외 SFX** - freesoung.org
+상세 표·삭제된 미사용 패키지 목록: **[Assets/Docs/CREDITS.md](Assets/Docs/CREDITS.md)**
+
+| 구분 | 요약 |
+|------|------|
+| 폰트 | Galmuri · TMP LiberationSans · Layer Lab Tilt Warp (OFL) |
+| VFX | Cartoon FX Remaster FREE (JMO) — 중화·가스 연기 |
+| BGM | SUNO 생성 (타이틀·스테이지) |
+| SFX | freesound.org · BoostSound(YouTube) · 팀 녹음/편집 |
+| UI | Layer Lab 버튼 팩 · 팀 제작 HUD 스프라이트 시트 |

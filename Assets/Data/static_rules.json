@@ -138,7 +138,7 @@
       "intent": "EndPlayerContact에서 pollutanMaxHp 복구 (가스 포함)",
       "kind": "file_contains",
       "path": "Assets/Scripts/GamePlay/Pollutant.cs",
-      "must_contain": ["void EndPlayerContact", "pollutanCurHp = pollutanMaxHp"]
+      "must_contain": ["void EndPlayerContact", "pollutantCurHp = pollutantMaxHp"]
     },
     {
       "id": "F17",
