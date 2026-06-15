@@ -14,7 +14,7 @@
 | **외부 QA 피드백** | [QA_Feedback/HazmatRush/](Assets/Docs/QA_Feedback/HazmatRush/) (PC v1.0 · 7건) |
 | **스테이지 데이터** | `Assets/Data/stage_data.json` (`mapPollutants` 포함) |
 | **회복 아이템 정의** | `Assets/Data/recovery_items.json` |
-| **AI·협업 규칙** | [AGENTS.md](AGENTS.md) |
+| **AI·협업 규칙** | [AGENTS.md](AGENTS.md) · [AI 운영 방식 (사례)](Assets/Docs/2026-06-15-시각미상-ai-협업-운영방식.md) |
 | **에셋 출처·라이선스** | [CREDITS.md](Assets/Docs/CREDITS.md) |
 | **사전 기획서 (제출용)** | [Assets/Docs/기획서/](Assets/Docs/기획서/) — HTML 열면 JSON 자동 반영 · PDF 내보내기 |
 | **버그·수정 기록** | [Bug 폴더](Assets/Docs/Bug/) — 최근: [0614 일일 2차](Assets/Docs/Bug/2026-06-14-시각미상-0614-일일-오후2100-2차-fixes.md) |
@@ -40,7 +40,7 @@
 | **TypeD** 가스 | 독성가스, 일산화탄소 등 | 가스밸브 `GasValve` | 24 | 5 |
 
 - **A~C:** 한 번에 하나만 활성. 중화 전까지 다음 A~C 경고·등장 없음.
-- **D(가스):** A~C와 별도 타이머로 등장 가능, 동시 존재 가능. 접촉 해제 시 A~C와 동일하게 **HP 초기화** (`pollutanMaxHp`).
+- **D(가스):** A~C와 별도 타이머로 등장 가능, 동시 존재 가능. 접촉 해제 시 A~C와 동일하게 **HP 초기화** (`pollutantMaxHp`).
 - 가스 접촉 + 가스밸브 정답 시 **밸브 애니**(`Player_Valve`) + **밸브 SFX** (`squeakyValveSFX`). 가스 접촉 중 **중화 VFX 없음**.
 
 ### 아이템 DPS (중화용)
@@ -105,7 +105,7 @@ GameScene
 ### App 진입 (`AppScene` · PR1)
 
 - Build index **0**. `AppBootstrap` — `Application.runInBackground = true`, `SceneLoadManager`로 `SplashScene` 싱글 로드.
-- **PC 빌드 창 모드:** Player Settings **1280×720** Windowed · `resizableWindow` ([0612](Assets/Docs/Bug/2026-06-12-오후1700-0612-일일-오후1700-1차-fixes.md) · [0614 UI](Assets/Docs/Bug/2026-06-14-시각미상-0614-일일-오후2100-2차-fixes.md) §3)
+- **PC 빌드 창 모드:** 설계 **1920×1080** · 첫 기동 창 **1280×720** Windowed · `defaultIsNativeResolution` OFF · `resizableWindow` ([0612](Assets/Docs/Bug/2026-06-12-오후1700-0612-일일-오후1700-1차-fixes.md) · [0614 UI](Assets/Docs/Bug/2026-06-14-시각미상-0614-일일-오후2100-2차-fixes.md) §3)
 - `SceneLoadManager`·`AudioManager`는 App에서 생성 후 `DontDestroyOnLoad` (Splash 로드 시 App 씬 오브젝트는 unload, 매니저만 유지).
 - **서버·Additive 로딩은 미적용** (프론트 계획만). 상세: [회의록 0609 일일](Assets/Docs/회의록/2026-06-09-오후1227-0609-일일-오후1400-1차-합의.md) §App.
 - **Play 루트 2가지:** (1) `AppScene` — 빌드·전체 플로우·백그라운드 실행 (2) `GameScene` 등 직접 Play — 개발용 · 해당 씬 매니저 사용. 중복 매니저는 **의도적 유지**(PR2 보류).
@@ -162,7 +162,7 @@ GameScene
 **고속 이동 보정:** `LateUpdate` bounds 겹침 시 Stay 누락 프레임 데미지 보정 · `OnTriggerExit` 패딩(`GetContactOverlapPadding`).  
 **D 연출만 분기:** 가스밸브 정답 시 밸브 애니·SFX (중화 VFX 없음).
 
-접촉 해제(전 타입): 오염원 HP `pollutanMaxHp`로 리셋.  
+접촉 해제(전 타입): 오염원 HP `pollutantMaxHp`로 리셋.  
 오염원 제거 시 아이템 선택 **유지** (스캐너/중화제로 자동 초기화 안 함).
 
 **팝업·경고 문구 (코드):**
@@ -472,7 +472,6 @@ Assets/
 ### 미구현·보류
 
 - **창 크기 16:9 고정 / 해상도 프리셋 UI** (1920·1600·1280) — 논의만, 미구현
-- **`AppBootstrap.ForceWindowedOnPcBuild`** vs Player Settings 1280×720 — 정렬 필요 시 확인
 - **5_TutorialScene** Play·타이틀 TutorialButton — 🟡 미검증
 - **시계 HUD 중앙 배치** — 외부 QA 피드백 (Item Guide 겹침) · 목표 UI 아래로 이동 예정 ([0612 합의](Assets/Docs/회의록/2026-06-12-오후1700-0612-일일-오후1700-1차-합의.md))
 - **커스텀 커서** — Player Settings Default Cursor만 사용 (추가 작업 없음)
@@ -491,6 +490,7 @@ Assets/
 |------|------|
 | [README.md](README.md) | 프로젝트 개요 (이 파일) |
 | [AGENTS.md](AGENTS.md) | AI·협업·코딩 규칙 |
+| [AI 협업 운영 방식](Assets/Docs/2026-06-15-시각미상-ai-협업-운영방식.md) | 1인 바이브코딩 · rules/AGENTS 역할 · 실전 예시 · 발표용 요약 |
 | [문서 하네스](Assets/Docs/문서-이름-규칙.md) | Bug/회의록 작성·당일 취합·5필드 파일명 |
 | [CREDITS.md](Assets/Docs/CREDITS.md) | 에셋 출처·라이선스 · 미사용 패키지 정리 이력 |
 | [0614 일일 회의록](Assets/Docs/회의록/2026-06-14-시각미상-0614-일일-오후2100-2차-합의.md) | **최근** — 타이머 SFX · dieSplatt · 1280 UI · Save 경로 |

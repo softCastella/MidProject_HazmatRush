@@ -515,7 +515,7 @@
     <section class="hero">
       <span class="eyebrow">Student Submission</span>
       <h1>중간 팀프로젝트 사전 기획서</h1>
-      <div class="submit-date">제출일 · 2026-06-15 (일)</div>
+      <div class="submit-date">제출일 · 2026-06-15 (월)</div>
 
       <div class="header-fields">
         <div class="header-field">
@@ -781,7 +781,7 @@
       </table>
     </section>
 
-    <p class="small">중간 팀프로젝트 사전 기획서 · 제출일 2026-05-26</p>
+    <p class="small">중간 팀프로젝트 사전 기획서 · 제출일 2026-06-15</p>
   </main>
 
   <div class="toast" id="toast"></div>
@@ -794,206 +794,437 @@
 <script id="bundled-plan-json" type="application/json">
 {
   "version": 1,
-  "savedAt": "2026-06-15T12:00:00.000Z",
+  "savedAt": "2026-06-15T04:33:54.022Z",
   "fields": {
     "teamName": "진영(개인)",
     "projectName": "Hazmat Rush",
     "env-unity": "Unity 6000.4.8f1 (URP 17.4.0)",
-    "env-git": "Git (origin/master · YYMMDD_기능 브랜치 + PR) · worktree 병행\n상세: Assets/Docs/2026-06-08-시각미상-git-workflow-worktree.md",
-    "env-tools": "Trello (진행·버그), Cursor (AI 협업), Unity Editor, 카페 게시물",
-    "env-refs": "Purify (Steam) — 오염 탐지·중화 횡스크롤 레퍼런스",
-    "env-assets": "통합 목록: Assets/Docs/CREDITS.md\nUI — Layer Lab GUI-BasicButtonPack, itch.io, 팀 제작(HudIconSheet_*)\n사운드 — SUNO (Title/Game BGM), YouTube BoostSound, freesound.org\nVFX — Cartoon FX Remaster FREE (JMO · CFXR Electrified 3)\n폰트 — Galmuri, TextMesh Pro (LiberationSans OFL)",
-    "env-controls": "이동: A/D, ←/→\n중화 아이템: Z(이전), X(다음)\n회복 인벤: C/V 선택, Space 사용\n가이드: K(키 가이드), I(아이템 가이드)\n일시정지: ESC · 타이틀/일시정지 종료하기: Application.Quit\n디버그: F1 강제 클리어, F2 강제 게임오버, F3/F4 세이브 확인",
+    "env-git": "팀 문서 기준 Git worktree + master PR 흐름 병행",
+    "env-tools": "Trello (일정·진행·버그·에셋 등의 통합 관리), Cursor (AI 협업)",
+    "env-refs": "Purify (Steam) — 정화 컨셉, 횡스크롤 진행 화면, 방식 레퍼런스",
+    "env-assets": "UI — Unity Asset Store, itch.io, AI 생성(GPT, Gemini)\n사운드 — SUNO (Title/Game BGM), YouTube, freesound.org, Pixabay\nVFX (CFXR (중화 파티클) —   Unity Asset Store\n폰트 — (Galmuri폰트계열) Noonnu.cc",
+    "env-controls": "이동: A/D, ←/→ (좌,우만 지원)\n중화 아이템: Z(이전), X(다음) 이동 선택\n인벤토리 회복 아이템: C(이전), V(다음) 이동 선택, Space 사용\n가이드: K(키 가이드), I(아이템 가이드)\n일시정지: ESC\n종료하기: 종료하기 버튼(타이틀씬, 일시정지 패널)\n디버그: F1 강제 클리어, F2 강제 게임오버",
     "scope-title": "Hazmat Rush (해즈멧러쉬)",
     "scope-genre": "2D 횡스크롤 오염 대응 게임",
-    "scope-platform": "PC (Windows Standalone), 1280×720 창 모드, 리사이즈 가능 (Player Settings)",
-    "scope-oneliner": "화학 공장 사고 현장에서 방호복을 유지하며 오염원 유형에 맞는 도구로 중화하는 게임",
-    "scope-goal": "발표 시 AppScene부터 전체 플로우(스플래시→타이틀→인트로→로딩→게임) 시연 · 스테이지 1-1~1-3 플레이 · 클리어/게임오버·별점·회복 인벤·가스(D) 밸브 연출까지 확인",
-    "scope-musthave": "[씬·플로우 — 완료]\nAppScene → SplashScene → TitleScene → IntroStoryScene → LoadingScene → GameScene\n이어하기(인트로 생략), 세이브/로드(gamesave.json)\n\n[게임씬 — 완료]\n배경 UV 스크롤 · 플레이어 이동(FixedUpdate) · 1차 구간(-785~-403) 후 맵 해제\n오염원 경고→등장→팝업 · A~C/D 타입별 접촉·중화 · 정답만 오염원 HP·VFX\n방호복·오염원 HP 실시간 감소 · 접촉 해제 시 오염원 HP 초기화\nZ/X 아이템 선택 유지 · 틀린 아이템 2초 패널티\n맵 구간(mapPollutants) · 스테이지 3종(stage_data.json)\n타임어택 · 클리어/사망 Die·Clear 애니 2초 후 결과 HUD 패널\n일시정지(ESC) · K/I HUD 가이드\n\n[회복 시스템 — 완료]\n오염원 정화 시 회복 아이템 확률 드랍(아크 연출) · C/V/Space 인벤",
-    "scope-nice": "[대부분 완료]\n멀티 스테이지(3스테이지) · 로딩 프리스폰 · 스테이지별 BGM/배경\n중화 VFX(CFXR) · 밸브 SFX · 스플래시·씬 페이드(검정 통일)\n오염원 등장 화살표(A~C) · 방호복 HUD 아웃라인 · 타이틀 버전 표시\nPC 창 모드·종료 버튼 · 외부 QA 1차 7건 취합 · CREDITS.md\n\n[남은 polish]\n시계 HUD 중앙 배치(Item Guide 겹침 해소)\n회복 인벤 6종+ Scroll 실검증\n가스(D) 사망 시 밸브↔Die 애니 루프 잔여 이슈",
-    "scope-outscope": "서버 연동 · Additive 씬 로딩 · App PR2 중복 매니저 제거 · 맵 포인트 회복 스폰(폐기 확정) · 커스텀 커서 인게임 표시(보류) · 별도 ResultScene(결과는 GameScene HUD 패널)",
-    "scope-playflow": "AppScene → Splash(페이드인 0.65s) → Title(BGM) → [시작] Intro(스크롤) → Loading(스폰 확정·조작 안내) → GameScene\n[이어하기] Title → Loading → GameScene\nGameScene 내: 가이드 → 이동·경고 → 오염원 등장·접촉·중화 → 맵/스테이지 전환 → ClearSet/GameOverSet(HUD 패널, 별도 씬 아님)",
-    "risk-feature": "플레이어·오염원 접촉 판정(고속 이동 시 Stay 누락), 정답/오답에 따른 VFX·HP 분기, D(가스)와 A~C 경로 이원화 시 회귀 버그",
-    "risk-solution": "회의록 §4 표준 모델 고정(OnTriggerStay 단일 데미지 경로) · LateUpdate bounds 보정 · Pollutant/Player 수정 전 Bug·회의록 체크리스트 검증 · AI 수정 시 midproject-core 규칙 적용",
-    "scenario": "[GameScene 플레이 시나리오]\n1. 시작 가이드(GuideTxt) 종료 → 이동·타이머·배경 스크롤 활성화\n2. 1차 구간(-785~-403) 우측 이동 · 탐사 모드(Scanner 고정)\n3. 누적 이동 시간 후 [경고] WarningTxt(1.2s 고정→깜빡임 3회)\n4. Z/X 안내(Stage 1-1) 또는 대기 후 오염원 페이드인 · PopupUI(추천 도구) · A~C 화살표 바운스(1-2+)\n5. 첫 오염원 후 -403 해제 → 맵 내 이동 · 아이템 Z/X 전환(선택 유지)\n6. 접촉: 판정 로그 → 방호복 감소 → 정답일 때만 오염원 HP 감소\n   · A~C 정답: 중화 VFX+SFX · D+가스밸브: 밸브 애니+SFX(VFX 없음)\n   · 오답: 2초 패널티(dim+GuideTxt) · 접촉 해제 시 오염원 HP 초기화\n7. 오염원 제거 시 회복 아이템 아크 드랍 → C/V/Space 사용\n8. 구간 예정 오염원 전부 처리 후 x=769까지 이동 → 맵 페이드·리셋 반복\n9. 스테이지 클리어: Player_Clear 2초 → ClearSet(별 3개) / 실패: Die 2초 → GameOverSet",
-    "win-cond": "스테이지 제한 시간 내 totalPollutant만큼 오염원 전부 중화 · 방호복 curProtection ≥ 1\n별 조건(좌→우): 전부 중화 / 방호복 50% 이상 / 틀린 아이템 0회",
+    "scope-platform": "PC (Windows Standalone), 1920×1080 창 모드, 리사이즈 가능(* 앱 기동 디폴트 : 1270*720)",
+    "scope-oneliner": "화학 공장 사고 현장에서 방호복 내구도(HP)를 유지하며 시간 내에 오염원 유형에 맞는 도구로 중화하는 게임",
+    "scope-goal": "· 발표 시 AppScene부터 전체 플로우(앱→스플래시→타이틀→인트로→로딩→게임) 시연 가능\n · 스테이지 1-1~1-3 플레이 지원(각자 다른 배경과 BGM)\n · 클리어/게임오버\n · 클리어시 별점 시스템\n · 중화 아이템/인벤토리용 회복 아이템\n · 다양한 오염원(액체 오염-A,B,C와 기체오염-D)과 대응 아이템의 구현 및 연출(예: 중화제, 패드, 밸브)",
+    "scope-musthave": "[게임씬 기능]\n1. 배경 무한 스크롤링\n2. 플레이어 이동\n3. 아이템 전환\n4. 플레이어, 오염원 충돌 판정\n5. 오염원 랜덤 등장\n6. 플레이어 이동 거리 제한 및 자동 이동 기능\n7. HUD(인게임, 결과(클리어, 게임오버) 패널, 일시정지 패널)\n8. 안내 문구 등장\n9. 대응 아이템 팝업 등장\n10. 텍스트 갱신 및 등장 온오프 기능\n11. 타임 어택\n12. 플레이어 내구도(hp)바와 오염원 hp바의 실시간 동시 감소 기능\n\n[패널 기능]\n2. 결과 화면\n2-1. clear구현\n2-2. game over구현\n\n3. 타이틀씬\n3-1. 타이틀씬에서 시작하도록 하기\n3-2. 타이틀씬 구성하기\n3-2. 시작하기 버튼으로 게임씬 이동하게 하기\n3-3. 결과 화면(클리어, 게임오버)에 타이틀로 돌아가게 하기기능 추가\n\n4. 일시중지 패널 기능\n4-1. 게임을 일시중지 상태로 만드는 기능\n4-2. 게임으로 돌아가기(패널 끄기)\n4-3. 타이틀로 돌아가기 추가",
+    "scope-nice": "1. 멀티 스테이지 기능\n2. 오브젝트 풀링(오염원, 인게임 일부 기능) -> 프리로드방식 확정\n3. 로딩씬\n4. 중화씬 VFX, 피격 효과 추가\n5. 사운드 : BGM, SFX\n6. 게임 흐름의 풀 구성[스플래시 -> 타이틀 -> 인트로 -> 로딩 -> 게임씬]\n7. PC 창 모드\n8. 종료 버튼",
+    "scope-outscope": "튜토리얼",
+    "scope-playflow": "GameScene [stage 1-1]\n가이드 → 이동·경고 → 오염원 등장·접촉·중화 (오염원 1체) → 일시정지  → 오염원 1체 중화  → 스테이지 전환 → 강제 클리어  →  ClearSet(HUD 패널)  → 다시 시작하기  → GameOverSet(HUD 패널)",
+    "risk-feature": "보호장비 내구도와 오염원의 hp의 동시 감소 기능",
+    "risk-solution": "hp 실시간 감소 관련 자료 공부 및 순차적 주석에 의한 AI와 회의 결과 테스트, 반영",
+    "scenario": "게임씬의 Stage1-1 기준\n[가이드 -> 이동 -> 경고 -> 오염원 등장 -> 대응 아이템 팝업 -> 아이템 선택 -> 중화 (-> 이동 or 결과) ]\n\n1.  화면 상단 중앙 : 오른쪽을 이동하세요 안내 문구 노출\n2. 이동: 공장안 시작지점에서 우측으로 키이동을 한다. [탐사 모드(스캐너) - (좌우 이동 가능 : a,d키 <-, ->키)]\n3. 화면 우측 상단 : 경고 메세지가 뜸 \n4. 화면 중앙 부근 : 일정 시간 걸으면 경고메세지(오염원 등장)가 뜨고 4종의 오염원이 특정 스판 포인트에서 랜덤 등장하며 \n                              (1-1은 가스만 2체 등장)\n5. 대응 장비가 팝업으로 뜬다. \n6. 아이템 선택: 팝업에 뜬 대응 장비를 아이템 창에서 고른다.(z, x키로 전환)\n7. 중화: 오염원 등장후 중앙까지 이동 가능해지고 오염원과 플레이어 접촉하며 \n    방호복과 오염원의 hp게이지가 동시에 뜨며 서로 깍여나간다. [중화 모드]\n    올바른 장비 선택후 접촉했을 경우 2~3초내 한 체의 오염원을 제거가능. \n    잘못 선택시 좌측으로 이동해 올바른 장비로 전환 후 다시 시도 가능.\n\n8. 반복 or 결과: 화면 상단 중앙 적시된 오염원 수만큼 '이동 -> 아이템 선택 ->제거'를 반복하게 된다.\n                       or 우측 카운트 다운 시간 내에 정해진 수의 오염원을 제거하고 방호복의 내구도가 1이상 남아있으면 생존(클리어)하게 된다.",
+    "win-cond": "방호복의 내구도가 1이상 남아있고, \n카운트 다운 시간 내에 해당 스테이지의 정해진 수의 오염원을 제거해야  생존(클리어)하게 된다.",
     "lose-cond": "방호복 HP 0 (ProtectionDepleted) 또는 제한 시간 초과(TimeOver)"
   },
   "scenes": [
     {
       "name": "AppScene",
-      "role": "진입점 · runInBackground · PC 1280×720 창 모드 · SceneLoadManager/AudioManager DontDestroyOnLoad 생성 후 SplashScene 로드"
+      "role": "진입점"
     },
     {
       "name": "SplashScene",
-      "role": "로고 페이드인(0.65s, 흰 배경)·확대·샤인 → 페이드아웃 → 검정 암전(0.35s) → TitleScene 선로드 · splashSFX"
+      "role": "로고 페이드 연출, 팀명 사운드 연출"
     },
     {
       "name": "TitleScene",
-      "role": "타이틀 BGM · 시작/이어하기 버튼 · 우하단 v{Application.version} · 종료하기"
+      "role": "타이틀 BGM · 시작/이어하기/종료하기 버튼 · 저작권, 버전 정보"
     },
     {
       "name": "IntroStoryScene",
-      "role": "타이틀에서만 진입 · 검정 페이드인(0.8s) 후 TapeScroll 스토리 · 종료 시 LoadingScene"
+      "role": "인트로 화면, 상하 텍스트 스크롤로 짧은 배경 스토리를 연출"
     },
     {
       "name": "LoadingScene",
-      "role": "PollutantSpawnPlan.Prepare(오염원 배치 확정) · 프리팹 워밍업 · LoadingGuideTxt 조작 안내 순환 · GameScene 비동기 로드"
+      "role": "로딩 화면, 로딩 동안 가이드 텍스트를 노출"
     },
     {
       "name": "GameScene",
-      "role": "핵심 플레이 · Player/PollutantManager/StageManager/GameManager · HUD(방호복·타이머·아이템·회복인벤·가이드·경고·팝업·화살표) · Background 스크롤 · 결과/일시정지는 별도 씬이 아닌 HUD 패널"
+      "role": "스크롤 배경, 플레이어, 오염원, \n조작 및 정보 HUD(방호복 내구도, 스테이지(목표 오염원수), 안내 문구,  경고메세지, 남은시간, 대응 아이템 팝업, 플레이어hp바, 오염원hp바, 아이템(창)4칸"
     },
     {
       "name": "PauseSet (HUD)",
-      "role": "ESC 일시정지 · BGM 1/3 볼륨 · 재개/타이틀/종료하기"
+      "role": "일시정지 텍스트 이미지, 돌아가기 버튼, 타이틀로 버튼"
     },
     {
       "name": "ClearSet (HUD)",
-      "role": "클리어 애니 2초 후 표시 · 별점(ClearPanelUI) · 다음 스테이지/타이틀"
+      "role": "클리어 텍스트 이미지, 다음스테이지로 버튼, 타이틀로 버튼"
     },
     {
       "name": "GameOverSet (HUD)",
-      "role": "Die 애니 2초→페이드→1초 후 표시 · 재시작/타이틀 · 게임오버 SFX"
+      "role": "게임오버 텍스트 이미지, 다시 시작하기 버튼,  타이틀로 버튼"
     }
   ],
   "transitions": [
-    { "from": "AppScene", "trigger": "Start 시 자동", "to": "SplashScene" },
-    { "from": "SplashScene", "trigger": "로고 연출", "to": "TitleScene" },
-    { "from": "TitleScene", "trigger": "시작 버튼", "to": "IntroStoryScene" },
-    { "from": "TitleScene", "trigger": "이어하기 버튼 (세이브 로드)", "to": "LoadingScene" },
-    { "from": "IntroStoryScene", "trigger": "스토리 스크롤", "to": "LoadingScene" },
-    { "from": "LoadingScene", "trigger": "로딩·스폰 플랜 완료", "to": "GameScene" },
-    { "from": "GameScene", "trigger": "클리어 조건 달성 (Clear 애니 2초 후)", "to": "ClearSet" },
-    { "from": "GameScene", "trigger": "방호복 0 또는 시간 초과 (Die 애니 2초 후)", "to": "GameOverSet" },
-    { "from": "ClearSet", "trigger": "다음 스테이지 버튼", "to": "GameScene" },
-    { "from": "ClearSet", "trigger": "타이틀로 버튼", "to": "TitleScene" },
-    { "from": "GameOverSet", "trigger": "다시 시작 버튼", "to": "GameScene" },
-    { "from": "GameOverSet", "trigger": "타이틀로 버튼", "to": "TitleScene" },
-    { "from": "GameScene", "trigger": "ESC 키", "to": "PauseSet" },
-    { "from": "PauseSet", "trigger": "재개 / ESC", "to": "GameScene" },
-    { "from": "PauseSet", "trigger": "타이틀로 버튼", "to": "TitleScene" }
+    {
+      "from": "AppScene",
+      "trigger": "기동시 자동 스플래시씬 이동",
+      "to": "SplashScene"
+    },
+    {
+      "from": "SplashScene",
+      "trigger": "자동 로고 애니메이션",
+      "to": "TitleScene"
+    },
+    {
+      "from": "TitleScene",
+      "trigger": "시작 버튼",
+      "to": "IntroStoryScene"
+    },
+    {
+      "from": "TitleScene",
+      "trigger": "이어하기 버튼 (세이브 로드)",
+      "to": "LoadingScene"
+    },
+    {
+      "from": "IntroStoryScene",
+      "trigger": "스토리 스크롤",
+      "to": "LoadingScene"
+    },
+    {
+      "from": "LoadingScene",
+      "trigger": "로딩·스폰 플랜 완료, 가이드 텍스트 노출",
+      "to": "GameScene"
+    },
+    {
+      "from": "GameScene",
+      "trigger": "클리어 조건 달성",
+      "to": "ClearSet"
+    },
+    {
+      "from": "GameScene",
+      "trigger": "방호복 내구도 HP 0 또는 시간 초과",
+      "to": "GameOverSet"
+    },
+    {
+      "from": "ClearSet",
+      "trigger": "다음 스테이지 버튼",
+      "to": "GameScene"
+    },
+    {
+      "from": "ClearSet",
+      "trigger": "타이틀로 버튼",
+      "to": "TitleScene"
+    },
+    {
+      "from": "GameOverSet",
+      "trigger": "다시 시작 버튼",
+      "to": "GameScene"
+    },
+    {
+      "from": "GameOverSet",
+      "trigger": "타이틀로 버튼",
+      "to": "TitleScene"
+    },
+    {
+      "from": "GameScene",
+      "trigger": "ESC 키",
+      "to": "PauseSet"
+    },
+    {
+      "from": "PauseSet",
+      "trigger": "게임으로 돌아가기 버튼",
+      "to": "GameScene"
+    },
+    {
+      "from": "PauseSet",
+      "trigger": "타이틀로 버튼",
+      "to": "TitleScene"
+    },
+    {
+      "from": "TitleScene",
+      "trigger": "종료하기 버튼",
+      "to": "게임 꺼짐"
+    },
+    {
+      "from": "PauseSet",
+      "trigger": "종료하기 버튼",
+      "to": "게임 꺼짐"
+    }
   ],
   "sounds": [
-    { "scene": "SplashScene", "type": "SFX", "desc": "로고 페이드인 0.22s 후 splashClip 재생 (AudioManager.PlaySplashSfx)" },
-    { "scene": "TitleScene", "type": "BGM", "desc": "씬 진입 시 타이틀 BGM 페이드 인 · 종료 시 StopBGM" },
-    { "scene": "TitleScene", "type": "SFX", "desc": "시작/이어하기 버튼 — selectionSFX" },
-    { "scene": "GameScene", "type": "BGM", "desc": "StageManager.LoadStage → PlayStageBgm(bgmIndex) · 스테이지별 stageBgmClips" },
-    { "scene": "GameScene · A~C 정답 접촉", "type": "SFX", "desc": "중화 루프 neutralizationSfx (정답 A~C만)" },
-    { "scene": "GameScene · D 가스밸브", "type": "SFX", "desc": "밸브 루프 squeakyValveClip (중화 VFX 없음)" },
-    { "scene": "GameScene · 타이머 16초 이하", "type": "SFX", "desc": "countdownSFX 1회 (Timer.cs)" },
-    { "scene": "PauseSet", "type": "BGM", "desc": "게임 BGM 볼륨 약 1/3으로 dim" },
-    { "scene": "ClearSet / GameOverSet", "type": "SFX", "desc": "clearSFX / game-overSFX · dieSplattSFX (사망 1회)" }
+    {
+      "scene": "SplashScene",
+      "type": "SFX",
+      "desc": "로고 페이드인 후 음성 포함 SFX 재생 -splashSFX.ogg"
+    },
+    {
+      "scene": "TitleScene",
+      "type": "BGM",
+      "desc": "씬 진입 시 타이틀 BGM 페이드 인 · 종료 시 StopBGM -TitleTrack.ogg"
+    },
+    {
+      "scene": "TitleScene",
+      "type": "SFX",
+      "desc": "시작/이어하기 버튼 -selectionSFX.ogg"
+    },
+    {
+      "scene": "GameScene",
+      "type": "BGM",
+      "desc": "스테이지 시작시 스테이지별 BGM 재생\n1-1: ExplorationMonde_1\n1-2: ExplorationMonde_2\n1-3: Neutralization_2"
+    },
+    {
+      "scene": "GameScene\n · A~C 정답 접촉",
+      "type": "SFX",
+      "desc": "정답 A~C만 중화 루프에 SFX재생 -neutralizationSfx.ogg"
+    },
+    {
+      "scene": "GameScene\n · D 가스밸브",
+      "type": "SFX",
+      "desc": "D오염체(가스)의 밸브 루프에 SFX재생 squeakyValve.ogg"
+    },
+    {
+      "scene": "PauseSet",
+      "type": "BGM",
+      "desc": "게임씬 각 스테이지별 BGM이 볼륨 약 1/3으로 줄여짐"
+    },
+    {
+      "scene": "ClearSet / GameOverSet",
+      "type": "SFX",
+      "desc": "클리어·게임오버 각각 전용 SFX\n클리어: clearSFX.ogg\n게임오버: gameOverSFX.ogg"
+    }
   ],
   "effects": [
-    { "scene": "씬 전환 공통", "type": "페이드", "desc": "스플래시 흰 배경 로고 페이드\n그 외 검정 FadeOverlay 통일 (타이틀→인트로 0.25s, 인트로→로딩 0.5s 등)" },
-    { "scene": "GameScene · Background", "type": "UV 스크롤", "desc": "플레이어 입력 시 반대 방향 텍스처 오프셋 · 오염원 활성/구간 미완료 시 정지 · bgLockedSpeedMultiplier(1.7) 가속" },
-    { "scene": "GameScene · 오염원", "type": "등장/제거", "desc": "경고(1.2s+깜빡임) → 페이드인 · HP 0 시 페이드아웃 · A~C PollutantArrow 바운스 3회(1-2+, D·1-1 제외)" },
-    { "scene": "GameScene · 중화", "type": "VFX / 패널티", "desc": "정답 A~C: CFXR Electrified 3 중화 VFX\n오답: 2초 아이템창 dim + GuideTxt\nD: Player_Valve 애니" },
-    { "scene": "GameScene · 회복 드랍", "type": "아크 연출", "desc": "오염원 정화 시 mapProtectRecov/mapTimeRecov 프리팹 포물선 드랍" },
-    { "scene": "GameScene · 플레이어", "type": "애니메이션", "desc": "Idle/Move State · Die 2초 → 페이드 → GameOverSet · Clear 트리거 → Player_Clear 2초 후 패널" },
-    { "scene": "GameScene · 맵 전환", "type": "페이드·리셋", "desc": "x=769 도달 후 페이드 · 플레이어·배경 시작 위치 리셋 · 다음 mapPollutants 구간" }
+    {
+      "scene": "씬 전환 공통",
+      "type": "페이드",
+      "desc": "스플래시만 흰 배경 로고 페이드 효과\n그 외 검정 FadeOverlay 통일"
+    },
+    {
+      "scene": "GameScene · Background",
+      "type": "UV 무한 스크롤",
+      "desc": "1장의 이미지로 무한 스크롤 : 텍스처 오프셋 스크롤 방식 채택\n디폴트 : 멈춘 상태\n플레이어 키 입력시 : 플레이어와 반대방향으로 배경이 흐름\n플레이어의 움직임 속도와 배경의 속도간 간극을 조정해 최대한 자연스럽게 연출"
+    },
+    {
+      "scene": "GameScene · 오염원",
+      "type": "등장/제거\n/피격",
+      "desc": "경고(잠시 노출후 깜빡임)후 등장 \n페이드인 · HP 0 시 페이드아웃\n오염원 A~C는 화살표가 상단에서 바운스 3회로 등장\n(스테이지 1-1은 가스(D)만 등장해 확인은 1-2부터 가능)\n\n피격시 반짝이는 연출"
+    },
+    {
+      "scene": "GameScene · 중화",
+      "type": "VFX / 패널티",
+      "desc": "[오염원 A~C]\n정답: A~C: CFXR 중화 VFX 재생\n오답: 2초 아이템창 dim + GuideTxt + 방호복 내구도 hp만 감소\n\n[오염원 D]\nPlayer_Valve 애니메이션 + 밸브 잠금 VFX 재생"
+    },
+    {
+      "scene": "GameScene · 회복 드랍",
+      "type": "아크 연출",
+      "desc": "오염원 정화 시 월드 전용 프리팹 포물선 드랍(2종 방호복회복/시간연장기)"
+    },
+    {
+      "scene": "GameScene · 플레이어",
+      "type": "애니메이션\n/피격 연출",
+      "desc": "Idle 평상\nMove 걷기 애니메이션\nDie 사망 애니메이션 + 사망 SFX 재생\n피격시 붉은색으로 반짝이는 연출"
+    },
+    {
+      "scene": "GameScene · 맵 전환",
+      "type": "페이드·리셋",
+      "desc": "x=769 도달 후 페이드 · 플레이어·배경 시작 위치 리셋 · 다음 mapPollutants 구간"
+    },
+    {
+      "scene": "IntroStoryScene",
+      "type": "스크롤/ 스킵버튼 연출",
+      "desc": "스크롤은 위로 텍스트가 자동 올라가는 연출\n화면 클릭 유지시 빠르게 텍스트가 올라가짐\n스킵버튼 아이콘이 작고 커짐이 반복되는 두근두근 모양의 연출"
+    },
+    {
+      "scene": "LoadingScene",
+      "type": "로딩 스피너",
+      "desc": "정해진 모양(크기가 작은 원들이 모인 전체 원모양)의 스피너에 원마다 돌아가며 불이 들어오는 효과를 주고 한바퀴를 도는 연출"
+    }
   ],
   "roles": [
     {
       "name": "최진영",
       "part": "기획·문서",
-      "features": "게임 범위 정의, 사전 기획서(JSON/HTML), QA·회의록·Bug, CREDITS, 발표 자료",
-      "criteria": "기획서 JSON/HTML 제출 · README/CREDITS와 실제 산출물 일치",
-      "output": "Assets/Docs/기획서/, CREDITS.md, README.md"
+      "features": "중간 프로젝트용 프로토타입범위 게임을 기획 및 문서 작성, 제출",
+      "criteria": "기획서를 완성, 제출",
+      "output": "사전 기획서"
     },
     {
       "name": "최진영",
       "part": "Core / 씬 플로우",
-      "features": "AppBootstrap, SceneLoadManager, SceneLoadUI, LoadingController, SplashController, TitleSceneFade, AutoScrollIntro, GameSaveManager",
-      "criteria": "AppScene Play 시 스플래시→타이틀→인트로→로딩→게임 전체 연결 · 이어하기 동작",
-      "output": "AppScene~GameScene, SceneLoadManager.cs, LoadingController.cs"
+      "features": "게임의 전체 구성에 필요한 모든 씬을 구성 및 연결",
+      "criteria": "AppScene Play 시 스플래시→타이틀→인트로→로딩→게임 전체 연결 · 이어하기 등이 정상 동작",
+      "output": "0_AppScene ~ 6_GameScene, SceneLoadManager.cs, LoadingController.cs"
     },
     {
       "name": "최진영",
       "part": "게임플레이 · Player",
-      "features": "이동(FixedUpdate), 구간 제한·해제, 방호복 HP, 중화 VFX, 밸브/Clear/Die 애니, 회복 아이템 사용",
-      "criteria": "가이드 후 이동 · 접촉 중 방호복 감소 · 정답 VFX · 클리어/사망 연출 2초",
-      "output": "Player.cs, ProtectionHpBarUI.cs"
+      "features": "이동, 구간 제한·해제, \n방호복 HP, \n중화 VFX, 피격 효과,\n밸브/Clear/Die 애니메이션 구현",
+      "criteria": "가이드 후 이동 · 접촉 중 방호복 감소 · 정답 VFX · 클리어/사망 연출이 정상 구동, 연출",
+      "output": "Player.cs, ProtectionHpBarUI.cs\n각 애니메이션 컨트롤러, 클립"
     },
     {
       "name": "최진영",
       "part": "오염원 · 스폰",
-      "features": "Pollutant 접촉 모델, PollutantManager 경고·등장·맵구간, PollutantSpawnPlan 프리로드, stage_data.json",
-      "criteria": "경고→등장→접촉 판정 · 정답만 HP 감소 · 접촉 해제 HP 초기화 · mapPollutants 구간 전환",
+      "features": "오염원, 오염원 스포너, stage_data.json,\n로딩시 프리로드",
+      "criteria": "경고→등장→접촉 판정 · 정답만 HP 감소 · 접촉 해제 HP 초기화 · mapPollutants 구간 전환 등의 로직이 정상 작동",
       "output": "Pollutant.cs, PollutantManager.cs, PollutantSpawnPlan.cs, stage_data.json"
     },
     {
       "name": "최진영",
-      "part": "아이템 · HUD",
-      "features": "Item/ItemSelectManager Z/X, ItemManager dim, GuideTxt/WarningTxt/PopupUI, PollutantArrowUI, HelpGuideToggle K/I",
-      "criteria": "Z/X 방향 · 첫 경고 후 중화제 기본 · 선택 유지 · HUD 우선순위(경고>가이드>팝업)",
-      "output": "ItemSelectManager.cs, GuideTxt.cs, WarningTxt.cs, PopupUI.cs, PollutantArrowUI.cs"
+      "part": "중화 아이템 · HUD",
+      "features": "화면 기본 구성HUD, 특수기능패널(클리어, 게임오버, 일시정지, 가이드2 종(키,아이템), 중화아이템 창, 인벤토리 아이템 창, 팝업, 가이드 문구",
+      "criteria": "기본 화면 구성을 완료하고 각 요소가 정상 동작, 조건별 패널이 등장, 키 조작으로 정상 기능 조작이 가능",
+      "output": "ItemSelectManager.cs, GuideTxt.cs, \nWarningTxt.cs, PopupUI.cs, \nPollutantArrowUI.cs"
     },
     {
       "name": "최진영",
-      "part": "결과 · 매니저",
-      "features": "GameManager 클리어/게임오버/일시정지/오대응 패널티, StageManager, StageScoreTracker, ClearPanelUI, Timer",
-      "criteria": "ESC 일시정지 · 틀린 아이템 2초 패널티 · 별 3개 좌→우 · F1/F2 디버그",
-      "output": "GameManager.cs, StageManager.cs, ClearPanelUI.cs, Timer.cs"
+      "part": "각종 매니저와 관리 기능",
+      "features": "매니저 작성으로 요소 들을 관리",
+      "criteria": "게임의 주요 요소에 필요한 관리 주체를 작성하고 관련 기능들이 정상적으로 동작",
+      "output": "GameManager,\nStageManager,\nSceneLoadManager,\nGameSaveManager,\nItemManager,\nItemSelectManager,\nRecoveryItemManager,\nPollutantManager"
     },
     {
       "name": "최진영",
       "part": "회복 인벤",
-      "features": "recovery_items.json, RecoveryItemInventory, RecoveryItemManager 드랍·아크, RecoveryItemInventoryUI InvItemView",
-      "criteria": "정화 후 드랍 · C/V/Space · 스택 count · dim 선택 표시",
-      "output": "RecoveryItemInventory.cs, RecoveryItemManager.cs, RecoveryItemInventoryUI.cs"
+      "features": "회복 아이템 생성, 사용 기능",
+      "criteria": "오염원 정화 후 드랍 · 인벤토리 창에서 키로 이동,선택, 사용이 가능",
+      "output": "recovery_items.json, \nRecoveryItemInventory.cs, RecoveryItemManager.cs, RecoveryItemInventoryUI.cs"
     },
     {
       "name": "최진영",
       "part": "오디오 · 배경",
-      "features": "AudioManager BGM/SFX 싱글톤, Background 스크롤, CameraAspectFit, CanvasBackgroundCover",
-      "criteria": "타이틀·게임 BGM 페이드 · 중화/밸브 루프 분리 · 배경 스크롤 자연스러움",
+      "features": "오디오관리 기능과 \n무한 스크롤 배경을 구현",
+      "criteria": "타이틀·게임 BGM\n중화/밸브 루프 SFX · \n자연스러운 배경 스크롤 구현",
       "output": "AudioManager.cs, Background.cs"
     },
     {
       "name": "최진영",
       "part": "디자인 · 발표",
-      "features": "UI 에셋·폰트·아이콘, PPT·시연 스크립트, PC 빌드(1280×720·exe)",
-      "criteria": "1280×720 가독성 · 발표 6/16 시연 · 빌드 정상 실행",
-      "output": "Assets/UI/, PT_Docs/, Windows 빌드"
+      "features": "폰트, UI 에셋 서칭·아이콘 등 디자인 작업\nPPT·시연 스크립트작성\nPC 빌드(창 모드·exe)",
+      "criteria": "게임내 디자인 요소 구현, 발표 자료 완성, PC빌드 완료",
+      "output": "프로젝트 폴더, 빌드 폴더, 발표PPT, 발표 스크립트PPT, 사전기획서 PDF, 플레이 영상"
     }
   ],
   "schedule": {
-    "2026-05-11": { "work": "컨셉 레퍼런스 확정 (Steam: Purify)", "output": "카페 게시물 n.929" },
-    "2026-05-13": { "work": "개발 범위 확정", "output": "카페 게시물 n.966" },
-    "2026-05-14": { "work": "배경 이미지 선정, UV 무한 스크롤 방식 결정", "output": "Background.cs" },
-    "2026-05-16": { "work": "마인드맵·AI 기획서 초안", "output": "Hazmat Rush.docx" },
-    "2026-05-19": { "work": "핵심 씬 코어 루프 시안", "output": "카페 n.1000" },
-    "2026-05-22": { "work": "플레이어 1차 이동·배경 연동, Unity·Git 초기 세팅", "output": "Player.cs, Background.cs" },
-    "2026-05-23": { "work": "오염원 등장·타이머", "output": "PollutantManager, Timer" },
-    "2026-05-24": { "work": "HUD·아이템·접촉 후 방호복 감소", "output": "HUD_Canvas, ItemContainer" },
-    "2026-05-25": { "work": "TitleScene, SceneLoadManager, 사전기획서 초안", "output": "TitleScene, SceneLoadManager.cs" },
-    "2026-05-26": { "work": "PPT 초안", "output": "PPT" },
-    "2026-05-27": { "work": "[프로젝트 시작일] 가이드~팝업 타이밍 조정", "output": "GuideTxt, PopupUI" },
-    "2026-05-28": { "work": "중화모드(방호복·아이템·오염원 관계)", "output": "Item.cs, Pollutant.cs, Player.cs" },
-    "2026-05-29": { "work": "BGM·Result/Pause HUD·1차 범위 완성", "output": "AudioManager, Result_HUD, Pause_HUD" },
-    "2026-05-30": { "work": "HP바 UI·월드 오프셋·버그 수정", "output": "WorldSpaceUIFollower" },
-    "2026-05-31": { "work": "아이템 선택 로직·SFX·멀티스테이지 범위 확장", "output": "ItemSelectManager, stage_data.json" },
-    "2026-06-01": { "work": "강사님 1차 검수 반영·패널티·멀티스테이지·로딩·세이브·Player_Die", "output": "GameManager, LoadingScene, StageManager" },
-    "2026-06-02": { "work": "스테이지별 배경·BGM·UI 개선", "output": "stage_data.json, AudioManager" },
-    "2026-06-03": { "work": "UI·이펙트 서칭", "output": "CFXR VFX" },
-    "2026-06-04": { "work": "폰트·시스템 UI 교체·접촉 판정 안정화", "output": "gameplay-fixes 문서" },
-    "2026-06-05": { "work": "클리어/사망 2초 연출·VFX·아이템 유지 수정", "output": "클리어·VFX-fixes 문서" },
-    "2026-06-06": { "work": "회복 인벤 1차·씬 전환 페이드", "output": "RecoveryItemInventory, SplashController" },
-    "2026-06-07": { "work": "", "output": "" },
-    "2026-06-08": { "work": "회복 아이템 아크 드랍·Git worktree 문서", "output": "RecoveryItemManager, workflow 문서" },
-    "2026-06-09": { "work": "경고·맵·접촉·App·방호복 HUD 일일 작업", "output": "0609 회의록·Bug" },
-    "2026-06-10": { "work": "스테이지 BGM·가이드/경고 팝업·가스 사망 HP바", "output": "0610 회의록·Bug" },
-    "2026-06-11": { "work": "타이틀 버전·페이드 검정·화살표 UI·속도 튜닝", "output": "0611 회의록·Bug, PollutantArrowUI" },
-    "2026-06-12": { "work": "종료 버튼·PC 창 모드·리사이즈 HUD·외부 QA 1차 7건", "output": "0612 회의록·Bug, 기획서 JSON 06-12" },
-    "2026-06-13": { "work": "사전기획서 현행화·통합 테스트·PPT 캡처·빌드 재검증", "output": "기획서 JSON 06-13, PC 빌드 후보" },
-    "2026-06-14": { "work": "타이머 SFX·1280 UI·Save 경로·문서·PPT 마무리", "output": "0614 회의록·Bug, 기획서 JSON 06-14" },
-    "2026-06-15": { "work": "P5 정리(CREDITS·미사용 에셋·네이밍) · 기획서 HTML↔JSON 연동 · 발표 리허설", "output": "CREDITS.md, mid_team_project_submission.html" },
-    "2026-06-16": { "work": "[최종 발표·제출] 시연 및 빌드·기획서 PDF 제출", "output": "발표 완료, exe·사전기획서 PDF" }
+    "2026-05-11": {
+      "work": "컨셉 레퍼런스 확정 (Steam: Purify)",
+      "output": "카페 게시물 n.929"
+    },
+    "2026-05-13": {
+      "work": "개발 범위 확정",
+      "output": "카페 게시물 n.966"
+    },
+    "2026-05-14": {
+      "work": "배경 이미지 선정, UV 무한 스크롤 방식 결정",
+      "output": "Background.cs"
+    },
+    "2026-05-16": {
+      "work": "마인드맵·AI 기획서 초안",
+      "output": "Hazmat Rush.docx"
+    },
+    "2026-05-19": {
+      "work": "핵심 씬 코어 루프 시안",
+      "output": "카페 n.1000"
+    },
+    "2026-05-22": {
+      "work": "플레이어 1차 이동·배경 연동, Unity·Git 초기 세팅",
+      "output": "Player.cs, Background.cs"
+    },
+    "2026-05-23": {
+      "work": "오염원 등장·타이머",
+      "output": "PollutantManager, Timer"
+    },
+    "2026-05-24": {
+      "work": "HUD·아이템·접촉 후 방호복 감소",
+      "output": "HUD_Canvas, ItemContainer"
+    },
+    "2026-05-25": {
+      "work": "TitleScene, SceneLoadManager, 사전기획서 초안",
+      "output": "TitleScene, SceneLoadManager.cs"
+    },
+    "2026-05-26": {
+      "work": "PPT 초안",
+      "output": "PPT"
+    },
+    "2026-05-27": {
+      "work": "[프로젝트 시작일] 가이드~팝업 타이밍 조정",
+      "output": "GuideTxt, PopupUI"
+    },
+    "2026-05-28": {
+      "work": "중화모드(방호복·아이템·오염원 관계)",
+      "output": "Item.cs, Pollutant.cs, Player.cs"
+    },
+    "2026-05-29": {
+      "work": "BGM·Result/Pause HUD·1차 범위 완성",
+      "output": "AudioManager, Result_HUD, Pause_HUD"
+    },
+    "2026-05-30": {
+      "work": "HP바 UI·월드 오프셋·버그 수정",
+      "output": "WorldSpaceUIFollower"
+    },
+    "2026-05-31": {
+      "work": "아이템 선택 로직·SFX·멀티스테이지 범위 확장",
+      "output": "ItemSelectManager, stage_data.json"
+    },
+    "2026-06-01": {
+      "work": "강사님 1차 검수 반영·패널티·멀티스테이지·로딩·세이브·Player_Die",
+      "output": "GameManager, LoadingScene, StageManager"
+    },
+    "2026-06-02": {
+      "work": "스테이지별 배경·BGM·UI 개선",
+      "output": "stage_data.json, AudioManager"
+    },
+    "2026-06-03": {
+      "work": "UI·이펙트 서칭",
+      "output": "CFXR VFX"
+    },
+    "2026-06-04": {
+      "work": "폰트·시스템 UI 교체\n·접촉 판정 안정화",
+      "output": "HUD_Canvas\ngameplay-fixes 문서"
+    },
+    "2026-06-05": {
+      "work": "클리어/사망 2초 연출·VFX·아이템 유지 수정",
+      "output": "클리어·VFX-fixes 문서"
+    },
+    "2026-06-06": {
+      "work": "회복 인벤토리 밑작업, 씬 전환 페이드작업",
+      "output": "RecoveryItemInventory, SplashController"
+    },
+    "2026-06-07": {
+      "work": "휴식",
+      "output": "-"
+    },
+    "2026-06-08": {
+      "work": "버그 수정, 회복 아이템 아크 드랍구현, Git worktree 문서 작성",
+      "output": "RecoveryItemManager, workflow 문서"
+    },
+    "2026-06-09": {
+      "work": "버그 수정, 경고·맵·접촉·App·방호복 HUD 작업",
+      "output": "0609 회의록·Bug"
+    },
+    "2026-06-10": {
+      "work": "버그 수정, 방호복 HP바 텍스트 -> 아이콘화",
+      "output": "0610 회의록·Bug, HUD_Canvas"
+    },
+    "2026-06-11": {
+      "work": "타이틀 버전 추가, 페이드 검정 통일 작업, 오염원용 화살표 UI추가, 플레이어와 배경 등의 속도 튜닝",
+      "output": "0611 회의록·Bug, PollutantArrowUI"
+    },
+    "2026-06-12": {
+      "work": "빌드 후 이슈 버그 수정\n실행, 창용 아이콘 디자인, 작성\n종료 버튼 추가(타이틀, 일시정지)\nPC 창 모드 · 리사이즈 옵션으로 필드\nQA 진행",
+      "output": "0612 회의록·Bug, \n기획서_진영(개인)_2026-06-12.json\nexe를 포함한 빌드 폴더"
+    },
+    "2026-06-13": {
+      "work": "사전기획서 현행화(구현 상태 반영),\n버그 테스트,\n시계 HUD 중앙 배치 검토,",
+      "output": "기획서_진영(개인)_2026-06-13.json,\nPC 빌드 후보"
+    },
+    "2026-06-14": {
+      "work": "시계 HUD 중앙 배치, \n타이머 16초 카운트다운 효과 추가(SFX+빨간폰트),\n아이콘 디자인v2 작성 및 교체,\n발표 PPT, 스크립트 초안 생성,",
+      "output": "HUD_Canvas\n발표 PPT와 스크립트 초안 작성"
+    },
+    "2026-06-15": {
+      "work": "버그 수정, 사전기획서 수정, 발표 자료 수정, 코어루프플레이 영상",
+      "output": "사전기획서, 발표 PPT와 스크립트"
+    },
+    "2026-06-16": {
+      "work": "[최종 제출·발표] 발표 자료 제출 및 시연",
+      "output": "exe 제출, 발표 완료"
+    }
   }
 }
-
 </script>
   <script>
     // ===== Cytoscape setup =====
@@ -1564,7 +1795,6 @@
       scheduleDiagramRender();
       showToast("불러오기 완료");
     }
-
     function tryAutoLoadBundledPlan() {
       const embedded = document.getElementById("bundled-plan-json");
       if (embedded && embedded.textContent.trim()) {
@@ -1575,11 +1805,12 @@
           console.warn("embedded plan json parse failed", err);
         }
       }
-      fetch("기획서_진영(개인)_2026-06-14.json")
+      fetch("기획서_진영(개인)_2026-06-15.json")
         .then((res) => (res.ok ? res.json() : Promise.reject()))
         .then((data) => applyJSON(data))
         .catch(() => {});
     }
+
 
     // ===== Export to DOCX =====
     async function exportDOCX() {
@@ -1798,6 +2029,7 @@
     `<tr><td class="mono">${esc(r.date)}</td><td>${nl(r.work)}</td><td>${nl(r.output)}</td></tr>`
   ).join("\n  ")}
 </table>
+
 </body>
 </html>`;
 

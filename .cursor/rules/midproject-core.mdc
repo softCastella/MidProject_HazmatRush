@@ -27,7 +27,7 @@ Unity 2D 오염 대응 게임. 상세: `README.md`, `AGENTS.md`.
 ## 타입·네이밍
 
 - `Item.ItemType`, `Pollutant.PollutantType` 사용 (전역 `ItemType` enum 만들지 않기)
-- `curProtection`, `pollutanCurHp`, `pollutanDps`, `canMove` 등 기존 이름 유지
+- `curProtection`, `pollutantCurHp`, `pollutantDps`, `canMove` 등 기존 이름 유지
 
 ## Git·폴더
 
