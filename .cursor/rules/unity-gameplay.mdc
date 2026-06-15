@@ -13,9 +13,9 @@ alwaysApply: false
 
 ## HP
 
-- 계산: `float` (`curProtection`, `pollutanCurHp`)
+- 계산: `float` (`curProtection`, `pollutantCurHp`)
 - UI `%` 표시: `Mathf.FloorToInt`
-- 플레이어 방호복: `pollutanDps * Time.deltaTime` (`ApplyPollutantDamage`)
+- 플레이어 방호복: `pollutantDps * Time.deltaTime` (`ApplyPollutantDamage`)
 - 로그: `Debug.Log($"[Player] ... {value:F2}")` 형식
 
 ## 접촉 판정 — 단일 모델 (A~C / D 동일)
@@ -25,12 +25,12 @@ alwaysApply: false
 | `OnTriggerEnter2D` | `currentPlayer`, HP바, `AddPollutantTouch` |
 | `OnTriggerStay2D` | `currentPlayer` 갱신 + `ApplyPlayerContactDamage` (**데미지는 여기만**) |
 | `OnTriggerExit2D` | bounds 겹침이면 무시 → 아니면 `EndPlayerContact` |
-| `EndPlayerContact` | 밸브 off, HP `pollutanMaxHp` 초기화, `RegisterPollutantReset` |
+| `EndPlayerContact` | 밸브 off, HP `pollutantMaxHp` 초기화, `RegisterPollutantReset` |
 
 ## `ApplyPlayerContactDamage` 순서
 
 1. 아이템 판정 로그 (`올바른/틀린 아이템입니다. 추천 = ..., 선택 = ...`)
-2. `player.ApplyPollutantDamage(pollutanDps)`
+2. `player.ApplyPollutantDamage(pollutantDps)`
 3. **추천 아이템 == 선택 아이템**일 때만 오염원 HP 감소
 
 ## 중화 VFX (`Player.RefreshNeutralizationVfx`)

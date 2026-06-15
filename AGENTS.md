@@ -7,6 +7,8 @@
 
 **Cursor Rules (자동 적용):** `.cursor/rules/midproject-core.mdc` (항상), `.cursor/rules/git-worktree-workflow.mdc` (항상), `.cursor/rules/docs-harness.mdc` (`Assets/Docs/**` 작업 시), `.cursor/rules/unity-gameplay.mdc` (`Assets/Scripts/**/*.cs` 작업 시)
 
+**AI 운영 방식 (발표·사례):** [2026-06-15 ai-협업-운영방식](Assets/Docs/2026-06-15-시각미상-ai-협업-운영방식.md)
+
 > 요약 문서: [README.md](README.md)
 
 ---
@@ -51,7 +53,7 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 
 | 항목 | 이 프로젝트에서 따를 것 |
 |------|------------------------|
-| 변수명 | `curProtection`, `pollutanCurHp`, `pollutanDps`, `canMove` 등 **이미 있는 이름** 재사용 |
+| 변수명 | `curProtection`, `pollutantCurHp`, `pollutantDps`, `canMove` 등 **이미 있는 이름** 재사용 |
 | 타입 | `Item.ItemType`, `Pollutant.PollutantType` — 새 enum 만들지 않기 |
 | null 체크 | `if (player == null) return;` 패턴 유지 |
 | Unity API | `FindAnyObjectByType`, `GetComponent`, `OnTriggerStay2D` 등 **파일 안에 이미 쓰인 방식** |
@@ -66,14 +68,14 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 - **변경 범위 최소화** — 요청과 무관한 파일·리팩터링 금지
 - **기존 패턴 따르기** — 네이밍, 폴더 구조, `Item.ItemType` 등 프로젝트 관례 유지
 - **Unity 메타 파일** — `.cs` 추가·삭제 시 `.meta`도 함께 고려 (Unity가 자동 생성하는 경우 많음)
-- **HP는 float, UI는 int** — `curProtection`, `pollutanCurHp`는 float로 계산, 화면·`%` 텍스트는 `Mathf.FloorToInt` 등으로 표시
+- **HP는 float, UI는 int** — `curProtection`, `pollutantCurHp`는 float로 계산, 화면·`%` 텍스트는 `Mathf.FloorToInt` 등으로 표시
 - **접촉 판정·데미지** — `Pollutant.cs` **표준 모델** (A~C/D 동일, 상세: [회의록 §4](Assets/Docs/회의록/2026-06-05-시각미상-플레이어-오염원-로직-검토.md)):
   - `OnTriggerEnter2D` → `currentPlayer`·HP바·`AddPollutantTouch`
   - `OnTriggerStay2D` → `currentPlayer` 갱신 + `ApplyPlayerContactDamage` (**데미지는 여기만**)
-  - `OnTriggerExit2D` / `EndPlayerContact` → HP `pollutanMaxHp` 초기화 (가스 포함)
+  - `OnTriggerExit2D` / `EndPlayerContact` → HP `pollutantMaxHp` 초기화 (가스 포함)
 - **접촉 데미지 순서** (`ApplyPlayerContactDamage`):
   1. 아이템 판정 로그
-  2. `player.ApplyPollutantDamage(pollutanDps)`
+  2. `player.ApplyPollutantDamage(pollutantDps)`
   3. **추천 아이템 == 선택 아이템**일 때만 오염원 HP 감소
 - **중화 VFX** (`Player.RefreshNeutralizationVfx`): 접촉 중 A~C + `IsSelectedItemRecommendedFor`일 때만. **틀린 도구·스캐너·가스(D)는 VFX 없음** (가스는 밸브 애니만).
 - **아이템 선택**: 오염원 제거 시 `ResetToDefault()` **금지**. `OnWarningShown()` — 첫 경고만 중화제 기본, 이후 선택 유지. 스테이지 리셋만 Scanner 초기화.
@@ -229,6 +231,7 @@ curProtection = ApplyDamageOverTime(curProtection, pollutantDps, DamageContext.F
 |------|------|
 | `.cursor/rules/midproject-core.mdc` | **항상** (단순 코드, 기존 스타일, 커밋 금지 등) |
 | `.cursor/rules/git-worktree-workflow.mdc` | **항상** (master·worktree·PR 절차) |
+| `.cursor/rules/docs-harness.mdc` | `Assets/Docs/**` 작업 시 (Bug/회의록 파일명·당일 취합) |
 | `.cursor/rules/unity-gameplay.mdc` | `Assets/Scripts/**/*.cs` 열 때 (HP, 접촉, Pollutant) |
 
 Cursor에서 확인: **Settings → Rules** 또는 채팅 입력창 근처 Rules 목록.
