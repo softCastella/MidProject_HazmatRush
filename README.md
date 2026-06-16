@@ -3,6 +3,18 @@
 2D 횡스크롤 환경에서 오염물질을 탐지·중화하는 Unity 게임입니다.  
 방호복을 유지하며 이동하고, 오염원 유형에 맞는 아이템으로 오염원을 제거하는 것이 핵심 플레이입니다.
 
+## 저작권 · 에셋 출처
+
+상세 표·미사용 패키지 정리: **[CREDITS.md](Assets/Docs/CREDITS.md)**
+
+| 구분 | 요약 |
+|------|------|
+| 폰트 | Galmuri · TMP LiberationSans · Layer Lab Tilt Warp (OFL) |
+| VFX | Cartoon FX Remaster FREE (JMO) — 중화·가스 연기 |
+| BGM | SUNO 생성 (타이틀·스테이지) |
+| SFX | freesound.org · BoostSound(YouTube) · 팀 녹음/편집 |
+| UI | Layer Lab 버튼 팩 · 팀 제작 HUD 스프라이트 시트 |
+
 | 항목 | 내용 |
 |------|------|
 | **엔진** | Unity `6000.4.8f1` |
@@ -543,17 +555,3 @@ Assets/
 - **빌드 저장 테스트:** exe 폴더의 `Save/gamesave.json` 삭제 후 이어하기 버튼 숨김 확인 (Documents 아님)
 - 가이드 패널: 부모만 비활성, 자식은 활성 유지
 - `Library/`, `Temp/`, `Logs/` — Git·수정 대상 아님
-
----
-
-## 폰트·미디어 저작권
-
-상세 표·삭제된 미사용 패키지 목록: **[Assets/Docs/CREDITS.md](Assets/Docs/CREDITS.md)**
-
-| 구분 | 요약 |
-|------|------|
-| 폰트 | Galmuri · TMP LiberationSans · Layer Lab Tilt Warp (OFL) |
-| VFX | Cartoon FX Remaster FREE (JMO) — 중화·가스 연기 |
-| BGM | SUNO 생성 (타이틀·스테이지) |
-| SFX | freesound.org · BoostSound(YouTube) · 팀 녹음/편집 |
-| UI | Layer Lab 버튼 팩 · 팀 제작 HUD 스프라이트 시트 |
