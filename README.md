@@ -9,7 +9,7 @@
 
 | 구분 | 요약 |
 |------|------|
-| 폰트 | Galmuri11 (눈누) · TMP LiberationSans · Layer Lab Tilt Warp (OFL) |
+| 폰트 | Galmuri11 (눈누) |
 | VFX | Cartoon FX Remaster FREE (JMO · Unity Asset Store) — 중화·가스 연기 |
 | BGM | SUNO 생성 (타이틀·스테이지) |
 | SFX | freesound.org · BoostSound(YouTube) · Pixabay · 팀 녹음/편집 |
