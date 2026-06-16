@@ -9,11 +9,11 @@
 
 | 구분 | 요약 |
 |------|------|
-| 폰트 | Galmuri · TMP LiberationSans · Layer Lab Tilt Warp (OFL) |
-| VFX | Cartoon FX Remaster FREE (JMO) — 중화·가스 연기 |
+| 폰트 | Galmuri11 (눈누) · TMP LiberationSans · Layer Lab Tilt Warp (OFL) |
+| VFX | Cartoon FX Remaster FREE (JMO · Unity Asset Store) — 중화·가스 연기 |
 | BGM | SUNO 생성 (타이틀·스테이지) |
-| SFX | freesound.org · BoostSound(YouTube) · 팀 녹음/편집 |
-| UI | Layer Lab 버튼 팩 · 팀 제작 HUD 스프라이트 시트 |
+| SFX | freesound.org · BoostSound(YouTube) · Pixabay · 팀 녹음/편집 |
+| UI | Layer Lab 버튼 팩 (Unity Asset Store) · 팀 제작 HUD 스프라이트 시트 |
 
 | 항목 | 내용 |
 |------|------|
